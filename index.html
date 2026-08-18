@@ -419,7 +419,6 @@
         color: var(--paper);
       }
 
-
       /* ---------- DONATION ---------- */
       .donation {
         margin-top: 42px;
@@ -427,7 +426,11 @@
         border: 1px solid var(--line);
         border-radius: 5px;
         background:
-          radial-gradient(circle at 50% 0%, rgba(201, 133, 47, 0.10), transparent 55%),
+          radial-gradient(
+            circle at 50% 0%,
+            rgba(201, 133, 47, 0.1),
+            transparent 55%
+          ),
           var(--paper2);
         text-align: center;
       }
@@ -462,11 +465,13 @@
         background: #fff;
         border-radius: 6px;
         cursor: pointer;
-        transition: transform 0.15s ease, box-shadow 0.15s ease;
+        transition:
+          transform 0.15s ease,
+          box-shadow 0.15s ease;
       }
       .donation-qr:hover {
         transform: translateY(-2px);
-        box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
       }
       .donation-account {
         font-family: "IBM Plex Mono", monospace;
@@ -490,7 +495,7 @@
         display: none;
         place-items: center;
         padding: 20px;
-        background: rgba(0,0,0,0.82);
+        background: rgba(0, 0, 0, 0.82);
         backdrop-filter: blur(4px);
       }
       .qr-modal.open {
@@ -508,8 +513,8 @@
         position: fixed;
         top: 18px;
         right: 22px;
-        border: 1px solid rgba(255,255,255,0.3);
-        background: rgba(0,0,0,0.35);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        background: rgba(0, 0, 0, 0.35);
         color: #fff;
         width: 40px;
         height: 40px;
@@ -606,14 +611,13 @@
       <div id="content"></div>
       <div class="empty-msg" id="emptyMsg">Тохирох item олдсонгүй.</div>
 
-
       <!-- ---------- DONATION ---------- -->
       <section class="donation" aria-label="Donation">
         <div class="donation-kicker">Support the project</div>
         <h2>☕ Дэмжлэг үзүүлэх</h2>
         <p>
-          Энэ каталог хэрэг болсон бол QR кодыг уншуулж хүссэн дүнгээрээ
-          дэмжлэг үзүүлээрэй. Баярлалаа ❤️
+          Энэ каталог хэрэг болсон бол QR кодыг уншуулж хүссэн дүнгээрээ дэмжлэг
+          үзүүлээрэй. Баярлалаа ❤️
         </p>
 
         <img
@@ -626,7 +630,8 @@
 
         <div class="donation-account">
           <div>Банк: <strong>Голомт банк</strong></div>
-          <div>Хүлээн авагч: <strong>khosbat munkhjargal</strong></div>
+          <div>дансаар хийхийг хүсвэл: <strong>1505206332</strong></div>
+          <div>Хүлээн авагч: <strong>khosbat mun******l</strong></div>
           <div>QR-аар шууд уншуулж төлнө</div>
         </div>
         <p class="donation-hint">QR код дээр дарвал томоор нээгдэнэ.</p>
@@ -634,7 +639,10 @@
 
       <div class="qr-modal" id="qrModal" aria-hidden="true">
         <button class="qr-close" id="qrClose" aria-label="Close">×</button>
-        <img src="data:image/png;base64,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" alt="Donation QR code enlarged" />
+        <img
+          src="data:image/png;base64,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"
+          alt="Donation QR code enlarged"
+        />
       </div>
 
       <!-- ---------- FOOTER ---------- -->
@@ -1806,7 +1814,6 @@
         currentSearch = e.target.value.toLowerCase();
         render();
       });
-
 
       const donationQr = document.getElementById("donationQr");
       const qrModal = document.getElementById("qrModal");
