@@ -1,0 +1,1836 @@
+<!doctype html>
+<html lang="mn">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Deadlock — Дэлгүүрийн Каталог</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap");
+
+      :root {
+        --paper: #161310;
+        --paper2: #1c1815;
+        --ink: #efe6d8;
+        --ink-dim: #a89a86;
+        --line: #3a332b;
+
+        --fx-accent: #c9852f;
+        --fx-glow: rgba(201, 133, 47, 0.18);
+        --mps-accent: #4f9a63;
+        --mps-glow: rgba(79, 154, 99, 0.18);
+        --cc-accent: #8b5fc9;
+        --cc-glow: rgba(139, 95, 201, 0.2);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background:
+          radial-gradient(
+            circle at 15% 0%,
+            rgba(255, 255, 255, 0.03),
+            transparent 40%
+          ),
+          var(--paper);
+        color: var(--ink);
+        font-family: "Inter", sans-serif;
+        min-height: 100vh;
+        padding: 0 0 60px;
+      }
+
+      .wrap {
+        max-width: 1040px;
+        margin: 0 auto;
+        padding: 0 16px;
+      }
+
+      /* ---------- TOP SOCIAL BAR ---------- */
+      .topbar {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 10px;
+        max-width: 1040px;
+        margin: 0 auto;
+        padding: 14px 16px 0;
+      }
+      .social-link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: 1px solid var(--line);
+        background: var(--paper2);
+        color: var(--ink-dim);
+        text-decoration: none;
+        transition: all 0.15s ease;
+      }
+      .social-link:hover {
+        color: var(--ink);
+        border-color: var(--ink-dim);
+        transform: translateY(-2px);
+      }
+      .social-link svg {
+        width: 16px;
+        height: 16px;
+        fill: currentColor;
+      }
+
+      header {
+        text-align: center;
+        margin: 20px 0 26px;
+      }
+      .kicker {
+        font-family: "IBM Plex Mono", monospace;
+        letter-spacing: 0.35em;
+        font-size: 11px;
+        color: var(--ink-dim);
+        text-transform: uppercase;
+        margin-bottom: 10px;
+      }
+      h1 {
+        font-family: "Oswald", sans-serif;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        font-size: clamp(28px, 5vw, 44px);
+        margin: 0 0 8px;
+        text-transform: uppercase;
+        color: var(--ink);
+      }
+      .sub {
+        color: var(--ink-dim);
+        font-size: 14px;
+        max-width: 520px;
+        margin: 0 auto;
+        line-height: 1.5;
+      }
+
+      .tabs {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin: 26px 0 20px;
+      }
+      .tab {
+        position: relative;
+        font-family: "Oswald", sans-serif;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        font-size: 14px;
+        padding: 12px 22px;
+        border-radius: 3px;
+        border: 1px solid var(--line);
+        background: var(--paper2);
+        color: var(--ink-dim);
+        cursor: pointer;
+        transition: all 0.18s ease;
+      }
+      .tab span.dot {
+        display: inline-block;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        margin-right: 9px;
+        vertical-align: middle;
+        background: var(--ink-dim);
+      }
+      .tab:hover {
+        color: var(--ink);
+        border-color: var(--ink-dim);
+      }
+      .tab.active {
+        color: var(--paper);
+        background: var(--tab-accent, var(--ink));
+      }
+      .tab.active span.dot {
+        background: var(--paper);
+      }
+      .tab[data-shop="fairfax"].active {
+        --tab-accent: var(--fx-accent);
+        box-shadow: 0 0 24px var(--fx-glow);
+      }
+      .tab[data-shop="mps"].active {
+        --tab-accent: var(--mps-accent);
+        box-shadow: 0 0 24px var(--mps-glow);
+      }
+      .tab[data-shop="cc"].active {
+        --tab-accent: var(--cc-accent);
+        box-shadow: 0 0 24px var(--cc-glow);
+      }
+
+      .controls {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 22px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid var(--line);
+      }
+      .search {
+        flex: 1;
+        min-width: 200px;
+        position: relative;
+      }
+      .search input {
+        width: 100%;
+        background: var(--paper2);
+        border: 1px solid var(--line);
+        color: var(--ink);
+        padding: 10px 14px 10px 34px;
+        border-radius: 3px;
+        font-family: "Inter", sans-serif;
+        font-size: 14px;
+        outline: none;
+      }
+      .search input:focus {
+        border-color: var(--ink-dim);
+      }
+      .search::before {
+        content: "⌕";
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--ink-dim);
+        font-size: 16px;
+      }
+      .filter-chips {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+      .chip {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.04em;
+        padding: 6px 11px;
+        border-radius: 3px;
+        border: 1px solid var(--line);
+        background: transparent;
+        color: var(--ink-dim);
+        cursor: pointer;
+        text-transform: uppercase;
+      }
+      .chip.active {
+        background: var(--shop-accent);
+        color: var(--paper);
+        border-color: var(--shop-accent);
+        font-weight: 600;
+      }
+
+      .empty-msg {
+        text-align: center;
+        color: var(--ink-dim);
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 13px;
+        padding: 40px 0;
+        display: none;
+      }
+
+      .tier-block {
+        margin-bottom: 30px;
+      }
+      .tier-head {
+        display: flex;
+        align-items: baseline;
+        gap: 12px;
+        margin-bottom: 14px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid var(--line);
+      }
+      .tier-num {
+        font-family: "Oswald", sans-serif;
+        font-weight: 700;
+        font-size: 20px;
+        color: var(--shop-accent);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      .tier-price {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 12px;
+        color: var(--ink-dim);
+        background: var(--paper2);
+        border: 1px solid var(--line);
+        padding: 3px 9px;
+        border-radius: 20px;
+      }
+      .tier-note {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        color: var(--shop-accent);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        margin-left: auto;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+        gap: 10px;
+      }
+      .card {
+        background: var(--paper2);
+        border: 1px solid var(--line);
+        border-left: 3px solid var(--shop-accent);
+        border-radius: 4px;
+        padding: 12px 13px;
+        transition:
+          transform 0.12s ease,
+          border-color 0.12s ease;
+      }
+      .card:hover {
+        transform: translateY(-2px);
+        border-color: var(--shop-accent);
+      }
+
+      /* ---------- IMAGE PLACEHOLDER SLOT ---------- */
+      /* Хоосон байгаа — та item.img талбарт зурагны URL-аа бичихэд энд харагдана */
+      .item-img-slot {
+        width: 100%;
+        aspect-ratio: 1/1;
+        border-radius: 4px;
+        margin-bottom: 9px;
+        overflow: hidden;
+        background: var(--paper);
+        border: 1px dashed var(--line);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .item-img-slot img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      .item-img-slot.placeholder {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 9px;
+        color: var(--line);
+        text-align: center;
+        letter-spacing: 0.03em;
+        padding: 4px;
+      }
+
+      .card-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        margin-bottom: 6px;
+      }
+      .item-name {
+        font-family: "Oswald", sans-serif;
+        font-weight: 600;
+        font-size: 14.5px;
+        letter-spacing: 0.01em;
+        color: var(--ink);
+        text-transform: uppercase;
+      }
+      .badges {
+        display: flex;
+        gap: 4px;
+        flex-shrink: 0;
+      }
+      .badge {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 8.5px;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        padding: 2px 6px;
+        border-radius: 10px;
+        text-transform: uppercase;
+      }
+      .badge.active {
+        background: rgba(230, 180, 60, 0.15);
+        color: #e6b43c;
+        border: 1px solid rgba(230, 180, 60, 0.4);
+      }
+      .badge.imbue {
+        background: rgba(139, 95, 201, 0.18);
+        color: #b79ce8;
+        border: 1px solid rgba(139, 95, 201, 0.4);
+      }
+      .item-desc {
+        font-size: 12.5px;
+        line-height: 1.5;
+        color: var(--ink-dim);
+      }
+
+      /* ---------- FOOTER ---------- */
+      footer {
+        margin-top: 50px;
+        padding-top: 26px;
+        border-top: 1px solid var(--line);
+        text-align: center;
+      }
+      .footer-social {
+        display: flex;
+        justify-content: center;
+        gap: 14px;
+        margin-bottom: 14px;
+      }
+      .footer-social a {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.05em;
+        color: var(--ink-dim);
+        text-decoration: none;
+        padding: 8px 14px;
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        transition: all 0.15s ease;
+      }
+      .footer-social a:hover {
+        color: var(--ink);
+        border-color: var(--ink-dim);
+        transform: translateY(-2px);
+      }
+      .footer-social svg {
+        width: 14px;
+        height: 14px;
+        fill: currentColor;
+      }
+      footer .credit {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        color: var(--line);
+        letter-spacing: 0.08em;
+      }
+
+      ::selection {
+        background: var(--shop-accent);
+        color: var(--paper);
+      }
+
+
+      /* ---------- DONATION ---------- */
+      .donation {
+        margin-top: 42px;
+        padding: 24px;
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        background:
+          radial-gradient(circle at 50% 0%, rgba(201, 133, 47, 0.10), transparent 55%),
+          var(--paper2);
+        text-align: center;
+      }
+      .donation-kicker {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.18em;
+        color: var(--shop-accent);
+        text-transform: uppercase;
+        margin-bottom: 8px;
+      }
+      .donation h2 {
+        font-family: "Oswald", sans-serif;
+        font-size: 25px;
+        margin: 0 0 7px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+      .donation p {
+        color: var(--ink-dim);
+        font-size: 13px;
+        line-height: 1.5;
+        margin: 0 auto 18px;
+        max-width: 520px;
+      }
+      .donation-qr {
+        width: min(230px, 72vw);
+        aspect-ratio: 1;
+        display: block;
+        margin: 0 auto 16px;
+        padding: 8px;
+        background: #fff;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+      }
+      .donation-qr:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+      }
+      .donation-account {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        color: var(--ink-dim);
+        line-height: 1.7;
+      }
+      .donation-account strong {
+        color: var(--ink);
+        font-weight: 600;
+      }
+      .donation-hint {
+        margin-top: 12px;
+        font-size: 10px !important;
+        color: var(--line) !important;
+      }
+      .qr-modal {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        display: none;
+        place-items: center;
+        padding: 20px;
+        background: rgba(0,0,0,0.82);
+        backdrop-filter: blur(4px);
+      }
+      .qr-modal.open {
+        display: grid;
+      }
+      .qr-modal img {
+        width: min(420px, 88vw);
+        max-height: 88vh;
+        object-fit: contain;
+        padding: 12px;
+        background: #fff;
+        border-radius: 8px;
+      }
+      .qr-close {
+        position: fixed;
+        top: 18px;
+        right: 22px;
+        border: 1px solid rgba(255,255,255,0.3);
+        background: rgba(0,0,0,0.35);
+        color: #fff;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        font-size: 24px;
+        cursor: pointer;
+      }
+
+      @media (max-width: 480px) {
+        .controls {
+          flex-direction: column;
+          align-items: stretch;
+        }
+        .tier-note {
+          margin-left: 0;
+        }
+        .footer-social {
+          flex-direction: column;
+          align-items: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ---------- TOP SOCIAL BAR ---------- -->
+    <div class="topbar">
+      <a
+        class="social-link"
+        href="https://instagram.com/m.hosoo/"
+        target="_blank"
+        rel="noopener"
+        title="Instagram"
+      >
+        <svg viewBox="0 0 24 24">
+          <path
+            d="M12 2.2c3.2 0 3.6 0 4.85.07 1.25.06 2.1.25 2.85.55.77.3 1.42.7 2.07 1.35.65.65 1.05 1.3 1.35 2.07.3.75.49 1.6.55 2.85.07 1.25.07 1.65.07 4.85s0 3.6-.07 4.85c-.06 1.25-.25 2.1-.55 2.85-.3.77-.7 1.42-1.35 2.07-.65.65-1.3 1.05-2.07 1.35-.75.3-1.6.49-2.85.55-1.25.07-1.65.07-4.85.07s-3.6 0-4.85-.07c-1.25-.06-2.1-.25-2.85-.55-.77-.3-1.42-.7-2.07-1.35-.65-.65-1.05-1.3-1.35-2.07-.3-.75-.49-1.6-.55-2.85C2.2 15.6 2.2 15.2 2.2 12s0-3.6.07-4.85c.06-1.25.25-2.1.55-2.85.3-.77.7-1.42 1.35-2.07.65-.65 1.3-1.05 2.07-1.35.75-.3 1.6-.49 2.85-.55C8.4 2.2 8.8 2.2 12 2.2zm0 1.8c-3.15 0-3.52 0-4.76.07-1.02.05-1.57.21-1.94.36-.49.19-.84.42-1.2.79-.37.36-.6.71-.79 1.2-.15.37-.31.92-.36 1.94C2.9 8.4 2.9 8.77 2.9 11.92s0 3.52.07 4.76c.05 1.02.21 1.57.36 1.94.19.49.42.84.79 1.2.36.37.71.6 1.2.79.37.15.92.31 1.94.36 1.24.07 1.6.07 4.76.07s3.52 0 4.76-.07c1.02-.05 1.57-.21 1.94-.36.49-.19.84-.42 1.2-.79.37-.36.6-.71.79-1.2.15-.37.31-.92.36-1.94.07-1.24.07-1.6.07-4.76s0-3.52-.07-4.76c-.05-1.02-.21-1.57-.36-1.94-.19-.49-.42-.84-.79-1.2-.36-.37-.71-.6-1.2-.79-.37-.15-.92-.31-1.94-.36C15.52 4 15.15 4 12 4zm0 3.4a4.6 4.6 0 1 1 0 9.2 4.6 4.6 0 0 1 0-9.2zm0 1.8a2.8 2.8 0 1 0 0 5.6 2.8 2.8 0 0 0 0-5.6zm5.85-2.02a1.08 1.08 0 1 1-2.15 0 1.08 1.08 0 0 1 2.15 0z"
+          />
+        </svg>
+      </a>
+      <a
+        class="social-link"
+        href="https://www.facebook.com/m.hosanna0129/"
+        target="_blank"
+        rel="noopener"
+        title="Facebook"
+      >
+        <svg viewBox="0 0 24 24">
+          <path
+            d="M22 12.06C22 6.5 17.52 2 12 2S2 6.5 2 12.06c0 5.02 3.66 9.18 8.44 9.94v-7.03H7.9v-2.9h2.54V9.85c0-2.5 1.49-3.89 3.77-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56v1.88h2.78l-.44 2.9h-2.34V22c4.78-.76 8.44-4.92 8.44-9.94z"
+          />
+        </svg>
+      </a>
+    </div>
+
+    <div class="wrap">
+      <header>
+        <div class="kicker">Deadlock · Reference No. 03</div>
+        <h1>Дэлгүүрийн Каталог</h1>
+        <p class="sub">
+          Fairfax, MPS, Curiosity Catalog — гурван дэлгүүрийн бүх item, tier тус
+          бүрээр эмхэлж, товч тайлбарын хамт.
+        </p>
+      </header>
+
+      <div class="tabs">
+        <button class="tab active" data-shop="fairfax">
+          <span class="dot"></span>Fairfax
+        </button>
+        <button class="tab" data-shop="mps">
+          <span class="dot"></span>MPS
+        </button>
+        <button class="tab" data-shop="cc">
+          <span class="dot"></span>Curiosity Catalog
+        </button>
+      </div>
+
+      <div class="controls">
+        <div class="search">
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="Item нэрээр хайх..."
+          />
+        </div>
+        <div class="filter-chips" id="tierChips">
+          <button class="chip active" data-tier="all">Бүгд</button>
+          <button class="chip" data-tier="1">Tier 1</button>
+          <button class="chip" data-tier="2">Tier 2</button>
+          <button class="chip" data-tier="3">Tier 3</button>
+          <button class="chip" data-tier="4">Tier 4</button>
+        </div>
+      </div>
+
+      <div id="content"></div>
+      <div class="empty-msg" id="emptyMsg">Тохирох item олдсонгүй.</div>
+
+
+      <!-- ---------- DONATION ---------- -->
+      <section class="donation" aria-label="Donation">
+        <div class="donation-kicker">Support the project</div>
+        <h2>☕ Дэмжлэг үзүүлэх</h2>
+        <p>
+          Энэ каталог хэрэг болсон бол QR кодыг уншуулж хүссэн дүнгээрээ
+          дэмжлэг үзүүлээрэй. Баярлалаа ❤️
+        </p>
+
+        <img
+          class="donation-qr"
+          src="data:image/png;base64,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"
+          alt="Donation QR code"
+          title="QR кодыг томоор харах"
+          id="donationQr"
+        />
+
+        <div class="donation-account">
+          <div>Банк: <strong>Голомт банк</strong></div>
+          <div>Хүлээн авагч: <strong>khosbat munkhjargal</strong></div>
+          <div>QR-аар шууд уншуулж төлнө</div>
+        </div>
+        <p class="donation-hint">QR код дээр дарвал томоор нээгдэнэ.</p>
+      </section>
+
+      <div class="qr-modal" id="qrModal" aria-hidden="true">
+        <button class="qr-close" id="qrClose" aria-label="Close">×</button>
+        <img src="data:image/png;base64,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" alt="Donation QR code enlarged" />
+      </div>
+
+      <!-- ---------- FOOTER ---------- -->
+      <footer>
+        <div class="footer-social">
+          <a
+            href="https://instagram.com/m.hosoo/"
+            target="_blank"
+            rel="noopener"
+          >
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M12 2.2c3.2 0 3.6 0 4.85.07 1.25.06 2.1.25 2.85.55.77.3 1.42.7 2.07 1.35.65.65 1.05 1.3 1.35 2.07.3.75.49 1.6.55 2.85.07 1.25.07 1.65.07 4.85s0 3.6-.07 4.85c-.06 1.25-.25 2.1-.55 2.85-.3.77-.7 1.42-1.35 2.07-.65.65-1.3 1.05-2.07 1.35-.75.3-1.6.49-2.85.55-1.25.07-1.65.07-4.85.07s-3.6 0-4.85-.07c-1.25-.06-2.1-.25-2.85-.55-.77-.3-1.42-.7-2.07-1.35-.65-.65-1.05-1.3-1.35-2.07-.3-.75-.49-1.6-.55-2.85C2.2 15.6 2.2 15.2 2.2 12s0-3.6.07-4.85c.06-1.25.25-2.1.55-2.85.3-.77.7-1.42 1.35-2.07.65-.65 1.3-1.05 2.07-1.35.75-.3 1.6-.49 2.85-.55C8.4 2.2 8.8 2.2 12 2.2zm0 1.8c-3.15 0-3.52 0-4.76.07-1.02.05-1.57.21-1.94.36-.49.19-.84.42-1.2.79-.37.36-.6.71-.79 1.2-.15.37-.31.92-.36 1.94C2.9 8.4 2.9 8.77 2.9 11.92s0 3.52.07 4.76c.05 1.02.21 1.57.36 1.94.19.49.42.84.79 1.2.36.37.71.6 1.2.79.37.15.92.31 1.94.36 1.24.07 1.6.07 4.76.07s3.52 0 4.76-.07c1.02-.05 1.57-.21 1.94-.36.49-.19.84-.42 1.2-.79.37-.36.6-.71.79-1.2.15-.37.31-.92.36-1.94.07-1.24.07-1.6.07-4.76s0-3.52-.07-4.76c-.05-1.02-.21-1.57-.36-1.94-.19-.49-.42-.84-.79-1.2-.36-.37-.71-.6-1.2-.79-.37-.15-.92-.31-1.94-.36C15.52 4 15.15 4 12 4zm0 3.4a4.6 4.6 0 1 1 0 9.2 4.6 4.6 0 0 1 0-9.2zm0 1.8a2.8 2.8 0 1 0 0 5.6 2.8 2.8 0 0 0 0-5.6zm5.85-2.02a1.08 1.08 0 1 1-2.15 0 1.08 1.08 0 0 1 2.15 0z"
+              />
+            </svg>
+            @m.hosoo
+          </a>
+          <a
+            href="https://www.facebook.com/m.hosanna0129/"
+            target="_blank"
+            rel="noopener"
+          >
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M22 12.06C22 6.5 17.52 2 12 2S2 6.5 2 12.06c0 5.02 3.66 9.18 8.44 9.94v-7.03H7.9v-2.9h2.54V9.85c0-2.5 1.49-3.89 3.77-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56v1.88h2.78l-.44 2.9h-2.34V22c4.78-.76 8.44-4.92 8.44-9.94z"
+              />
+            </svg>
+            m.hosanna0129
+          </a>
+        </div>
+        <div class="credit">ALL'S FAIR — REFERENCE ONLY</div>
+      </footer>
+    </div>
+
+    <script>
+      /*
+  ЗУРАГ НЭМЭХ ЗААВАР:
+  Доорх DATA дотор item бүрийн { } дотор img: "ТАНЫ_ЗУРГИЙН_URL"
+  гэж нэмбэл тэр item дээр зураг харагдана. img талбар байхгүй бол
+  зурагны байрлалд хоосон placeholder box л харагдана.
+
+  Жишээ:
+  {t:1,n:"Close Quarters",d:"...", img:"https://example.com/close-quarters.png"}
+*/
+
+      const DATA = {
+        fairfax: {
+          label: "Fairfax",
+          accent: "#c9852f",
+          tierPrices: { 1: "$800", 2: "$1600", 3: "$3200", 4: "$6400" },
+          tierNote: { 4: "Experts Only" },
+          items: [
+            {
+              t: 1,
+              n: "Close Quarters",
+              d: "Ойрын зайд бууны хохирол нэмэгдэнэ.",
+              img: "https://deadlock.wiki/images/4/43/Close_Quarters.png",
+            },
+            {
+              t: 1,
+              n: "Extended Magazine",
+              d: "Сумны багтаамж нэмэгдэнэ.",
+              img: "https://deadlock.wiki/images/8/8a/Extended_Magazine.png",
+            },
+            {
+              t: 1,
+              n: "Headshot Booster",
+              d: "Толгойн цохилтын хохирол нэмэгдэнэ.",
+              img: "https://deadlock.wiki/images/a/ac/Headshot_Booster.png",
+            },
+            {
+              t: 1,
+              n: "High-Velocity Rounds",
+              d: "Сумны хурд болон алсын зайн хохирол сайжирна.",
+              img: "https://deadlock.wiki/images/0/0e/High-Velocity_Rounds.png",
+            },
+            {
+              t: 1,
+              n: "Monster Rounds",
+              d: "NPC/creep зэрэг чөтгөрт илүү их хохирол өгнө.",
+              img: "https://deadlock.wiki/images/f/f8/Monster_Rounds.png",
+            },
+            {
+              t: 1,
+              n: "Rapid Rounds",
+              d: "Буудах хурд (fire rate) нэмэгдэнэ.",
+              img: "https://deadlock.wiki/images/6/6e/Rapid_Rounds.png",
+            },
+            {
+              t: 1,
+              n: "Restorative Shot",
+              d: "Бууны хохиролоор бага хэмжээний life steal өгнө.",
+              img: "https://deadlock.wiki/images/4/4c/Restorative_Shot.png",
+            },
+            {
+              t: 2,
+              n: "Active Reload",
+              d: "Идэвхтэй чадвар: цэнэглэлтийг хурдасгана.",
+              active: 1,
+              img: "https://deadlock.wiki/images/b/b4/Active_Reload.png",
+            },
+            {
+              t: 2,
+              n: "Fleetfoot",
+              d: "Буудсаны дараа хөдөлгөөний хурд түр нэмэгдэнэ.",
+              img: "https://deadlock.wiki/images/c/cf/Fleetfoot.png",
+            },
+            {
+              t: 2,
+              n: "Intensifying Magazine",
+              d: "Магазин дуусах тусам сум бүрийн хохирол нэмэгдэнэ.",
+              img: "https://deadlock.wiki/images/6/65/Intensifying_Magazine.png",
+            },
+            {
+              t: 2,
+              n: "Kinetic Dash",
+              d: "Dash хийхэд нэмэлт бонус эффект өгнө.",
+              img: "https://deadlock.wiki/images/3/3e/Kinetic_Dash.png",
+            },
+            {
+              t: 2,
+              n: "Long Range",
+              d: "Алсын зайн бууны хохирол мэдэгдэхүйц сайжирна.",
+              img: "https://deadlock.wiki/images/0/0a/Long_Range.png",
+            },
+            {
+              t: 2,
+              n: "Melee Charge",
+              d: "Melee цохилт цэнэглэгддэг болж, дараагийн цохилт хүчтэй болно.",
+              img: "https://deadlock.wiki/images/e/ea/Melee_Charge.png",
+            },
+            {
+              t: 2,
+              n: "Mystic Shot",
+              d: "Бууны сум нэмэлт spirit хохирол өгдөг болно.",
+              img: "https://deadlock.wiki/images/5/5a/Mystic_Shot.png",
+            },
+            {
+              t: 2,
+              n: "Opening Rounds",
+              d: "Магазины эхний сум(ууд) илүү их хохиролтой.",
+              img: "https://deadlock.wiki/images/8/8d/Opening_Rounds.png",
+            },
+            {
+              t: 2,
+              n: "Recharging Rush",
+              d: "Идэвхтэй: түр хугацаанд буудах хурд, reload хурдасна.",
+              active: 1,
+              img: "https://deadlock.wiki/images/1/17/Recharging_Rush.png",
+            },
+            {
+              t: 2,
+              n: "Slowing Bullets",
+              d: "Сум онох бүрт өрсөлдөгчийг удаашруулна.",
+              img: "https://deadlock.wiki/images/d/db/Slowing_Bullets.png",
+            },
+            {
+              t: 2,
+              n: "Spirit Shredder",
+              d: "Spirit shield-тэй өрсөлдөгчид эффектив хохирол.",
+              img: "https://deadlock.wiki/images/9/96/Spirit_Shredder_Bullets.png",
+            },
+            {
+              t: 2,
+              n: "Split Shot",
+              d: "Идэвхтэй: буудсан сум задарч олон чиглэлд тархана.",
+              active: 1,
+              img: "https://deadlock.wiki/images/0/04/Split_Shot.png",
+            },
+            {
+              t: 2,
+              n: "Stalker",
+              d: "Хол зайд байгаа дайсанд нэмэлт хохирол.",
+              img: "https://deadlock.wiki/images/4/4b/Stalker.png",
+            },
+            {
+              t: 2,
+              n: "Swift Striker",
+              d: "Attack speed нэмэгдэнэ.",
+              img: "https://deadlock.wiki/images/e/e4/Swift_Striker.png",
+            },
+            {
+              t: 2,
+              n: "Titanic Magazine",
+              d: "Магазины багтаамж их хэмжээгээр нэмэгдэнэ.",
+              img: "https://deadlock.wiki/images/d/d8/Titanic_Magazine.png",
+            },
+            {
+              t: 2,
+              n: "Weakening Headshot",
+              d: "Толгойн цохилт дайсанд debuff (сулруулах) эффект өгнө.",
+              img: "https://deadlock.wiki/images/a/ad/Weakening_Headshot.png",
+            },
+            {
+              t: 3,
+              n: "Alchemical Fire",
+              d: "Идэвхтэй: заасан талбайд гал тавьж тасралтгүй хохирол өгнө.",
+              active: 1,
+              img: "https://deadlock.wiki/images/f/fc/Alchemical_Fire.png",
+            },
+            {
+              t: 3,
+              n: "Ballistic Enchantment",
+              d: "Сумыг spirit damage-тай холино.",
+              imbue: 1,
+              img: "https://deadlock.wiki/images/d/d4/Ballistic_Enchantment.png",
+            },
+            {
+              t: 3,
+              n: "Berserker",
+              d: "HP багасах тусам бууны хохирол нэмэгдэнэ.",
+              img: "https://deadlock.wiki/images/a/a8/Berserker.png",
+            },
+            {
+              t: 3,
+              n: "Blood Tribute",
+              d: "Идэвхтэй: өөрийн HP зарцуулж их хохирол/бонус авна.",
+              active: 1,
+              img: "https://deadlock.wiki/images/a/af/Blood_Tribute.png",
+            },
+            {
+              t: 3,
+              n: "Burst Fire",
+              d: "Дарахад хэд хэдэн сум цуваагаар гардаг болно.",
+              img: "https://deadlock.wiki/images/b/b0/Burst_Fire.png",
+            },
+            {
+              t: 3,
+              n: "Cultist Sacrifice",
+              d: "Идэвхтэй: HP зарцуулж хүчирхэг бонус эффект авна.",
+              active: 1,
+              img: "https://deadlock.wiki/images/e/eb/Cultist_Sacrifice.png",
+            },
+            {
+              t: 3,
+              n: "Escalating Resilience",
+              d: "Хохирол авах тусам resistance (тэсвэржилт) нэмэгдэнэ.",
+              img: "https://deadlock.wiki/images/5/57/Escalating_Resilience.png",
+            },
+            {
+              t: 3,
+              n: "Express Shot",
+              d: "Магазины эхний сум илүү хурдтай бөгөөд хохиролтой.",
+              img: "https://deadlock.wiki/images/e/e6/Express_Shot.png",
+            },
+            {
+              t: 3,
+              n: "Headhunter",
+              d: "Бага HP-той (сул) дайсанд нэмэлт хохирол.",
+              img: "https://deadlock.wiki/images/0/06/Headhunter.png",
+            },
+            {
+              t: 3,
+              n: "Heroic Aura",
+              d: "Идэвхтэй: ойролцоох багийн гишүүдэд buff аура өгнө.",
+              active: 1,
+              img: "https://deadlock.wiki/images/6/60/Heroic_Aura.png",
+            },
+            {
+              t: 3,
+              n: "Hollow Point",
+              d: "Маш ойр зайд хохирол нэмэгдэнэ.",
+              img: "https://deadlock.wiki/images/3/30/Hollow_Point.png",
+            },
+            {
+              t: 3,
+              n: "Hunter's Aura",
+              d: "Ойролцоох дайсныг илрүүлдэг (wallhack төрлийн) эффект.",
+              img: "https://deadlock.wiki/images/0/08/Hunter%27s_Aura.png",
+            },
+            {
+              t: 3,
+              n: "Point Blank",
+              d: "Маш ойрхон зайд асар их хохирол өгнө.",
+              img: "https://deadlock.wiki/images/7/79/Point_Blank.png",
+            },
+            {
+              t: 3,
+              n: "Shadow Weave",
+              d: "Идэвхтэй: түр хугацаанд нуугдаж/арчлагдаж чадна.",
+              active: 1,
+              img: "https://deadlock.wiki/images/4/4e/Shadow_Weave.png",
+            },
+            {
+              t: 3,
+              n: "Sharpshooter",
+              d: "Алсын зайн бонус хохирол улам нэмэгдсээр байна.",
+              img: "https://deadlock.wiki/images/2/25/Sharpshooter.png",
+            },
+            {
+              t: 3,
+              n: "Spirit Rend",
+              d: "Дайсны spirit shield-ийг устгаж/сулруулна.",
+              img: "https://deadlock.wiki/images/4/42/Spirit_Rend.png",
+            },
+            {
+              t: 3,
+              n: "Tesla Bullets",
+              d: "Сум онсон дайсны ойролцоох бусад дайсан руу цахилгаан chain хийнэ.",
+              img: "https://deadlock.wiki/images/5/56/Tesla_Bullets.png",
+            },
+            {
+              t: 3,
+              n: "Toxic Bullets",
+              d: "Сум онсон дайсанд хор нэмж, тасралтгүй хохирол өгнө.",
+              img: "https://deadlock.wiki/images/f/f0/Toxic_Bullets.png",
+            },
+            {
+              t: 3,
+              n: "Weighted Shots",
+              d: "Сум онохоор knockback/удаашруулах эффект нэмнэ.",
+              img: "https://deadlock.wiki/images/8/88/Weighted_Shots.png",
+            },
+            {
+              t: 4,
+              n: "Armor Piercing Rounds",
+              d: "Дайсны armor-ийг тоохгүйгээр шууд хохирол өгнө.",
+              img: "https://deadlock.wiki/images/1/10/Armor_Piercing_Rounds.png",
+            },
+            {
+              t: 4,
+              n: "Capacitor",
+              d: "Идэвхтэй: цэнэглэгдсэний дараа асар их хохиролтой цохилт.",
+              active: 1,
+              img: "https://deadlock.wiki/images/b/b5/Capacitor.png",
+            },
+            {
+              t: 4,
+              n: "Crippling Headshot",
+              d: "Толгойн цохилт онсон дайсныг disable (хөдөлгөөнгүй) болгоно.",
+              img: "https://deadlock.wiki/images/6/6c/Crippling_Headshot.png",
+            },
+            {
+              t: 4,
+              n: "Crushing Fists",
+              d: "Melee чадварыг эрс сайжруулна.",
+              img: "https://deadlock.wiki/images/c/ca/Crushing_Fists.png",
+            },
+            {
+              t: 4,
+              n: "Frenzy",
+              d: "Kill хийх бүрт хурд/хохирол нэмэгдэнэ (killing streak).",
+              img: "https://deadlock.wiki/images/f/f1/Frenzy.png",
+            },
+            {
+              t: 4,
+              n: "Glass Cannon",
+              d: "Бууны хохирол ихээр нэмэгдэнэ, харин өөрийн эмзэг байдал нэмэгдэнэ.",
+              img: "https://deadlock.wiki/images/6/6e/Glass_Cannon.png",
+            },
+            {
+              t: 4,
+              n: "Lucky Shot",
+              d: "Санамсаргүй байдлаар crit хохирол өгдөг магазин.",
+              img: "https://deadlock.wiki/images/0/06/Lucky_Shot.png",
+            },
+            {
+              t: 4,
+              n: "Ricochet",
+              d: "Сум нэг дайснаас нөгөө дайсан руу секээд шилждэг болно.",
+              img: "https://deadlock.wiki/images/8/87/Ricochet.png",
+            },
+            {
+              t: 4,
+              n: "Silencer",
+              d: "Дайсны spirit ур чадварыг хааж (silence) идэвхгүй болгоно.",
+              img: "https://deadlock.wiki/images/4/43/Silencer.png",
+            },
+            {
+              t: 4,
+              n: "Spellslinger",
+              d: "Бууны хохирлыг spirit ур чадварт хувиргаж нэмнэ.",
+              img: "https://deadlock.wiki/images/a/a8/Spellslinger.png",
+            },
+            {
+              t: 4,
+              n: "Spiritual Overflow",
+              d: "Илүү зогсоосон spirit item-ийн (6-р слот) эффектийг сайжруулна.",
+              img: "https://deadlock.wiki/images/4/46/Spiritual_Overflow.png",
+            },
+          ],
+        },
+        mps: {
+          label: "MPS",
+          accent: "#4f9a63",
+          tierPrices: { 1: "$800", 2: "$1600", 3: "$3200", 4: "$6400" },
+          tierNote: { 4: "Experts Only" },
+          items: [
+            {
+              t: 1,
+              n: "Extra Health",
+              d: "Max HP нэмэгдэнэ.",
+              img: "https://deadlock.wiki/images/6/69/Extra_Health.png",
+            },
+            {
+              t: 1,
+              n: "Extra Regen",
+              d: "HP сэргэх (regen) хурд нэмэгдэнэ.",
+              img: "https://deadlock.wiki/images/6/60/Extra_Regen.png",
+            },
+            {
+              t: 1,
+              n: "Extra Stamina",
+              d: "Dash/sprint-ийн нэмэлт цэнэг өгнө.",
+              img: "https://deadlock.wiki/images/2/28/Extra_Stamina.png",
+            },
+            {
+              t: 1,
+              n: "Grit",
+              d: "Идэвхтэй: debuff-ийн үргэлжлэх хугацааг богиносгоно.",
+              active: 1,
+              img: "https://deadlock.wiki/images/1/17/Grit.png",
+            },
+            {
+              t: 1,
+              n: "Healing Rite",
+              d: "Идэвхтэй: өөрийгөө болон ойролцоох багийнхныг эмчилнэ.",
+              active: 1,
+              img: "https://deadlock.wiki/images/7/72/Healing_Rite.png",
+            },
+            {
+              t: 1,
+              n: "Melee Lifesteal",
+              d: "Melee цохилтоор HP сэргээнэ.",
+              img: "https://deadlock.wiki/images/2/24/Melee_Lifesteal.png",
+            },
+            {
+              t: 1,
+              n: "Rebuttal",
+              d: "Дайсан ойролцоо байх үед buff идэвхждэг.",
+              img: "https://deadlock.wiki/images/4/4c/Rebuttal.png",
+            },
+            {
+              t: 1,
+              n: "Sprint Boots",
+              d: "Хөдөлгөөний хурд нэмэгдэнэ.",
+              img: "https://deadlock.wiki/images/d/da/Sprint_Boots.png",
+            },
+            {
+              t: 2,
+              n: "Battle Vest",
+              d: "HP болон бууны хохирлын resistance хамтад нь нэмэгдэнэ.",
+              img: "https://deadlock.wiki/images/7/7d/Battle_Vest.png",
+            },
+            {
+              t: 2,
+              n: "Bullet Lifesteal",
+              d: "Бууны сумаар HP сэргээнэ.",
+              img: "https://deadlock.wiki/images/5/57/Bullet_Lifesteal_%28item%29.png",
+            },
+            {
+              t: 2,
+              n: "Debuff Reducer",
+              d: "Дайсны debuff-ийн үргэлжлэх хугацааг богиносгоно.",
+              img: "https://deadlock.wiki/images/c/c3/Debuff_Reducer.png",
+            },
+            {
+              t: 2,
+              n: "Enchanter's Emblem",
+              d: "Ойролцоох дайсанд тасралтгүй бага хохирол (аура) өгнө.",
+              img: "https://deadlock.wiki/images/0/03/Enchanter%27s_Emblem.png",
+            },
+            {
+              t: 2,
+              n: "Enduring Speed",
+              d: "Хөдөлгөөний хурд болон damage resistance нэгтгэсэн бонус.",
+              img: "https://deadlock.wiki/images/c/cd/Enduring_Speed.png",
+            },
+            {
+              t: 2,
+              n: "Guardian Ward",
+              d: "Идэвхтэй: түр зуурын shield нэмж өгнө.",
+              active: 1,
+              img: "https://deadlock.wiki/images/6/60/Guardian_Ward.png",
+            },
+            {
+              t: 2,
+              n: "Healbane",
+              d: "Дайсны эмчилгээний (heal) үр дүнг бууруулна.",
+              img: "https://deadlock.wiki/images/6/62/Healbane.png",
+            },
+            {
+              t: 2,
+              n: "Healing Booster",
+              d: "Өөрийн авах эмчилгээний эффект сайжирна.",
+              img: "https://deadlock.wiki/images/b/b0/Healing_Booster.png",
+            },
+            {
+              t: 2,
+              n: "Reactive Barrier",
+              d: "Хохирол авахад автоматаар түр shield үүсгэнэ.",
+              img: "https://deadlock.wiki/images/f/f2/Reactive_Barrier.png",
+            },
+            {
+              t: 2,
+              n: "Restorative Locket",
+              d: "Идэвхтэй: их хэмжээний эмчилгээ хийнэ.",
+              active: 1,
+              img: "https://deadlock.wiki/images/0/07/Restorative_Locket.png",
+            },
+            {
+              t: 2,
+              n: "Return Fire",
+              d: "Идэвхтэй: авсан хохирлын нэг хэсгийг буцаана (reflect).",
+              active: 1,
+              img: "https://deadlock.wiki/images/7/7c/Return_Fire.png",
+            },
+            {
+              t: 2,
+              n: "Spirit Lifesteal",
+              d: "Spirit хохиролоор HP сэргээнэ.",
+              img: "https://deadlock.wiki/images/d/d9/Spirit_Lifesteal_%28item%29.png",
+            },
+            {
+              t: 2,
+              n: "Spirit Shielding",
+              d: "Spirit-ээс хүлээн авах хохирлыг бууруулна.",
+              img: "https://deadlock.wiki/images/4/4a/Spirit_Shielding.png",
+            },
+            {
+              t: 2,
+              n: "Trophy Collector",
+              d: "Kill хийхэд нэмэлт бонус эффект авна.",
+              img: "https://deadlock.wiki/images/b/b0/Trophy_Collector.png",
+            },
+            {
+              t: 2,
+              n: "Weapon Shielding",
+              d: "Бууны хохирлыг бууруулна.",
+              img: "https://deadlock.wiki/images/f/f4/Weapon_Shielding.png",
+            },
+            {
+              t: 3,
+              n: "Bullet Resilience",
+              d: "Бууны хохирлын эсрэг resistance ихээхэн нэмэгдэнэ.",
+              img: "https://deadlock.wiki/images/4/4d/Bullet_Resilience.png",
+            },
+            {
+              t: 3,
+              n: "Counterspell",
+              d: "Дайсны spirit ур чадварыг блоклоно.",
+              img: "https://deadlock.wiki/images/5/51/Counterspell.png",
+            },
+            {
+              t: 3,
+              n: "Dispel Magic",
+              d: "Идэвхтэй: өөрийн дээрх debuff-үүдийг арилгана.",
+              active: 1,
+              img: "https://deadlock.wiki/images/d/da/Dispel_Magic.png",
+            },
+            {
+              t: 3,
+              n: "Fortitude",
+              d: "Их хэмжээний HP болон resistance хамтад нь өгнө.",
+              img: "https://deadlock.wiki/images/c/c6/Fortitude.png",
+            },
+            {
+              t: 3,
+              n: "Fury Trance",
+              d: "Идэвхтэй: HP багасах тусам түр хугацаанд хүчирхэгжинэ.",
+              active: 1,
+              img: "https://deadlock.wiki/images/1/15/Fury_Trance.png",
+            },
+            {
+              t: 3,
+              n: "Healing Nova",
+              d: "Идэвхтэй: ойролцоох талбайд эмчилгээ тарааж өгнө.",
+              active: 1,
+              img: "https://deadlock.wiki/images/a/ae/Healing_Nova.png",
+            },
+            {
+              t: 3,
+              n: "Lifestrike",
+              d: "Идэвхтэй: их хохирол өгөөд эргээд их хэмжээний heal авна.",
+              active: 1,
+              img: "https://deadlock.wiki/images/6/6a/Lifestrike.png",
+            },
+            {
+              t: 3,
+              n: "Majestic Leap",
+              d: "Идэвхтэй: хол зайд үсэрч шилжинэ.",
+              active: 1,
+              img: "https://deadlock.wiki/images/d/d7/Majestic_Leap.png",
+            },
+            {
+              t: 3,
+              n: "Metal Skin",
+              d: "Идэвхтэй: түр хугацаанд асар их damage reduction авна.",
+              active: 1,
+              img: "https://deadlock.wiki/images/f/fa/Metal_Skin.png",
+            },
+            {
+              t: 3,
+              n: "Rescue Beam",
+              d: "Идэвхтэй: багийн гишүүнийг өөр рүүгээ татаж авчирна.",
+              active: 1,
+              img: "https://deadlock.wiki/images/c/c2/Rescue_Beam.png",
+            },
+            {
+              t: 3,
+              n: "Spirit Resilience",
+              d: "Spirit хохирлын эсрэг resistance ихээхэн нэмэгдэнэ.",
+              img: "https://deadlock.wiki/images/7/7f/Spirit_Resilience.png",
+            },
+            {
+              t: 3,
+              n: "Stamina Mastery",
+              d: "Dash/sprint-ийн цэнэгийн тоо нэмэгдэнэ.",
+              img: "https://deadlock.wiki/images/e/eb/Stamina_Mastery.png",
+            },
+            {
+              t: 3,
+              n: "Veil Walker",
+              d: "Идэвхтэй: түр хугацаанд үл үзэгдэгч (invisible) болно.",
+              active: 1,
+              img: "https://deadlock.wiki/images/6/69/Veil_Walker.png",
+            },
+            {
+              t: 3,
+              n: "Warp Stone",
+              d: "Идэвхтэй: богино зайд шуурхай teleport хийнэ.",
+              active: 1,
+              img: "https://deadlock.wiki/images/4/4f/Warp_Stone.png",
+            },
+            {
+              t: 4,
+              n: "Cheat Death",
+              d: "Үхэх ёстой цохилтыг зорчиж, бага хэмжээний HP-тэй амьд үлдэнэ.",
+              img: "https://deadlock.wiki/images/f/f7/Cheat_Death.png",
+            },
+            {
+              t: 4,
+              n: "Colossus",
+              d: "Их хэмжээний HP, resistance авч, биеийн хэмжээ томорно.",
+              img: "https://deadlock.wiki/images/b/bb/Colossus.png",
+            },
+            {
+              t: 4,
+              n: "Divine Barrier",
+              d: "Идэвхтэй: маш их HP-тэй shield үүсгэнэ.",
+              active: 1,
+              img: "https://deadlock.wiki/images/7/74/Divine_Barrier.png",
+            },
+            {
+              t: 4,
+              n: "Diviner's Kevlar",
+              d: "Идэвхтэй: прожектайл төрлийн бууны хохирлын эсрэг resist өгнө.",
+              active: 1,
+              img: "https://deadlock.wiki/images/0/0a/Diviner%27s_Kevlar.png",
+            },
+            {
+              t: 4,
+              n: "Healing Tempo",
+              d: "Идэвхтэй: шуурхай их хэмжээний heal (burst) хийнэ.",
+              active: 1,
+              img: "https://deadlock.wiki/images/7/70/Healing_Tempo.png",
+            },
+            {
+              t: 4,
+              n: "Indomitable",
+              d: "Crowd control (CC) эффектийн эсрэг resistance ихээхэн нэмэгдэнэ.",
+              img: "https://deadlock.wiki/images/f/ff/Indomitable.png",
+            },
+            {
+              t: 4,
+              n: "Infuser",
+              d: "Идэвхтэй: ойролцоох багийнхандаа buff/heal аура тараана.",
+              active: 1,
+              img: "https://deadlock.wiki/images/c/c3/Infuser.png",
+            },
+            {
+              t: 4,
+              n: "Inhibitor",
+              d: "Идэвхтэй: дайсны эмчилгээг бүрэн блоклоно.",
+              active: 1,
+              img: "https://deadlock.wiki/images/9/99/Inhibitor.png",
+            },
+            {
+              t: 4,
+              n: "Juggernaut",
+              d: "Kill хийх streak үргэлжлэх тусам хүчирхэг buff авна.",
+              img: "https://deadlock.wiki/images/0/07/Juggernaut.png",
+            },
+            {
+              t: 4,
+              n: "Leech",
+              d: "Идэвхтэй: маш их хэмжээний lifesteal авна.",
+              active: 1,
+              img: "https://deadlock.wiki/images/3/32/Leech.png",
+            },
+            {
+              t: 4,
+              n: "Phantom Strike",
+              d: "Идэвхтэй: дайсан руу шуурхай dash хийж хохирол өгнө.",
+              active: 1,
+              img: "https://deadlock.wiki/images/e/e6/Phantom_Strike.png",
+            },
+            {
+              t: 4,
+              n: "Plated Armor",
+              d: "Бууны хохирлын эсрэг маш их resistance өгнө.",
+              img: "https://deadlock.wiki/images/4/4c/Plated_Armor.png",
+            },
+            {
+              t: 4,
+              n: "Siphon Bullets",
+              d: "Бууны сумны lifesteal ихээхэн нэмэгдэнэ.",
+              img: "https://deadlock.wiki/images/2/2c/Siphon_Bullets.png",
+            },
+            {
+              t: 4,
+              n: "Spellbreaker",
+              d: "Идэвхтэй: бүх debuff-ээ цэвэрлээд CC-ийн эсрэг resist авна.",
+              active: 1,
+              img: "https://deadlock.wiki/images/2/27/Spellbreaker.png",
+            },
+            {
+              t: 4,
+              n: "Unstoppable",
+              d: "Идэвхтэй: түр хугацаанд CC-д огт үл нөлөөлдөг болно.",
+              active: 1,
+              img: "https://deadlock.wiki/images/e/eb/Unstoppable.png",
+            },
+            {
+              t: 4,
+              n: "Vampiric Burst",
+              d: "Идэвхтэй: ойролцоох талбайд их хэмжээний AoE lifesteal хийнэ.",
+              active: 1,
+              img: "https://deadlock.wiki/images/d/dc/Vampiric_Burst.png",
+            },
+            {
+              t: 4,
+              n: "Witchmail",
+              d: "Дайсан spirit ур чадвар ашиглахад тэднийг удаашруулна.",
+              img: "https://deadlock.wiki/images/0/09/Witchmail.png",
+            },
+          ],
+        },
+        cc: {
+          label: "Curiosity Catalog",
+          accent: "#8b5fc9",
+          tierPrices: { 1: "$800", 2: "$1600", 3: "$3200", 4: "$6400" },
+          tierNote: { 4: "Experts Only" },
+          items: [
+            {
+              t: 1,
+              n: "Extra Charge",
+              d: "Ур чадварын цэнэгийн тоо нэмэгдэнэ.",
+              img: "https://deadlock.wiki/images/4/4a/Extra_Charge.png",
+            },
+            {
+              t: 1,
+              n: "Extra Spirit",
+              d: "Spirit power нэмэгдэнэ.",
+              img: "https://deadlock.wiki/images/9/94/Extra_Spirit.png",
+            },
+            {
+              t: 1,
+              n: "Golden Goose Egg",
+              d: "Идэвхтэй: алт олох бонус өгнө.",
+              active: 1,
+              img: "https://deadlock.wiki/images/a/a8/Golden_Goose_Egg.png",
+            },
+            {
+              t: 1,
+              n: "Mystic Burst",
+              d: "Ур чадвар ашиглахад дэлбэрэлтийн нэмэлт хохирол өгнө.",
+              img: "https://deadlock.wiki/images/9/95/Mystic_Burst.png",
+            },
+            {
+              t: 1,
+              n: "Mystic Expansion",
+              d: "Ур чадварын нөлөөллийн радиус томорно.",
+              imbue: 1,
+              img: "https://deadlock.wiki/images/d/df/Mystic_Expansion.png",
+            },
+            {
+              t: 1,
+              n: "Mystic Regeneration",
+              d: "Spirit power-тэй холбоотой HP сэргэлт нэмэгдэнэ.",
+              img: "https://deadlock.wiki/images/1/17/Mystic_Regeneration.png",
+            },
+            {
+              t: 1,
+              n: "Rusted Barrel",
+              d: "Идэвхтэй: их хохиролтой прожектайл шидэнэ.",
+              active: 1,
+              img: "https://deadlock.wiki/images/5/54/Rusted_Barrel.png",
+            },
+            {
+              t: 1,
+              n: "Spirit Strike",
+              d: "Melee цохилтод spirit хохирол нэмж өгнө.",
+              img: "https://deadlock.wiki/images/7/7c/Spirit_Strike.png",
+            },
+            {
+              t: 2,
+              n: "Arcane Surge",
+              d: "Ур чадвар ашигласны дараа түр хугацаанд buff идэвхжинэ.",
+              img: "https://deadlock.wiki/images/b/bb/Arcane_Surge.png",
+            },
+            {
+              t: 2,
+              n: "Bullet Resist Shredder",
+              d: "Дайсны бууны resistance-ийг бууруулна.",
+              img: "https://deadlock.wiki/images/7/7d/Bullet_Resist_Shredder.png",
+            },
+            {
+              t: 2,
+              n: "Cold Front",
+              d: "Идэвхтэй: заасан талбайг мөслөж, удаашруулна.",
+              active: 1,
+              img: "https://deadlock.wiki/images/4/4d/Cold_Front.png",
+            },
+            {
+              t: 2,
+              n: "Compress Cooldown",
+              d: "Ур чадварын cooldown-г богиносгодог imbue.",
+              imbue: 1,
+              img: "https://deadlock.wiki/images/d/d4/Compress_Cooldown.png",
+            },
+            {
+              t: 2,
+              n: "Duration Extender",
+              d: "Ур чадварын үргэлжлэх хугацааг сунгадаг imbue.",
+              imbue: 1,
+              img: "https://deadlock.wiki/images/f/fb/Duration_Extender.png",
+            },
+            {
+              t: 2,
+              n: "Improved Spirit",
+              d: "Spirit power их хэмжээгээр нэмэгдэнэ.",
+              img: "https://deadlock.wiki/images/c/c9/Improved_Spirit.png",
+            },
+            {
+              t: 2,
+              n: "Mystic Slow",
+              d: "Ур чадвар онох бүрт дайсныг удаашруулна.",
+              img: "https://deadlock.wiki/images/6/65/Mystic_Slow.png",
+            },
+            {
+              t: 2,
+              n: "Mystic Vulnerability",
+              d: "Ур чадвараар онсон дайсан нэмэлт хохирол хүлээж авдаг болно.",
+              img: "https://deadlock.wiki/images/c/c7/Mystic_Vulnerability.png",
+            },
+            {
+              t: 2,
+              n: "Quicksilver Reload",
+              d: "Reload-ийн хурдыг нэмэгдүүлдэг imbue.",
+              imbue: 1,
+              img: "https://deadlock.wiki/images/3/3b/Quicksilver_Reload.png",
+            },
+            {
+              t: 2,
+              n: "Slowing Hex",
+              d: "Идэвхтэй: target-ийг чиглүүлж удаашруулна.",
+              active: 1,
+              img: "https://deadlock.wiki/images/1/18/Slowing_Hex.png",
+            },
+            {
+              t: 2,
+              n: "Spirit Sap",
+              d: "Идэвхтэй: дайсны spirit power-ийг авч өөртөө шилжүүлнэ.",
+              active: 1,
+              img: "https://deadlock.wiki/images/0/03/Spirit_Sap.png",
+            },
+            {
+              t: 2,
+              n: "Suppressor",
+              d: "Дайсны ур чадварыг түр хугацаанд disable хийнэ.",
+              img: "https://deadlock.wiki/images/2/21/Suppressor.png",
+            },
+            {
+              t: 3,
+              n: "Decay",
+              d: "Идэвхтэй: дайсны эмчилгээг блоклож, тасралтгүй хохирол өгнө.",
+              active: 1,
+              img: "https://deadlock.wiki/images/9/93/Decay.png",
+            },
+            {
+              t: 3,
+              n: "Disarming Hex",
+              d: "Идэвхтэй: дайсны бууг түр хугацаанд disable хийнэ.",
+              active: 1,
+              img: "https://deadlock.wiki/images/2/2d/Disarming_Hex.png",
+            },
+            {
+              t: 3,
+              n: "Greater Expansion",
+              d: "Ур чадварын нөлөөллийн радиус ихээхэн томорно.",
+              img: "https://deadlock.wiki/images/4/4e/Greater_Expansion.png",
+            },
+            {
+              t: 3,
+              n: "Knockdown",
+              d: "Идэвхтэй: том хэмжээний knockback эффект өгнө.",
+              active: 1,
+              img: "https://deadlock.wiki/images/3/36/Knockdown.png",
+            },
+            {
+              t: 3,
+              n: "Radiant Regeneration",
+              d: "Spirit power-тэй холбоотой HP regen ихээхэн нэмэгдэнэ.",
+              img: "https://deadlock.wiki/images/c/c7/Radiant_Regeneration.png",
+            },
+            {
+              t: 3,
+              n: "Rapid Recharge",
+              d: "Ур чадварын цэнэг хурдан дүүрдэг болно.",
+              img: "https://deadlock.wiki/images/a/a9/Rapid_Recharge.png",
+            },
+            {
+              t: 3,
+              n: "Silence Wave",
+              d: "Идэвхтэй: том талбайд silence эффект тараана.",
+              active: 1,
+              img: "https://deadlock.wiki/images/8/88/Silence_Wave.png",
+            },
+            {
+              t: 3,
+              n: "Spirit Snatch",
+              d: "Ур чадвараар дайсны spirit power авна.",
+              img: "https://deadlock.wiki/images/8/83/Spirit_Snatch.png",
+            },
+            {
+              t: 3,
+              n: "Superior Cooldown",
+              d: "Ур чадварын cooldown ихээхэн богиносно.",
+              img: "https://deadlock.wiki/images/9/93/Superior_Cooldown.png",
+            },
+            {
+              t: 3,
+              n: "Superior Duration",
+              d: "Ур чадварын үргэлжлэх хугацаа ихээхэн сунгагдана.",
+              img: "https://deadlock.wiki/images/c/c7/Superior_Duration.png",
+            },
+            {
+              t: 3,
+              n: "Surge of Power",
+              d: "Ур чадвар ашигласны дараа spirit burst нэмдэг imbue.",
+              imbue: 1,
+              img: "https://deadlock.wiki/images/d/d4/Surge_of_Power.png",
+            },
+            {
+              t: 3,
+              n: "Tankbuster",
+              d: "Их HP-той дайсанд нэмэлт хохирол.",
+              img: "https://deadlock.wiki/images/d/d8/Tankbuster.png",
+            },
+            {
+              t: 3,
+              n: "Torment Pulse",
+              d: "Дайсныг тасралтгүй damage over time-д оруулна.",
+              img: "https://deadlock.wiki/images/4/42/Torment_Pulse.png",
+            },
+            {
+              t: 4,
+              n: "Arctic Blast",
+              d: "Идэвхтэй: том хэмжээний мөс/удаашруулах бөмбөг шиднэ.",
+              active: 1,
+              img: "https://deadlock.wiki/images/3/30/Arctic_Blast.png",
+            },
+            {
+              t: 4,
+              n: "Boundless Spirit",
+              d: "Spirit power ихээхэн хэмжээгээр нэмэгдэнэ.",
+              img: "https://deadlock.wiki/images/9/97/Boundless_Spirit.png",
+            },
+            {
+              t: 4,
+              n: "Cursed Relic",
+              d: "Идэвхтэй: дайсны spirit power-ийг авна.",
+              active: 1,
+              img: "https://deadlock.wiki/images/6/61/Cursed_Relic.png",
+            },
+            {
+              t: 4,
+              n: "Echo Shard",
+              d: "Идэвхтэй: сүүлд ашигласан ур чадвараа давтан идэвхжүүлнэ.",
+              active: 1,
+              imbue: 1,
+              img: "https://deadlock.wiki/images/a/ab/Echo_Shard.png",
+            },
+            {
+              t: 4,
+              n: "Escalating Exposure",
+              d: "Дайсныг олон удаа онох тусам эмзэг байдал нь нэмэгдэнэ.",
+              img: "https://deadlock.wiki/images/2/21/Escalating_Exposure.png",
+            },
+            {
+              t: 4,
+              n: "Ethereal Shift",
+              d: "Идэвхтэй: түр хугацаанд материаллаг бус болж attack-аас зайлсхийнэ.",
+              active: 1,
+              img: "https://deadlock.wiki/images/3/3c/Ethereal_Shift.png",
+            },
+            {
+              t: 4,
+              n: "Focus Lens",
+              d: "Ур чадварын алсын зай, нарийвчлал сайжирна.",
+              img: "https://deadlock.wiki/images/3/3c/Focus_Lens.png",
+            },
+            {
+              t: 4,
+              n: "Lightning Scroll",
+              d: "Идэвхтэй: цахилгаан chain хохирол дайснуудад дамжуулна.",
+              active: 1,
+              img: "https://deadlock.wiki/images/b/b8/Lightning_Scroll.png",
+            },
+            {
+              t: 4,
+              n: "Magic Carpet",
+              d: "Идэвхтэй: түр хугацаанд нисдэг болно.",
+              active: 1,
+              img: "https://deadlock.wiki/images/2/25/Magic_Carpet.png",
+            },
+            {
+              t: 4,
+              n: "Mercurial Magnum",
+              d: "Бууг spirit-тэй хослуулдаг imbue.",
+              imbue: 1,
+              img: "https://deadlock.wiki/images/a/af/Mercurial_Magnum.png",
+            },
+            {
+              t: 4,
+              n: "Mystic Reverb",
+              d: "Ур чадвар давхар удаа идэвхждэг imbue.",
+              imbue: 1,
+              img: "https://deadlock.wiki/images/0/07/Mystic_Reverb.png",
+            },
+            {
+              t: 4,
+              n: "Refresher",
+              d: "Идэвхтэй: бүх ур чадварын cooldown-г шууд цэвэрлэнэ.",
+              active: 1,
+              img: "https://deadlock.wiki/images/5/53/Refresher.png",
+            },
+            {
+              t: 4,
+              n: "Scourge",
+              d: "Идэвхтэй: их хэмжээний AoE spirit хохирол өгнө.",
+              active: 1,
+              img: "https://deadlock.wiki/images/5/58/Scourge.png",
+            },
+            {
+              t: 4,
+              n: "Spirit Burn",
+              d: "Идэвхтэй: дайсны spirit power-ийг шатааж багасгана.",
+              active: 1,
+              img: "https://deadlock.wiki/images/e/ef/Spirit_Burn.png",
+            },
+            {
+              t: 4,
+              n: "Transcendent Cooldown",
+              d: "Ур чадварын cooldown маш ихээр богиносно.",
+              img: "https://deadlock.wiki/images/b/bd/Transcendent_Cooldown.png",
+            },
+            {
+              t: 4,
+              n: "Vortex Web",
+              d: "Идэвхтэй: дайсныг татаж, торонд бариулна.",
+              active: 1,
+              img: "https://deadlock.wiki/images/8/85/Vortex_Web.png",
+            },
+          ],
+        },
+      };
+
+      let currentShop = "fairfax";
+      let currentTier = "all";
+      let currentSearch = "";
+
+      function render() {
+        const shop = DATA[currentShop];
+        document.documentElement.style.setProperty(
+          "--shop-accent",
+          shop.accent,
+        );
+        const content = document.getElementById("content");
+        content.innerHTML = "";
+
+        const tiers = [1, 2, 3, 4].filter(
+          (t) => currentTier === "all" || currentTier == String(t),
+        );
+        let anyResults = false;
+
+        tiers.forEach((t) => {
+          const items = shop.items.filter((it) => {
+            if (it.t !== t) return false;
+            if (
+              currentSearch &&
+              !it.n.toLowerCase().includes(currentSearch) &&
+              !it.d.toLowerCase().includes(currentSearch)
+            )
+              return false;
+            return true;
+          });
+          if (items.length === 0) return;
+          anyResults = true;
+
+          const block = document.createElement("div");
+          block.className = "tier-block";
+
+          const head = document.createElement("div");
+          head.className = "tier-head";
+          head.innerHTML = `
+      <span class="tier-num">Tier ${t}</span>
+      <span class="tier-price">${shop.tierPrices[t]}</span>
+      ${shop.tierNote[t] ? `<span class="tier-note">${shop.tierNote[t]}</span>` : ""}
+    `;
+          block.appendChild(head);
+
+          const grid = document.createElement("div");
+          grid.className = "grid";
+          items.forEach((it) => {
+            const card = document.createElement("div");
+            card.className = "card";
+
+            const imgSlot = it.img
+              ? `<div class="item-img-slot"><img src="${it.img}" alt="${it.n}" loading="lazy"></div>`
+              : `<div class="item-img-slot placeholder">ЗУРАГ<br>ОРУУЛААГҮЙ</div>`;
+
+            card.innerHTML = `
+        ${imgSlot}
+        <div class="card-top">
+          <div class="item-name">${it.n}</div>
+          <div class="badges">
+            ${it.active ? '<span class="badge active">Active</span>' : ""}
+            ${it.imbue ? '<span class="badge imbue">Imbue</span>' : ""}
+          </div>
+        </div>
+        <div class="item-desc">${it.d}</div>
+      `;
+            grid.appendChild(card);
+          });
+          block.appendChild(grid);
+          content.appendChild(block);
+        });
+
+        document.getElementById("emptyMsg").style.display = anyResults
+          ? "none"
+          : "block";
+      }
+
+      document.querySelectorAll(".tab").forEach((tab) => {
+        tab.addEventListener("click", () => {
+          document
+            .querySelectorAll(".tab")
+            .forEach((t) => t.classList.remove("active"));
+          tab.classList.add("active");
+          currentShop = tab.dataset.shop;
+          render();
+        });
+      });
+
+      document.querySelectorAll(".chip").forEach((chip) => {
+        chip.addEventListener("click", () => {
+          document
+            .querySelectorAll(".chip")
+            .forEach((c) => c.classList.remove("active"));
+          chip.classList.add("active");
+          currentTier = chip.dataset.tier;
+          render();
+        });
+      });
+
+      document.getElementById("searchInput").addEventListener("input", (e) => {
+        currentSearch = e.target.value.toLowerCase();
+        render();
+      });
+
+
+      const donationQr = document.getElementById("donationQr");
+      const qrModal = document.getElementById("qrModal");
+      const qrClose = document.getElementById("qrClose");
+
+      function closeQr() {
+        qrModal.classList.remove("open");
+        qrModal.setAttribute("aria-hidden", "true");
+      }
+
+      donationQr.addEventListener("click", () => {
+        qrModal.classList.add("open");
+        qrModal.setAttribute("aria-hidden", "false");
+      });
+
+      qrClose.addEventListener("click", closeQr);
+      qrModal.addEventListener("click", (e) => {
+        if (e.target === qrModal) closeQr();
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeQr();
+      });
+
+      render();
+    </script>
+  </body>
+</html>
