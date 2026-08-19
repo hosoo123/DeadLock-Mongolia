@@ -8,9 +8,15 @@
       name="description"
       content="Deadlock item бүрийн Монгол тайлбар, hero/build тохироо, counter зөвлөмж болон Монгол тоглогчдын Deadlock Mongolia Discord community."
     />
-    <meta name="keywords" content="Deadlock Mongolia, Deadlock Монгол, Deadlock item guide, Deadlock Discord Mongolia, Deadlock build Монгол" />
+    <meta
+      name="keywords"
+      content="Deadlock Mongolia, Deadlock Монгол, Deadlock item guide, Deadlock Discord Mongolia, Deadlock build Монгол"
+    />
     <meta property="og:title" content="Deadlock Item Guide — Монгол" />
-    <meta property="og:description" content="Монгол хэл дээрх Deadlock item guide болон Монгол тоглогчдын Discord community." />
+    <meta
+      property="og:description"
+      content="Монгол хэл дээрх Deadlock item guide болон Монгол тоглогчдын Discord community."
+    />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://dead-lock-mongolia.vercel.app/" />
     <link rel="canonical" href="https://dead-lock-mongolia.vercel.app/" />
@@ -146,7 +152,11 @@
         border: 1px solid rgba(88, 101, 242, 0.48);
         border-radius: 16px;
         background:
-          radial-gradient(circle at 10% 0%, rgba(88, 101, 242, 0.2), transparent 55%),
+          radial-gradient(
+            circle at 10% 0%,
+            rgba(88, 101, 242, 0.2),
+            transparent 55%
+          ),
           var(--paper2);
         box-shadow: 0 12px 40px rgba(0, 0, 0, 0.22);
       }
@@ -175,7 +185,9 @@
         font-weight: 700;
         text-decoration: none;
         white-space: nowrap;
-        transition: transform 0.15s ease, background 0.15s ease;
+        transition:
+          transform 0.15s ease,
+          background 0.15s ease;
       }
       .discord-join:hover {
         background: #6875f5;
@@ -530,8 +542,12 @@
         animation: modalFade 0.16s ease-out;
       }
       @keyframes modalFade {
-        from { opacity: 0; }
-        to { opacity: 1; }
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
       }
       .item-panel {
         width: min(920px, 100%);
@@ -542,7 +558,11 @@
         border-top: 3px solid var(--shop-accent);
         border-radius: 10px;
         background:
-          radial-gradient(circle at 15% 0%, color-mix(in srgb, var(--shop-accent) 14%, transparent), transparent 34%),
+          radial-gradient(
+            circle at 15% 0%,
+            color-mix(in srgb, var(--shop-accent) 14%, transparent),
+            transparent 34%
+          ),
           #181411;
         box-shadow: 0 30px 90px rgba(0, 0, 0, 0.55);
       }
@@ -682,39 +702,127 @@
         font-size: 9px;
         line-height: 1.5;
       }
-      .upgrade-path { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
-      .upgrade-item {
-        display: inline-flex; align-items: center; gap: 8px; min-height: 42px;
-        padding: 7px 10px; border: 1px solid var(--line); border-radius: 5px;
-        background: rgba(255, 255, 255, 0.025); color: var(--ink);
-        cursor: pointer; text-align: left;
+      .upgrade-path {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
       }
-      .upgrade-item:hover, .upgrade-item:focus-visible { border-color: var(--shop-accent); outline: none; }
-      .upgrade-item img { width: 28px; height: 28px; border-radius: 3px; object-fit: cover; }
-      .upgrade-item strong, .upgrade-item small { display: block; }
-      .upgrade-item strong { font-size: 10px; }
-      .upgrade-item small { margin-top: 2px; color: var(--ink-dim); font-family: "IBM Plex Mono", monospace; font-size: 8px; }
-      .upgrade-arrow { color: var(--shop-accent); }
+      .upgrade-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 42px;
+        padding: 7px 10px;
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        background: rgba(255, 255, 255, 0.025);
+        color: var(--ink);
+        cursor: pointer;
+        text-align: left;
+      }
+      .upgrade-item:hover,
+      .upgrade-item:focus-visible {
+        border-color: var(--shop-accent);
+        outline: none;
+      }
+      .upgrade-item img {
+        width: 28px;
+        height: 28px;
+        border-radius: 3px;
+        object-fit: cover;
+      }
+      .upgrade-item strong,
+      .upgrade-item small {
+        display: block;
+      }
+      .upgrade-item strong {
+        font-size: 10px;
+      }
+      .upgrade-item small {
+        margin-top: 2px;
+        color: var(--ink-dim);
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 8px;
+      }
+      .upgrade-arrow {
+        color: var(--shop-accent);
+      }
       .meta-builder {
         margin: 28px 0 34px;
         padding: clamp(18px, 4vw, 30px);
         border: 1px solid var(--line);
         border-radius: 10px;
-        background: linear-gradient(135deg, rgba(196, 154, 87, 0.10), rgba(14, 13, 12, 0.88) 58%);
+        background: linear-gradient(
+          135deg,
+          rgba(196, 154, 87, 0.1),
+          rgba(14, 13, 12, 0.88) 58%
+        );
       }
-      .meta-builder-head { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 20px; align-items: start; }
-      .meta-builder h2 { margin: 5px 0 8px; font-family: "Oswald", sans-serif; font-size: clamp(24px, 4vw, 36px); text-transform: uppercase; }
-      .meta-builder-copy { max-width: 700px; margin: 0; color: #b9afa2; font-size: 14px; line-height: 1.75; }
-      .api-status { display: inline-flex; align-items: center; gap: 7px; color: var(--ink-dim); font-family: "IBM Plex Mono", monospace; font-size: 9px; }
-      .api-status::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #d09b43; box-shadow: 0 0 12px #d09b43; }
-      .api-status.live::before { background: #6fca88; box-shadow: 0 0 12px #6fca88; }
-      .api-status.offline::before { background: #ca6f6f; box-shadow: none; }
-      .meta-controls { display: grid; grid-template-columns: minmax(180px, 1fr) auto; gap: 10px; margin-top: 20px; }
-      .hero-select, .generate-build {
-        min-height: 48px; border: 1px solid var(--line); border-radius: 6px;
-        font: 600 12px "IBM Plex Mono", monospace;
+      .meta-builder-head {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 20px;
+        align-items: start;
       }
-      .hero-select { width: 100%; padding: 0 13px; background: #171411; color: var(--ink); }
+      .meta-builder h2 {
+        margin: 5px 0 8px;
+        font-family: "Oswald", sans-serif;
+        font-size: clamp(24px, 4vw, 36px);
+        text-transform: uppercase;
+      }
+      .meta-builder-copy {
+        max-width: 700px;
+        margin: 0;
+        color: #b9afa2;
+        font-size: 14px;
+        line-height: 1.75;
+      }
+      .api-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        color: var(--ink-dim);
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 9px;
+      }
+      .api-status::before {
+        content: "";
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #d09b43;
+        box-shadow: 0 0 12px #d09b43;
+      }
+      .api-status.live::before {
+        background: #6fca88;
+        box-shadow: 0 0 12px #6fca88;
+      }
+      .api-status.offline::before {
+        background: #ca6f6f;
+        box-shadow: none;
+      }
+      .meta-controls {
+        display: grid;
+        grid-template-columns: minmax(180px, 1fr) auto;
+        gap: 10px;
+        margin-top: 20px;
+      }
+      .hero-select,
+      .generate-build {
+        min-height: 48px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        font:
+          600 12px "IBM Plex Mono",
+          monospace;
+      }
+      .hero-select {
+        width: 100%;
+        padding: 0 13px;
+        background: #171411;
+        color: var(--ink);
+      }
       .generate-build {
         padding: 0 18px;
         background: #d7a74f;
@@ -724,31 +832,97 @@
         cursor: pointer;
         opacity: 1;
       }
-      .generate-build:hover:not(:disabled) { background: #edbd63; }
+      .generate-build:hover:not(:disabled) {
+        background: #edbd63;
+      }
       .generate-build:disabled {
         background: #766342;
         color: #f4ead8;
         cursor: wait;
         opacity: 1;
       }
-      .build-output { display: none; margin-top: 18px; }
-      .build-output.visible { display: block; }
-      .build-summary { margin: 0 0 12px; color: #d6cabb; font-size: 13px; line-height: 1.7; }
-      .build-phases { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 9px; }
-      .build-phase { padding: 13px; border: 1px solid var(--line); border-radius: 6px; background: rgba(0, 0, 0, .2); }
-      .build-phase h3 { margin: 0 0 9px; color: var(--gold); font: 600 9px "IBM Plex Mono", monospace; letter-spacing: .11em; text-transform: uppercase; }
-      .build-item-row { display: flex; justify-content: space-between; gap: 8px; padding: 7px 0; border-top: 1px solid rgba(255,255,255,.055); font-size: 11px; }
-      .build-item-row:first-of-type { border-top: 0; }
-      .build-item-row small { flex: none; color: #8f8579; font: 8px "IBM Plex Mono", monospace; }
-      .build-footnote { margin: 12px 0 0; color: #847a6e; font-size: 10px; line-height: 1.6; }
-      .modal-summary { max-width: 720px; font-size: 15px; line-height: 1.85; }
-      .guide-section p { font-size: 13.5px; line-height: 1.75; }
-      @media (max-width: 720px) {
-        .meta-builder-head { grid-template-columns: 1fr; }
-        .meta-controls { grid-template-columns: 1fr; }
-        .build-phases { grid-template-columns: 1fr 1fr; }
+      .build-output {
+        display: none;
+        margin-top: 18px;
       }
-      @media (max-width: 440px) { .build-phases { grid-template-columns: 1fr; } }
+      .build-output.visible {
+        display: block;
+      }
+      .build-summary {
+        margin: 0 0 12px;
+        color: #d6cabb;
+        font-size: 13px;
+        line-height: 1.7;
+      }
+      .build-phases {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 9px;
+      }
+      .build-phase {
+        padding: 13px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: rgba(0, 0, 0, 0.2);
+      }
+      .build-phase h3 {
+        margin: 0 0 9px;
+        color: var(--gold);
+        font:
+          600 9px "IBM Plex Mono",
+          monospace;
+        letter-spacing: 0.11em;
+        text-transform: uppercase;
+      }
+      .build-item-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 7px 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.055);
+        font-size: 11px;
+      }
+      .build-item-row:first-of-type {
+        border-top: 0;
+      }
+      .build-item-row small {
+        flex: none;
+        color: #8f8579;
+        font:
+          8px "IBM Plex Mono",
+          monospace;
+      }
+      .build-footnote {
+        margin: 12px 0 0;
+        color: #847a6e;
+        font-size: 10px;
+        line-height: 1.6;
+      }
+      .modal-summary {
+        max-width: 720px;
+        font-size: 15px;
+        line-height: 1.85;
+      }
+      .guide-section p {
+        font-size: 13.5px;
+        line-height: 1.75;
+      }
+      @media (max-width: 720px) {
+        .meta-builder-head {
+          grid-template-columns: 1fr;
+        }
+        .meta-controls {
+          grid-template-columns: 1fr;
+        }
+        .build-phases {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      @media (max-width: 440px) {
+        .build-phases {
+          grid-template-columns: 1fr;
+        }
+      }
 
       /* ---------- BACK TO TOP ---------- */
       .back-to-top {
@@ -760,7 +934,8 @@
         place-items: center;
         width: 46px;
         height: 46px;
-        border: 1px solid color-mix(in srgb, var(--shop-accent) 55%, var(--line));
+        border: 1px solid
+          color-mix(in srgb, var(--shop-accent) 55%, var(--line));
         border-radius: 50%;
         background: rgba(28, 24, 21, 0.92);
         color: var(--ink);
@@ -1094,8 +1269,14 @@
           animation: sheetUp 0.2s ease-out;
         }
         @keyframes sheetUp {
-          from { transform: translateY(28px); opacity: 0; }
-          to { transform: translateY(0); opacity: 1; }
+          from {
+            transform: translateY(28px);
+            opacity: 0;
+          }
+          to {
+            transform: translateY(0);
+            opacity: 1;
+          }
         }
         .item-modal-body {
           display: block;
@@ -1139,7 +1320,9 @@
       }
 
       @media (prefers-reduced-motion: reduce) {
-        *, *::before, *::after {
+        *,
+        *::before,
+        *::after {
           scroll-behavior: auto !important;
           animation-duration: 0.01ms !important;
           transition-duration: 0.01ms !important;
@@ -1204,17 +1387,20 @@
         <div class="kicker">Deadlock · Reference No. 03</div>
         <h1>Item Guide</h1>
         <p class="sub">
-          Item дээр дараад дэлгэрэнгүй тайлбар, тохирох hero ба build,
-          counter хийх нөхцөлийг нэг дороос хараарай.
+          Item дээр дараад дэлгэрэнгүй тайлбар, тохирох hero ба build, counter
+          хийх нөхцөлийг нэг дороос хараарай.
         </p>
       </header>
 
-      <section class="discord-community" aria-label="Deadlock Mongolia Discord community">
+      <section
+        class="discord-community"
+        aria-label="Deadlock Mongolia Discord community"
+      >
         <div>
           <h2>Deadlock Mongolia Discord 🇲🇳</h2>
           <p>
-            Монгол тоглогчидтой танилцаж, хамт тоглох хүн олох, build болон item-ийн
-            мэдээлэл солилцох community-д нэгдээрэй.
+            Монгол тоглогчидтой танилцаж, хамт тоглох хүн олох, build болон
+            item-ийн мэдээлэл солилцох community-д нэгдээрэй.
           </p>
         </div>
         <a
@@ -1235,17 +1421,26 @@
             <h2 id="metaBuilderTitle">Hero build автоматаар гаргах</h2>
             <p class="meta-builder-copy">
               Hero-гоо сонгоход тухайн үеийн бодит тоглолтуудын item сонголт,
-              ялалтын хувь болон sample хэмжээг харьцуулж, эхлэлээс late game хүртэл
-              уншихад хялбар build санал болгоно.
+              ялалтын хувь болон sample хэмжээг харьцуулж, эхлэлээс late game
+              хүртэл уншихад хялбар build санал болгоно.
             </p>
           </div>
-          <div class="api-status" id="apiStatus">Шинэ мэдээлэл шалгаж байна…</div>
+          <div class="api-status" id="apiStatus">
+            Шинэ мэдээлэл шалгаж байна…
+          </div>
         </div>
         <div class="meta-controls">
           <select class="hero-select" id="heroSelect" aria-label="Hero сонгох">
             <option value="">Hero мэдээлэл ачаалж байна…</option>
           </select>
-          <button class="generate-build" id="generateBuild" type="button" disabled>Build гаргах</button>
+          <button
+            class="generate-build"
+            id="generateBuild"
+            type="button"
+            disabled
+          >
+            Build гаргах
+          </button>
         </div>
         <div class="build-output" id="buildOutput" aria-live="polite"></div>
       </section>
@@ -2421,24 +2616,129 @@
       // 2026 оны playable roster. Шинэ hero нэмэгдэхэд энэ жагсаалт болон
       // тохирох role pool-ийг шинэчлэхэд бүх item guide дагаж шинэчлэгдэнэ.
       const ALL_HEROES = [
-        "Abrams", "Apollo", "Bebop", "Billy", "Calico", "Celeste", "Drifter",
-        "Dynamo", "Fathom", "Graves", "Grey Talon", "Haze", "Holliday",
-        "Infernus", "Ivy", "Kelvin", "Lady Geist", "Lash", "McGinnis",
-        "Mina", "Mirage", "Mo & Krill", "Paige", "Paradox", "Pocket",
-        "Rem", "Seven", "Shiv", "Silver", "Sinclair", "The Doorman",
-        "Venator", "Victor", "Vindicta", "Viscous", "Vyper", "Warden",
-        "Wraith", "Yamato"
+        "Abrams",
+        "Apollo",
+        "Bebop",
+        "Billy",
+        "Calico",
+        "Celeste",
+        "Drifter",
+        "Dynamo",
+        "Fathom",
+        "Graves",
+        "Grey Talon",
+        "Haze",
+        "Holliday",
+        "Infernus",
+        "Ivy",
+        "Kelvin",
+        "Lady Geist",
+        "Lash",
+        "McGinnis",
+        "Mina",
+        "Mirage",
+        "Mo & Krill",
+        "Paige",
+        "Paradox",
+        "Pocket",
+        "Rem",
+        "Seven",
+        "Shiv",
+        "Silver",
+        "Sinclair",
+        "The Doorman",
+        "Venator",
+        "Victor",
+        "Vindicta",
+        "Viscous",
+        "Vyper",
+        "Warden",
+        "Wraith",
+        "Yamato",
       ];
 
       const HERO_POOLS = {
-        weapon: ["Haze", "Wraith", "Infernus", "Ivy", "McGinnis", "Venator", "Victor", "Silver", "Vyper"],
-        precision: ["Vindicta", "Grey Talon", "Paradox", "Holliday", "Venator", "Victor"],
-        close: ["Abrams", "Shiv", "Mo & Krill", "Yamato", "Silver", "Apollo", "Calico", "Fathom"],
-        spirit: ["Seven", "Lady Geist", "Bebop", "Pocket", "Dynamo", "Graves", "Celeste", "Sinclair", "Mina", "Rem"],
-        mobility: ["Lash", "Pocket", "Yamato", "Ivy", "Celeste", "Calico", "Drifter", "Vyper"],
-        tank: ["Abrams", "Mo & Krill", "Shiv", "Kelvin", "Silver", "Warden", "The Doorman", "Viscous"],
-        support: ["Dynamo", "Ivy", "Kelvin", "McGinnis", "Rem", "Paige", "The Doorman", "Viscous"],
-        sustain: ["Abrams", "Shiv", "Infernus", "Dynamo", "Lady Geist", "Silver", "Fathom", "Rem"],
+        weapon: [
+          "Haze",
+          "Wraith",
+          "Infernus",
+          "Ivy",
+          "McGinnis",
+          "Venator",
+          "Victor",
+          "Silver",
+          "Vyper",
+        ],
+        precision: [
+          "Vindicta",
+          "Grey Talon",
+          "Paradox",
+          "Holliday",
+          "Venator",
+          "Victor",
+        ],
+        close: [
+          "Abrams",
+          "Shiv",
+          "Mo & Krill",
+          "Yamato",
+          "Silver",
+          "Apollo",
+          "Calico",
+          "Fathom",
+        ],
+        spirit: [
+          "Seven",
+          "Lady Geist",
+          "Bebop",
+          "Pocket",
+          "Dynamo",
+          "Graves",
+          "Celeste",
+          "Sinclair",
+          "Mina",
+          "Rem",
+        ],
+        mobility: [
+          "Lash",
+          "Pocket",
+          "Yamato",
+          "Ivy",
+          "Celeste",
+          "Calico",
+          "Drifter",
+          "Vyper",
+        ],
+        tank: [
+          "Abrams",
+          "Mo & Krill",
+          "Shiv",
+          "Kelvin",
+          "Silver",
+          "Warden",
+          "The Doorman",
+          "Viscous",
+        ],
+        support: [
+          "Dynamo",
+          "Ivy",
+          "Kelvin",
+          "McGinnis",
+          "Rem",
+          "Paige",
+          "The Doorman",
+          "Viscous",
+        ],
+        sustain: [
+          "Abrams",
+          "Shiv",
+          "Infernus",
+          "Dynamo",
+          "Lady Geist",
+          "Silver",
+          "Fathom",
+          "Rem",
+        ],
       };
 
       // Component -> шууд upgrade. Нэг item олон салаа upgrade-тай байж болно.
@@ -2450,8 +2750,13 @@
         "Long Range": ["Sharpshooter"],
         "Spirit Shredder": ["Spirit Rend"],
         "Split Shot": ["Ricochet"],
-        "Headhunter": ["Crippling Headshot"],
-        "Grit": ["Weapon Shielding", "Spirit Shielding", "Reactive Barrier", "Guardian Ward"],
+        Headhunter: ["Crippling Headshot"],
+        Grit: [
+          "Weapon Shielding",
+          "Spirit Shielding",
+          "Reactive Barrier",
+          "Guardian Ward",
+        ],
         "Extra Health": ["Fortitude"],
         "Extra Stamina": ["Stamina Mastery"],
         "Sprint Boots": ["Enduring Speed"],
@@ -2470,7 +2775,7 @@
         "Superior Cooldown": ["Transcendent Cooldown"],
         "Duration Extender": ["Superior Duration"],
         "Mystic Vulnerability": ["Escalating Exposure"],
-        "Suppressor": ["Silence Wave"],
+        Suppressor: ["Silence Wave"],
         "Slowing Hex": ["Vortex Web"],
       };
 
@@ -2483,19 +2788,31 @@
       function readCache(key) {
         try {
           const cached = JSON.parse(localStorage.getItem(key));
-          if (!cached || Date.now() - cached.savedAt > API_CACHE_HOURS * 3600000) return null;
+          if (
+            !cached ||
+            Date.now() - cached.savedAt > API_CACHE_HOURS * 3600000
+          )
+            return null;
           return cached.data;
-        } catch { return null; }
+        } catch {
+          return null;
+        }
       }
 
       function writeCache(key, data) {
-        try { localStorage.setItem(key, JSON.stringify({ savedAt: Date.now(), data })); } catch {}
+        try {
+          localStorage.setItem(
+            key,
+            JSON.stringify({ savedAt: Date.now(), data }),
+          );
+        } catch {}
       }
 
       async function fetchJson(path, cacheKey) {
         const cached = readCache(cacheKey);
         if (cached) return cached;
-        const controller = typeof AbortController !== "undefined" ? new AbortController() : null;
+        const controller =
+          typeof AbortController !== "undefined" ? new AbortController() : null;
         const timeout = setTimeout(() => controller?.abort(), 10000);
         try {
           const response = await fetch(`${API_BASE}${path}`, {
@@ -2512,53 +2829,97 @@
       }
 
       function heroName(hero) {
-        return hero.name || hero.localized_name || hero.display_name || hero.class_name || `Hero ${hero.id}`;
+        return (
+          hero.name ||
+          hero.localized_name ||
+          hero.display_name ||
+          hero.class_name ||
+          `Hero ${hero.id}`
+        );
       }
 
       function itemName(item) {
-        return item.name || item.localized_name || item.display_name || item.class_name || `Item ${item.id}`;
+        return (
+          item.name ||
+          item.localized_name ||
+          item.display_name ||
+          item.class_name ||
+          `Item ${item.id}`
+        );
       }
 
       function normalizeName(value) {
-        return String(value || "").toLowerCase().replace(/[^a-z0-9]+/g, "");
+        return String(value || "")
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "");
       }
 
       function itemTier(item) {
         const cost = Number(item.cost || item.shop_price || item.price || 0);
-        return Number(item.tier || item.item_tier || (cost <= 800 ? 1 : cost <= 1600 ? 2 : cost <= 3200 ? 3 : 4));
+        return Number(
+          item.tier ||
+            item.item_tier ||
+            (cost <= 800 ? 1 : cost <= 1600 ? 2 : cost <= 3200 ? 3 : 4),
+        );
       }
 
       function itemSlot(item) {
-        return String(item.item_slot_type || item.slot_type || item.shop_category || "utility").toLowerCase();
+        return String(
+          item.item_slot_type ||
+            item.slot_type ||
+            item.shop_category ||
+            "utility",
+        ).toLowerCase();
       }
 
       function isPlayableHero(hero) {
-        return hero && hero.id != null && hero.disabled !== true &&
-          hero.in_development !== true && hero.is_selectable !== false &&
-          hero.player_selectable !== false;
+        return (
+          hero &&
+          hero.id != null &&
+          hero.disabled !== true &&
+          hero.in_development !== true &&
+          hero.is_selectable !== false &&
+          hero.player_selectable !== false
+        );
       }
 
       function localFallbackHeroes() {
-        return ALL_HEROES.map((name, index) => ({ id: `local-${index}`, name, fallback: true }));
+        return ALL_HEROES.map((name, index) => ({
+          id: `local-${index}`,
+          name,
+          fallback: true,
+        }));
       }
 
       function populateHeroSelect(heroes) {
         const select = document.getElementById("heroSelect");
-        const sorted = [...heroes].sort((a, b) => heroName(a).localeCompare(heroName(b)));
-        select.innerHTML = '<option value="">Hero-оо сонгоно уу</option>' + sorted
-          .map((hero) => `<option value="${escapeHtml(hero.id)}">${escapeHtml(heroName(hero))}</option>`).join("");
+        const sorted = [...heroes].sort((a, b) =>
+          heroName(a).localeCompare(heroName(b)),
+        );
+        select.innerHTML =
+          '<option value="">Hero-оо сонгоно уу</option>' +
+          sorted
+            .map(
+              (hero) =>
+                `<option value="${escapeHtml(hero.id)}">${escapeHtml(heroName(hero))}</option>`,
+            )
+            .join("");
         document.getElementById("generateBuild").disabled = false;
       }
 
       function syncLocalItemAssets(items) {
-        const byName = new Map(items.map((item) => [normalizeName(itemName(item)), item]));
-        Object.values(DATA).forEach((shop) => shop.items.forEach((localItem) => {
-          const remote = byName.get(normalizeName(localItem.n));
-          if (!remote) return;
-          // API-г ID/statistics холбоход л ашиглана. Зургийн URL-ийг API-аас
-          // дарж солихгүй; шалгасан хуучин local URL хамгийн найдвартай.
-          localItem.apiId = remote.id;
-        }));
+        const byName = new Map(
+          items.map((item) => [normalizeName(itemName(item)), item]),
+        );
+        Object.values(DATA).forEach((shop) =>
+          shop.items.forEach((localItem) => {
+            const remote = byName.get(normalizeName(localItem.n));
+            if (!remote) return;
+            // API-г ID/statistics холбоход л ашиглана. Зургийн URL-ийг API-аас
+            // дарж солихгүй; шалгасан хуучин local URL хамгийн найдвартай.
+            localItem.apiId = remote.id;
+          }),
+        );
       }
 
       async function initializeLiveMeta() {
@@ -2566,12 +2927,19 @@
         try {
           const [heroes, items] = await Promise.all([
             fetchJson("/assets/heroes?language=english", "deadlock-heroes-v1"),
-            fetchJson("/assets/items/by-type/upgrade?language=english", "deadlock-items-v1"),
+            fetchJson(
+              "/assets/items/by-type/upgrade?language=english",
+              "deadlock-items-v1",
+            ),
           ]);
-          liveHeroes = (Array.isArray(heroes) ? heroes : heroes.heroes || []).filter(isPlayableHero);
+          liveHeroes = (
+            Array.isArray(heroes) ? heroes : heroes.heroes || []
+          ).filter(isPlayableHero);
           liveItems = Array.isArray(items) ? items : items.items || [];
           syncLocalItemAssets(liveItems);
-          populateHeroSelect(liveHeroes.length ? liveHeroes : localFallbackHeroes());
+          populateHeroSelect(
+            liveHeroes.length ? liveHeroes : localFallbackHeroes(),
+          );
           status.textContent = `${liveHeroes.length || ALL_HEROES.length} hero · Live мэдээлэл холбогдлоо`;
           status.classList.add("live");
           render();
@@ -2584,18 +2952,38 @@
       }
 
       function statNumber(stat, keys) {
-        for (const key of keys) if (Number.isFinite(Number(stat[key]))) return Number(stat[key]);
+        for (const key of keys)
+          if (Number.isFinite(Number(stat[key]))) return Number(stat[key]);
         return 0;
       }
 
       function scoreItemStat(stat) {
-        const matches = statNumber(stat, ["matches", "matches_played", "match_count", "total_matches", "count"]);
+        const matches = statNumber(stat, [
+          "matches",
+          "matches_played",
+          "match_count",
+          "total_matches",
+          "count",
+        ]);
         const wins = statNumber(stat, ["wins", "win_count"]);
         const rawRate = statNumber(stat, ["winrate", "win_rate"]);
-        const rate = rawRate ? (rawRate > 1 ? rawRate / 100 : rawRate) : (matches ? wins / matches : 0.5);
+        const rate = rawRate
+          ? rawRate > 1
+            ? rawRate / 100
+            : rawRate
+          : matches
+            ? wins / matches
+            : 0.5;
         // Бага sample-тай, санамсаргүй өндөр win rate-ийг хэт дээгүүр эрэмбэлэхээс хамгаална.
         const confidence = matches / (matches + 250);
-        return { matches, rate, score: (rate * confidence) + (0.5 * (1 - confidence)) + Math.log10(matches + 1) * 0.008 };
+        return {
+          matches,
+          rate,
+          score:
+            rate * confidence +
+            0.5 * (1 - confidence) +
+            Math.log10(matches + 1) * 0.008,
+        };
       }
 
       function resolveStatItem(stat) {
@@ -2604,35 +2992,68 @@
       }
 
       function fallbackBuildForHero(name) {
-        const pool = HERO_POOLS.precision.includes(name) ? HERO_POOLS.precision
-          : HERO_POOLS.close.includes(name) ? HERO_POOLS.close
-          : HERO_POOLS.spirit.includes(name) ? HERO_POOLS.spirit
-          : HERO_POOLS.tank.includes(name) ? HERO_POOLS.tank : HERO_POOLS.weapon;
-        const keywords = pool === HERO_POOLS.precision ? /headshot|long range|sharpshooter|express shot/i
-          : pool === HERO_POOLS.close ? /close quarters|melee|point blank|lifestrike|colossus/i
-          : pool === HERO_POOLS.spirit ? /spirit|mystic|cooldown|expansion|exposure/i
-          : pool === HERO_POOLS.tank ? /health|resilience|barrier|fortitude|armor/i
-          : /magazine|rounds|burst fire|ricochet|silencer/i;
-        return Object.values(DATA).flatMap((shop) => shop.items).filter((item) => keywords.test(`${item.n} ${item.d}`));
+        const pool = HERO_POOLS.precision.includes(name)
+          ? HERO_POOLS.precision
+          : HERO_POOLS.close.includes(name)
+            ? HERO_POOLS.close
+            : HERO_POOLS.spirit.includes(name)
+              ? HERO_POOLS.spirit
+              : HERO_POOLS.tank.includes(name)
+                ? HERO_POOLS.tank
+                : HERO_POOLS.weapon;
+        const keywords =
+          pool === HERO_POOLS.precision
+            ? /headshot|long range|sharpshooter|express shot/i
+            : pool === HERO_POOLS.close
+              ? /close quarters|melee|point blank|lifestrike|colossus/i
+              : pool === HERO_POOLS.spirit
+                ? /spirit|mystic|cooldown|expansion|exposure/i
+                : pool === HERO_POOLS.tank
+                  ? /health|resilience|barrier|fortitude|armor/i
+                  : /magazine|rounds|burst fire|ricochet|silencer/i;
+        return Object.values(DATA)
+          .flatMap((shop) => shop.items)
+          .filter((item) => keywords.test(`${item.n} ${item.d}`));
       }
 
       function selectBuildItems(stats, heroNameValue) {
-        let ranked = stats.map((stat) => {
-          const remote = resolveStatItem(stat);
-          const metric = scoreItemStat(stat);
-          return remote ? { remote, metric, name: itemName(remote), tier: itemTier(remote), slot: itemSlot(remote) } : null;
-        }).filter(Boolean).filter((entry) => entry.metric.matches >= 20)
+        let ranked = stats
+          .map((stat) => {
+            const remote = resolveStatItem(stat);
+            const metric = scoreItemStat(stat);
+            return remote
+              ? {
+                  remote,
+                  metric,
+                  name: itemName(remote),
+                  tier: itemTier(remote),
+                  slot: itemSlot(remote),
+                }
+              : null;
+          })
+          .filter(Boolean)
+          .filter((entry) => entry.metric.matches >= 20)
           .sort((a, b) => b.metric.score - a.metric.score);
 
         if (!ranked.length) {
           ranked = fallbackBuildForHero(heroNameValue).map((item) => ({
-            name: item.n, tier: item.t, slot: "recommended", metric: { matches: 0, rate: 0, score: 0 }, fallback: true,
+            name: item.n,
+            tier: item.t,
+            slot: "recommended",
+            metric: { matches: 0, rate: 0, score: 0 },
+            fallback: true,
           }));
         }
 
         const used = new Set();
-        const take = (tier, limit) => ranked.filter((entry) => entry.tier === tier && !used.has(entry.name))
-          .slice(0, limit).map((entry) => { used.add(entry.name); return entry; });
+        const take = (tier, limit) =>
+          ranked
+            .filter((entry) => entry.tier === tier && !used.has(entry.name))
+            .slice(0, limit)
+            .map((entry) => {
+              used.add(entry.name);
+              return entry;
+            });
         return [
           { title: "Эхлэл · Lane", items: take(1, 3) },
           { title: "Early game", items: take(2, 3) },
@@ -2660,9 +3081,12 @@
       async function generateHeroBuild() {
         const select = document.getElementById("heroSelect");
         const button = document.getElementById("generateBuild");
-        const hero = liveHeroes.find((entry) => String(entry.id) === select.value);
+        const hero = liveHeroes.find(
+          (entry) => String(entry.id) === select.value,
+        );
         if (!hero) {
-          document.getElementById("buildOutput").innerHTML = '<p class="build-summary">Эхлээд hero-оо сонгоно уу.</p>';
+          document.getElementById("buildOutput").innerHTML =
+            '<p class="build-summary">Эхлээд hero-оо сонгоно уу.</p>';
           document.getElementById("buildOutput").classList.add("visible");
           return;
         }
@@ -2672,16 +3096,29 @@
         let isLive = false;
         try {
           if (!hero.fallback) {
-            const since = Math.floor((Date.now() - META_WINDOW_DAYS * 86400000) / 1000);
+            const since = Math.floor(
+              (Date.now() - META_WINDOW_DAYS * 86400000) / 1000,
+            );
             const dayBucket = new Date().toISOString().slice(0, 10);
             const key = `deadlock-item-stats-${hero.id}-${dayBucket}`;
-            stats = await fetchJson(`/analytics/item-stats?hero_ids=${encodeURIComponent(hero.id)}&min_unix_timestamp=${since}&min_matches=20`, key);
+            stats = await fetchJson(
+              `/analytics/item-stats?hero_ids=${encodeURIComponent(hero.id)}&min_unix_timestamp=${since}&min_matches=20`,
+              key,
+            );
             stats = Array.isArray(stats) ? stats : stats.items || [];
             isLive = stats.length > 0;
           }
-          renderGeneratedBuild(hero, selectBuildItems(stats, heroName(hero)), isLive);
+          renderGeneratedBuild(
+            hero,
+            selectBuildItems(stats, heroName(hero)),
+            isLive,
+          );
         } catch {
-          renderGeneratedBuild(hero, selectBuildItems([], heroName(hero)), false);
+          renderGeneratedBuild(
+            hero,
+            selectBuildItems([], heroName(hero)),
+            false,
+          );
         } finally {
           button.disabled = false;
           button.textContent = "Build гаргах";
@@ -2700,7 +3137,9 @@
         },
         mps: {
           role: "Vitality / Survival",
-          heroes: [...HERO_POOLS.tank, ...HERO_POOLS.support].filter((v, i, a) => a.indexOf(v) === i),
+          heroes: [...HERO_POOLS.tank, ...HERO_POOLS.support].filter(
+            (v, i, a) => a.indexOf(v) === i,
+          ),
           builds: ["Frontline", "Brawler", "Support sustain"],
           counter:
             "Burst damage эсвэл удаан poke хийдэг багийн эсрэг амьд үлдэх хугацааг нэмэгдүүлэхэд тохиромжтой.",
@@ -2732,7 +3171,8 @@
           builds: ["Headshot", "Precision bullet", "Lane poke"],
           counter:
             "Том hitbox-той эсвэл хөдөлгөөн багатай hero-г lane дээр дарамтлахад тохиромжтой.",
-          caution: "Headshot тогтмол онодоггүй бол өөр item илүү найдвартай value өгнө.",
+          caution:
+            "Headshot тогтмол онодоггүй бол өөр item илүү найдвартай value өгнө.",
         },
         "Long Range": {
           heroes: ["Vindicta", "Grey Talon", "Paradox", "McGinnis"],
@@ -2754,7 +3194,8 @@
           builds: ["Frontline", "Anti-CC", "Dive survival"],
           counter:
             "Stun, slow, silence ихтэй Seven, Kelvin, Dynamo, Warden төрлийн control composition-ийн эсрэг.",
-          caution: "Burst damage-ийг өөрөө бууруулахгүй; зөвхөн debuff timing-д value өгнө.",
+          caution:
+            "Burst damage-ийг өөрөө бууруулахгүй; зөвхөн debuff timing-д value өгнө.",
         },
         "Bullet Resist Shredder": {
           heroes: ["Seven", "Infernus", "Ivy", "McGinnis"],
@@ -2777,35 +3218,40 @@
           builds: ["Teamfight bullet", "Wave clear", "On-hit"],
           counter:
             "Ойр бөөгнөрч тоглодог баг, summon болон олон target-тэй fight-д өндөр value өгнө.",
-          caution: "Ганц target pick хийхэд pure single-target item-аас сул байж болно.",
+          caution:
+            "Ганц target pick хийхэд pure single-target item-аас сул байж болно.",
         },
         "Tesla Bullets": {
           heroes: ["Haze", "Ivy", "McGinnis", "Infernus"],
           builds: ["Fire-rate", "Wave clear", "Hybrid AoE"],
           counter:
             "Creep wave, summon болон бөөгнөрсөн teamfight-д chain damage-аар дарамт үүсгэнэ.",
-          caution: "Удаан fire-rate-тэй build дээр proc-ийн давтамж бага байна.",
+          caution:
+            "Удаан fire-rate-тэй build дээр proc-ийн давтамж бага байна.",
         },
         "Extra Stamina": {
           heroes: ["Lash", "Pocket", "Yamato", "Dynamo"],
           builds: ["Mobility", "Roam", "Dive / escape"],
           counter:
             "Skillshot болон удаан AoE-оос зайлсхийх, lane дээр аюултай engage-ээс гарахад найдвартай.",
-          caution: "Stamina-гаа дэмий үрвэл item-ийн хамгаалалтын value мэдэгдэхгүй.",
+          caution:
+            "Stamina-гаа дэмий үрвэл item-ийн хамгаалалтын value мэдэгдэхгүй.",
         },
         "Mystic Expansion": {
           heroes: ["Seven", "Dynamo", "Bebop", "Kelvin"],
           builds: ["Area control", "Teamfight spirit", "Imbue"],
           counter:
             "Бөөгнөрсөн дайсан болон нарийн corridor-д AoE ability-гаа олон target-д хүргэхэд.",
-          caution: "Imbue хийх ability-гаа зөв сонго; жижиг utility skill дээр value алдаж болно.",
+          caution:
+            "Imbue хийх ability-гаа зөв сонго; жижиг utility skill дээр value алдаж болно.",
         },
         "Transcendent Cooldown": {
           heroes: ["Seven", "Pocket", "Dynamo", "Lady Geist", "Bebop"],
           builds: ["Late-game caster", "Cooldown loop", "Teamfight utility"],
           counter:
             "Удаан үргэлжлэх late-game fight-д гол ability-гаа дахин ашиглаж tempo авахад.",
-          caution: "Tier 4 тул core survivability/damage бэлэн болсны дараа авах luxury сонголт.",
+          caution:
+            "Tier 4 тул core survivability/damage бэлэн болсны дараа авах luxury сонголт.",
         },
       };
 
@@ -2828,7 +3274,9 @@
         };
         const text = `${item.n} ${item.d}`.toLowerCase();
 
-        if (/headshot|sharpshooter|long range|stalker|express shot/.test(text)) {
+        if (
+          /headshot|sharpshooter|long range|stalker|express shot/.test(text)
+        ) {
           guide.heroes = HERO_POOLS.precision;
           guide.builds = ["Precision", "Long-range", "Poke"];
           guide.counter =
@@ -2858,7 +3306,9 @@
           guide.heroes = HERO_POOLS.spirit;
           guide.builds = ["Spirit scaling", "Ability burst", "Cooldown combo"];
         }
-        if (/barrier|resilience|armor|health|fortitude|shield|vest/.test(text)) {
+        if (
+          /barrier|resilience|armor|health|fortitude|shield|vest/.test(text)
+        ) {
           guide.heroes = HERO_POOLS.tank;
           guide.builds = ["Frontline", "Anti-burst", "Dive survival"];
           guide.counter =
@@ -2902,10 +3352,13 @@
       }
 
       function getUpgradeInfo(itemName) {
-        const next = (ITEM_UPGRADES[itemName] || []).map(findItemByName).filter(Boolean);
+        const next = (ITEM_UPGRADES[itemName] || [])
+          .map(findItemByName)
+          .filter(Boolean);
         const previous = Object.entries(ITEM_UPGRADES)
           .filter(([, upgrades]) => upgrades.includes(itemName))
-          .map(([name]) => findItemByName(name)).filter(Boolean);
+          .map(([name]) => findItemByName(name))
+          .filter(Boolean);
         return { previous, next };
       }
 
@@ -2921,16 +3374,29 @@
         const { previous, next } = getUpgradeInfo(itemName);
         if (!previous.length && !next.length) return "";
         const parts = [];
-        previous.forEach((entry) => parts.push(upgradeButton(entry), '<span class="upgrade-arrow">→</span>'));
-        parts.push(`<span class="guide-tag">${escapeHtml(itemName)} · одоо</span>`);
-        next.forEach((entry) => parts.push('<span class="upgrade-arrow">→</span>', upgradeButton(entry)));
+        previous.forEach((entry) =>
+          parts.push(
+            upgradeButton(entry),
+            '<span class="upgrade-arrow">→</span>',
+          ),
+        );
+        parts.push(
+          `<span class="guide-tag">${escapeHtml(itemName)} · одоо</span>`,
+        );
+        next.forEach((entry) =>
+          parts.push(
+            '<span class="upgrade-arrow">→</span>',
+            upgradeButton(entry),
+          ),
+        );
         return `<div class="guide-section wide"><h3>↗ Item upgrade зам</h3><div class="upgrade-path">${parts.join("")}</div></div>`;
       }
 
       function readableItemSummary(item, guide) {
         const description = String(item.d || "").trim();
         const purpose = guide.builds.slice(0, 2).join(" болон ");
-        if (!description) return `${item.n} нь ${purpose} чиглэлийн build-д ашиглагддаг item.`;
+        if (!description)
+          return `${item.n} нь ${purpose} чиглэлийн build-д ашиглагддаг item.`;
         return `${description} Ерөнхийдөө ${purpose} чиглэлийн build-д хамгийн сайн үр дүн өгнө.`;
       }
 
@@ -3083,7 +3549,9 @@
         <div class="item-desc">${it.d}</div>
         <div class="guide-link">Дэлгэрэнгүй guide</div>
       `;
-            card.addEventListener("click", () => openItemGuide(it, currentShop));
+            card.addEventListener("click", () =>
+              openItemGuide(it, currentShop),
+            );
             card.addEventListener("keydown", (event) => {
               if (event.key === "Enter" || event.key === " ") {
                 event.preventDefault();
@@ -3127,7 +3595,9 @@
         currentSearch = e.target.value.toLowerCase();
         render();
       });
-      document.getElementById("generateBuild").addEventListener("click", generateHeroBuild);
+      document
+        .getElementById("generateBuild")
+        .addEventListener("click", generateHeroBuild);
       document.getElementById("heroSelect").addEventListener("change", () => {
         document.getElementById("buildOutput").classList.remove("visible");
       });
