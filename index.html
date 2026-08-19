@@ -6,8 +6,14 @@
     <meta name="theme-color" content="#161310" />
     <meta
       name="description"
-      content="Deadlock item бүрийн Монгол тайлбар, hero/build тохироо, counter зөвлөмж бүхий каталог."
+      content="Deadlock item бүрийн Монгол тайлбар, hero/build тохироо, counter зөвлөмж болон Монгол тоглогчдын Deadlock Mongolia Discord community."
     />
+    <meta name="keywords" content="Deadlock Mongolia, Deadlock Монгол, Deadlock item guide, Deadlock Discord Mongolia, Deadlock build Монгол" />
+    <meta property="og:title" content="Deadlock Item Guide — Монгол" />
+    <meta property="og:description" content="Монгол хэл дээрх Deadlock item guide болон Монгол тоглогчдын Discord community." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://dead-lock-mongolia.vercel.app/" />
+    <link rel="canonical" href="https://dead-lock-mongolia.vercel.app/" />
     <title>Deadlock Item Guide — Монгол</title>
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap");
@@ -128,6 +134,51 @@
         max-width: 520px;
         margin: 0 auto;
         line-height: 1.5;
+      }
+      .discord-community {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 18px;
+        align-items: center;
+        margin: 0 0 24px;
+        padding: 20px 22px;
+        border: 1px solid rgba(88, 101, 242, 0.48);
+        border-radius: 16px;
+        background:
+          radial-gradient(circle at 10% 0%, rgba(88, 101, 242, 0.2), transparent 55%),
+          var(--paper2);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.22);
+      }
+      .discord-community h2 {
+        margin: 0 0 7px;
+        font-family: "Oswald", sans-serif;
+        font-size: clamp(21px, 4vw, 28px);
+        text-transform: uppercase;
+      }
+      .discord-community p {
+        margin: 0;
+        color: var(--ink-dim);
+        font-size: 13px;
+        line-height: 1.55;
+      }
+      .discord-join {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        min-height: 46px;
+        padding: 0 18px;
+        border-radius: 11px;
+        background: #5865f2;
+        color: #fff;
+        font-weight: 700;
+        text-decoration: none;
+        white-space: nowrap;
+        transition: transform 0.15s ease, background 0.15s ease;
+      }
+      .discord-join:hover {
+        background: #6875f5;
+        transform: translateY(-2px);
       }
 
       .game-switcher {
@@ -1026,6 +1077,16 @@
           transition-duration: 0.01ms !important;
         }
       }
+      @media (max-width: 620px) {
+        .discord-community {
+          grid-template-columns: 1fr;
+          padding: 18px;
+          text-align: center;
+        }
+        .discord-join {
+          width: 100%;
+        }
+      }
     </style>
   </head>
   <body>
@@ -1079,6 +1140,25 @@
           counter хийх нөхцөлийг нэг дороос хараарай.
         </p>
       </header>
+
+      <section class="discord-community" aria-label="Deadlock Mongolia Discord community">
+        <div>
+          <h2>Deadlock Mongolia Discord 🇲🇳</h2>
+          <p>
+            Монгол тоглогчидтой танилцаж, хамт тоглох хүн олох, build болон item-ийн
+            мэдээлэл солилцох community-д нэгдээрэй.
+          </p>
+        </div>
+        <a
+          class="discord-join"
+          href="https://discord.gg/gwnQXsnBsp"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Deadlock Mongolia Discord серверт нэгдэх"
+        >
+          Discord-д нэгдэх
+        </a>
+      </section>
 
       <div class="tabs">
         <button class="tab active" data-shop="fairfax">
