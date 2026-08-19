@@ -3,7 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Deadlock — Дэлгүүрийн Каталог</title>
+    <meta name="theme-color" content="#161310" />
+    <meta
+      name="description"
+      content="Deadlock item бүрийн Монгол тайлбар, hero/build тохироо, counter зөвлөмж бүхий каталог."
+    />
+    <title>Deadlock Item Guide — Монгол</title>
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap");
 
@@ -42,6 +47,18 @@
         font-family: "Inter", sans-serif;
         min-height: 100vh;
         padding: 0 0 60px;
+        overflow-x: hidden;
+      }
+
+      button,
+      input {
+        font: inherit;
+      }
+      button:focus-visible,
+      input:focus-visible,
+      [role="button"]:focus-visible {
+        outline: 2px solid var(--shop-accent, var(--fx-accent));
+        outline-offset: 3px;
       }
 
       .wrap {
@@ -111,6 +128,50 @@
         max-width: 520px;
         margin: 0 auto;
         line-height: 1.5;
+      }
+
+      .game-switcher {
+        display: flex;
+        justify-content: center;
+        gap: 7px;
+        margin-bottom: 17px;
+        overflow-x: auto;
+        scrollbar-width: none;
+      }
+      .game-switcher::-webkit-scrollbar {
+        display: none;
+      }
+      .game-pill {
+        flex: 0 0 auto;
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        min-height: 34px;
+        padding: 7px 12px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: var(--paper2);
+        color: var(--ink-dim);
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+      .game-pill.active {
+        color: var(--ink);
+        border-color: var(--fx-accent);
+        box-shadow: 0 0 18px var(--fx-glow);
+      }
+      .game-pill.soon {
+        opacity: 0.55;
+        cursor: not-allowed;
+      }
+      .game-pill small {
+        font-size: 7px;
+        padding: 2px 5px;
+        border-radius: 8px;
+        color: var(--paper);
+        background: var(--ink-dim);
       }
 
       .tabs {
@@ -289,11 +350,18 @@
         padding: 12px 13px;
         transition:
           transform 0.12s ease,
-          border-color 0.12s ease;
+          border-color 0.12s ease,
+          box-shadow 0.12s ease;
+        cursor: pointer;
+        position: relative;
       }
       .card:hover {
         transform: translateY(-2px);
         border-color: var(--shop-accent);
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
+      }
+      .card:active {
+        transform: translateY(0) scale(0.99);
       }
 
       /* ---------- IMAGE PLACEHOLDER SLOT ---------- */
@@ -368,6 +436,228 @@
         font-size: 12.5px;
         line-height: 1.5;
         color: var(--ink-dim);
+      }
+      .guide-link {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        margin-top: 10px;
+        padding-top: 9px;
+        border-top: 1px solid var(--line);
+        color: var(--shop-accent);
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 9px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      .guide-link::after {
+        content: "→";
+        font-size: 15px;
+        transition: transform 0.15s ease;
+      }
+      .card:hover .guide-link::after {
+        transform: translateX(3px);
+      }
+
+      /* ---------- ITEM GUIDE MODAL ---------- */
+      .item-modal {
+        position: fixed;
+        inset: 0;
+        z-index: 10000;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        background: rgba(8, 7, 6, 0.86);
+        backdrop-filter: blur(10px);
+      }
+      .item-modal.open {
+        display: flex;
+        animation: modalFade 0.16s ease-out;
+      }
+      @keyframes modalFade {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      .item-panel {
+        width: min(920px, 100%);
+        max-height: min(780px, calc(100vh - 48px));
+        overflow: auto;
+        overscroll-behavior: contain;
+        border: 1px solid var(--line);
+        border-top: 3px solid var(--shop-accent);
+        border-radius: 10px;
+        background:
+          radial-gradient(circle at 15% 0%, color-mix(in srgb, var(--shop-accent) 14%, transparent), transparent 34%),
+          #181411;
+        box-shadow: 0 30px 90px rgba(0, 0, 0, 0.55);
+      }
+      .item-panel-head {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        display: flex;
+        justify-content: flex-end;
+        padding: 12px 14px 0;
+        background: linear-gradient(#181411 70%, transparent);
+      }
+      .item-close {
+        display: grid;
+        place-items: center;
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        border: 1px solid var(--line);
+        background: var(--paper2);
+        color: var(--ink);
+        font-size: 22px;
+        cursor: pointer;
+      }
+      .item-modal-body {
+        display: grid;
+        grid-template-columns: 220px minmax(0, 1fr);
+        gap: 28px;
+        padding: 4px 30px 30px;
+      }
+      .modal-visual {
+        position: sticky;
+        top: 62px;
+        align-self: start;
+      }
+      .modal-visual img,
+      .modal-placeholder {
+        display: block;
+        width: 100%;
+        aspect-ratio: 1;
+        object-fit: cover;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--paper);
+      }
+      .modal-placeholder {
+        display: grid;
+        place-items: center;
+        color: var(--ink-dim);
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+      }
+      .modal-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 12px;
+      }
+      .meta-pill {
+        padding: 5px 8px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        color: var(--ink-dim);
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 9px;
+        text-transform: uppercase;
+      }
+      .modal-kicker {
+        color: var(--shop-accent);
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+      .modal-title {
+        margin: 7px 0 10px;
+        font-family: "Oswald", sans-serif;
+        font-size: clamp(28px, 5vw, 44px);
+        line-height: 1.05;
+        text-transform: uppercase;
+      }
+      .modal-summary {
+        margin: 0 0 22px;
+        color: var(--ink-dim);
+        font-size: 14px;
+        line-height: 1.7;
+      }
+      .guide-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
+      .guide-section {
+        min-width: 0;
+        padding: 15px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: rgba(22, 19, 16, 0.72);
+      }
+      .guide-section.wide {
+        grid-column: 1 / -1;
+      }
+      .guide-section h3 {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0 0 9px;
+        color: var(--shop-accent);
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+      .guide-section p {
+        margin: 0;
+        color: var(--ink-dim);
+        font-size: 12.5px;
+        line-height: 1.6;
+      }
+      .tag-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .guide-tag {
+        padding: 5px 8px;
+        border-radius: 3px;
+        background: color-mix(in srgb, var(--shop-accent) 14%, transparent);
+        color: var(--ink);
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 9px;
+      }
+      .guide-note {
+        margin-top: 13px;
+        color: #7f7568;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 9px;
+        line-height: 1.5;
+      }
+
+      /* ---------- BACK TO TOP ---------- */
+      .back-to-top {
+        position: fixed;
+        right: max(16px, calc((100vw - 1040px) / 2 - 56px));
+        bottom: 18px;
+        z-index: 200;
+        display: grid;
+        place-items: center;
+        width: 46px;
+        height: 46px;
+        border: 1px solid color-mix(in srgb, var(--shop-accent) 55%, var(--line));
+        border-radius: 50%;
+        background: rgba(28, 24, 21, 0.92);
+        color: var(--ink);
+        font-size: 20px;
+        cursor: pointer;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        backdrop-filter: blur(8px);
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(12px);
+        transition: 0.18s ease;
+      }
+      .back-to-top.visible {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
       }
 
       /* ---------- FOOTER ---------- */
@@ -536,6 +826,206 @@
           align-items: center;
         }
       }
+
+      @media (max-width: 720px) {
+        body {
+          padding-bottom: 84px;
+        }
+        .wrap {
+          padding: 0 12px;
+        }
+        .topbar {
+          padding: 10px 12px 0;
+        }
+        header {
+          margin: 12px 0 20px;
+          text-align: left;
+        }
+        .game-switcher {
+          justify-content: flex-start;
+          margin-inline: -12px;
+          padding: 0 12px;
+        }
+        .kicker {
+          font-size: 9px;
+          letter-spacing: 0.2em;
+        }
+        h1 {
+          font-size: 34px;
+        }
+        .sub {
+          margin: 0;
+          font-size: 12.5px;
+        }
+        .tabs {
+          position: sticky;
+          top: 0;
+          z-index: 80;
+          justify-content: flex-start;
+          flex-wrap: nowrap;
+          gap: 7px;
+          margin: 0 -12px 14px;
+          padding: 10px 12px;
+          overflow-x: auto;
+          background: rgba(22, 19, 16, 0.9);
+          border-bottom: 1px solid var(--line);
+          backdrop-filter: blur(12px);
+          scrollbar-width: none;
+        }
+        .tabs::-webkit-scrollbar {
+          display: none;
+        }
+        .tab {
+          flex: 0 0 auto;
+          padding: 9px 12px;
+          font-size: 10px;
+        }
+        .controls {
+          gap: 12px;
+          margin-bottom: 18px;
+          padding-bottom: 13px;
+        }
+        .search {
+          width: 100%;
+          min-width: 0;
+        }
+        .search input {
+          min-height: 44px;
+          font-size: 16px;
+        }
+        .filter-chips {
+          width: calc(100vw - 24px);
+          flex-wrap: nowrap;
+          overflow-x: auto;
+          padding-bottom: 3px;
+          scrollbar-width: none;
+        }
+        .filter-chips::-webkit-scrollbar {
+          display: none;
+        }
+        .chip {
+          flex: 0 0 auto;
+          min-height: 34px;
+        }
+        .tier-block {
+          margin-bottom: 24px;
+        }
+        .tier-head {
+          margin-bottom: 10px;
+        }
+        .grid {
+          grid-template-columns: 1fr;
+          gap: 8px;
+        }
+        .card {
+          display: grid;
+          grid-template-columns: 78px minmax(0, 1fr);
+          grid-template-rows: auto auto 1fr;
+          column-gap: 11px;
+          padding: 10px;
+          min-height: 104px;
+        }
+        .item-img-slot {
+          grid-column: 1;
+          grid-row: 1 / 4;
+          width: 78px;
+          height: 78px;
+          margin: 0;
+          align-self: start;
+        }
+        .card-top,
+        .item-desc,
+        .guide-link {
+          grid-column: 2;
+        }
+        .card-top {
+          align-items: flex-start;
+          margin-bottom: 4px;
+        }
+        .item-name {
+          font-size: 14px;
+          line-height: 1.2;
+        }
+        .item-desc {
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+          font-size: 11.5px;
+          line-height: 1.42;
+        }
+        .guide-link {
+          margin-top: 6px;
+          padding-top: 6px;
+          font-size: 8px;
+        }
+        .donation {
+          padding: 20px 14px;
+        }
+        .item-modal {
+          align-items: flex-end;
+          padding: 0;
+        }
+        .item-panel {
+          width: 100%;
+          max-height: 92dvh;
+          border-width: 1px 0 0;
+          border-top-width: 3px;
+          border-radius: 16px 16px 0 0;
+          animation: sheetUp 0.2s ease-out;
+        }
+        @keyframes sheetUp {
+          from { transform: translateY(28px); opacity: 0; }
+          to { transform: translateY(0); opacity: 1; }
+        }
+        .item-modal-body {
+          display: block;
+          padding: 0 16px max(28px, env(safe-area-inset-bottom));
+        }
+        .modal-visual {
+          position: static;
+          display: grid;
+          grid-template-columns: 94px 1fr;
+          gap: 12px;
+          align-items: center;
+          margin-bottom: 18px;
+        }
+        .modal-visual img,
+        .modal-placeholder {
+          width: 94px;
+        }
+        .modal-meta {
+          margin-top: 0;
+          align-content: center;
+        }
+        .modal-title {
+          font-size: 30px;
+        }
+        .modal-summary {
+          font-size: 13px;
+          margin-bottom: 16px;
+        }
+        .guide-grid {
+          grid-template-columns: 1fr;
+        }
+        .guide-section.wide {
+          grid-column: auto;
+        }
+        .back-to-top {
+          right: 14px;
+          bottom: max(14px, env(safe-area-inset-bottom));
+          width: 44px;
+          height: 44px;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+          scroll-behavior: auto !important;
+          animation-duration: 0.01ms !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
     </style>
   </head>
   <body>
@@ -571,11 +1061,22 @@
 
     <div class="wrap">
       <header>
+        <nav class="game-switcher" aria-label="Тоглоом сонгох">
+          <button class="game-pill active" type="button" aria-current="page">
+            Deadlock
+          </button>
+          <button class="game-pill soon" type="button" disabled>
+            Valorant <small>soon</small>
+          </button>
+          <button class="game-pill soon" type="button" disabled>
+            CS2 <small>soon</small>
+          </button>
+        </nav>
         <div class="kicker">Deadlock · Reference No. 03</div>
-        <h1>Дэлгүүрийн Каталог</h1>
+        <h1>Item Guide</h1>
         <p class="sub">
-          Fairfax, MPS, Curiosity Catalog — гурван дэлгүүрийн бүх item, tier тус
-          бүрээр эмхэлж, товч тайлбарын хамт.
+          Item дээр дараад дэлгэрэнгүй тайлбар, тохирох hero ба build,
+          counter хийх нөхцөлийг нэг дороос хараарай.
         </p>
       </header>
 
@@ -647,6 +1148,29 @@
         />
       </div>
 
+      <div
+        class="item-modal"
+        id="itemModal"
+        aria-hidden="true"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="itemModalTitle"
+      >
+        <article class="item-panel" id="itemPanel">
+          <div class="item-panel-head">
+            <button
+              class="item-close"
+              id="itemClose"
+              type="button"
+              aria-label="Item тайлбарыг хаах"
+            >
+              ×
+            </button>
+          </div>
+          <div class="item-modal-body" id="itemModalBody"></div>
+        </article>
+      </div>
+
       <!-- ---------- FOOTER ---------- -->
       <footer>
         <div class="footer-social">
@@ -678,6 +1202,16 @@
         <div class="credit">ALL'S FAIR — REFERENCE ONLY</div>
       </footer>
     </div>
+
+    <button
+      class="back-to-top"
+      id="backToTop"
+      type="button"
+      aria-label="Хуудасны эхэнд очих"
+      title="Дээш очих"
+    >
+      ↑
+    </button>
 
     <script>
       /*
@@ -1714,6 +2248,281 @@
         },
       };
 
+      const SHOP_GUIDES = {
+        fairfax: {
+          role: "Weapon / Bullet",
+          heroes: ["Haze", "Wraith", "Infernus", "Ivy", "McGinnis"],
+          builds: ["Bullet carry", "Fire-rate", "Magazine scaling"],
+          counter:
+            "Удаан, том hitbox-той frontline hero болон удаан үргэлжлэх teamfight-д bullet pressure үүсгэхэд ашигтай.",
+          caution:
+            "Spirit-focused build дээр weapon item-д хэт их soul зарцуулах нь үндсэн power spike-ийг хойшлуулж болно.",
+        },
+        mps: {
+          role: "Vitality / Survival",
+          heroes: ["Abrams", "Mo & Krill", "Shiv", "Kelvin", "Dynamo"],
+          builds: ["Frontline", "Brawler", "Support sustain"],
+          counter:
+            "Burst damage эсвэл удаан poke хийдэг багийн эсрэг амьд үлдэх хугацааг нэмэгдүүлэхэд тохиромжтой.",
+          caution:
+            "Зөвхөн defense авах нь damage болон objective pressure-ийг багасгана. Нэг хамгаалалтын item-ийг build-ийнхээ гол scaling-тэй хослуул.",
+        },
+        cc: {
+          role: "Spirit / Ability",
+          heroes: ["Seven", "Lady Geist", "Bebop", "Pocket", "Lash"],
+          builds: ["Spirit burst", "Cooldown", "Ability range"],
+          counter:
+            "Ability-д түшиглэдэг teamfight болон бөөгнөрсөн дайснуудын эсрэг spirit pressure үүсгэхэд хүчтэй.",
+          caution:
+            "Ability-ийн cooldown болон combo timing таарахгүй бол item-ийн үр ашиг бүрэн гарахгүй.",
+        },
+      };
+
+      const GUIDE_OVERRIDES = {
+        "Close Quarters": {
+          heroes: ["Abrams", "Shiv", "Mo & Krill", "Yamato"],
+          builds: ["Close-range bullet", "Brawler", "Melee hybrid"],
+          counter:
+            "Vindicta, Grey Talon зэрэг зай барьдаг hero руу gap close хийж чаддаг үед илүү үр дүнтэй.",
+          caution:
+            "Дайсандаа хүрч чадахгүй matchup дээр bonus тогтмол ажиллахгүй.",
+        },
+        "Headshot Booster": {
+          heroes: ["Vindicta", "Wraith", "Paradox", "Haze"],
+          builds: ["Headshot", "Precision bullet", "Lane poke"],
+          counter:
+            "Том hitbox-той эсвэл хөдөлгөөн багатай hero-г lane дээр дарамтлахад тохиромжтой.",
+          caution: "Headshot тогтмол онодоггүй бол өөр item илүү найдвартай value өгнө.",
+        },
+        "Long Range": {
+          heroes: ["Vindicta", "Grey Talon", "Paradox", "McGinnis"],
+          builds: ["Long-range bullet", "Poke", "High-ground control"],
+          counter:
+            "Abrams, Mo & Krill зэрэг ойртож байж damage хийдэг hero-г зайнаас элээхэд ашигтай.",
+          caution: "Close-range fight олон бол passive bonus-оо алдана.",
+        },
+        Healbane: {
+          heroes: ["Infernus", "Seven", "Lady Geist", "Pocket"],
+          builds: ["Anti-heal", "Spirit damage", "DoT pressure"],
+          counter:
+            "Abrams, Shiv, Infernus, Dynamo зэрэг их heal/sustain-тэй hero болон healing-heavy багийн эсрэг авна.",
+          caution:
+            "Дайсны багт мэдэгдэхүйц heal байхгүй бол өөр damage эсвэл utility item сонго.",
+        },
+        "Debuff Reducer": {
+          heroes: ["Abrams", "Shiv", "Yamato", "Mo & Krill"],
+          builds: ["Frontline", "Anti-CC", "Dive survival"],
+          counter:
+            "Stun, slow, silence ихтэй Seven, Kelvin, Dynamo, Warden төрлийн control composition-ийн эсрэг.",
+          caution: "Burst damage-ийг өөрөө бууруулахгүй; зөвхөн debuff timing-д value өгнө.",
+        },
+        "Bullet Resist Shredder": {
+          heroes: ["Seven", "Infernus", "Ivy", "McGinnis"],
+          builds: ["Hybrid damage", "Team bullet amp", "Anti-frontline"],
+          counter:
+            "Bullet resist давхарласан Abrams, Mo & Krill, McGinnis зэрэг frontline hero-г багийн bullet carry-тайгаа хамт хайлуулахад.",
+          caution:
+            "Багийн чинь damage бараг бүхэлдээ spirit бол shred-ийн team value бага байна.",
+        },
+        Silencer: {
+          heroes: ["Haze", "Wraith", "Infernus", "Ivy"],
+          builds: ["Bullet carry", "Anti-caster", "Pick-off"],
+          counter:
+            "Seven, Bebop, Pocket, Lash зэрэг ability-гаар зугтах эсвэл combo хийх hero-г богино хугацаанд хаахад.",
+          caution:
+            "Silence хийх мөчөө алдахад өндөр үнэтэй item-ийн гол value алдагдана.",
+        },
+        Ricochet: {
+          heroes: ["Haze", "Infernus", "Ivy", "McGinnis"],
+          builds: ["Teamfight bullet", "Wave clear", "On-hit"],
+          counter:
+            "Ойр бөөгнөрч тоглодог баг, summon болон олон target-тэй fight-д өндөр value өгнө.",
+          caution: "Ганц target pick хийхэд pure single-target item-аас сул байж болно.",
+        },
+        "Tesla Bullets": {
+          heroes: ["Haze", "Ivy", "McGinnis", "Infernus"],
+          builds: ["Fire-rate", "Wave clear", "Hybrid AoE"],
+          counter:
+            "Creep wave, summon болон бөөгнөрсөн teamfight-д chain damage-аар дарамт үүсгэнэ.",
+          caution: "Удаан fire-rate-тэй build дээр proc-ийн давтамж бага байна.",
+        },
+        "Extra Stamina": {
+          heroes: ["Lash", "Pocket", "Yamato", "Dynamo"],
+          builds: ["Mobility", "Roam", "Dive / escape"],
+          counter:
+            "Skillshot болон удаан AoE-оос зайлсхийх, lane дээр аюултай engage-ээс гарахад найдвартай.",
+          caution: "Stamina-гаа дэмий үрвэл item-ийн хамгаалалтын value мэдэгдэхгүй.",
+        },
+        "Mystic Expansion": {
+          heroes: ["Seven", "Dynamo", "Bebop", "Kelvin"],
+          builds: ["Area control", "Teamfight spirit", "Imbue"],
+          counter:
+            "Бөөгнөрсөн дайсан болон нарийн corridor-д AoE ability-гаа олон target-д хүргэхэд.",
+          caution: "Imbue хийх ability-гаа зөв сонго; жижиг utility skill дээр value алдаж болно.",
+        },
+        "Transcendent Cooldown": {
+          heroes: ["Seven", "Pocket", "Dynamo", "Lady Geist", "Bebop"],
+          builds: ["Late-game caster", "Cooldown loop", "Teamfight utility"],
+          counter:
+            "Удаан үргэлжлэх late-game fight-д гол ability-гаа дахин ашиглаж tempo авахад.",
+          caution: "Tier 4 тул core survivability/damage бэлэн болсны дараа авах luxury сонголт.",
+        },
+      };
+
+      const STAGE_GUIDE = {
+        1: "Lane эхлэл — хямдхан power spike эсвэл lane-ийн сул талаа нөхөх үед.",
+        2: "Early game — эхний core item-үүдийн нэг болгож build-ийн чиглэлээ тогтоох үед.",
+        3: "Mid game — lane-ээс teamfight руу шилжихэд тодорхой matchup эсвэл combo-д зориулж.",
+        4: "Late game — үндсэн core build бэлэн болсон хойно өндөр өртөгтэй finisher байдлаар.",
+      };
+
+      function getItemGuide(item, shopKey) {
+        const base = SHOP_GUIDES[shopKey];
+        const guide = {
+          role: base.role,
+          heroes: [...base.heroes],
+          builds: [...base.builds],
+          counter: base.counter,
+          caution: base.caution,
+          when: STAGE_GUIDE[item.t],
+        };
+        const text = `${item.n} ${item.d}`.toLowerCase();
+
+        if (/headshot|sharpshooter|long range|stalker|express shot/.test(text)) {
+          guide.heroes = ["Vindicta", "Grey Talon", "Paradox", "Wraith"];
+          guide.builds = ["Precision", "Long-range", "Poke"];
+          guide.counter =
+            "Ойртохоосоо өмнө зайнаас damage авахад эмзэг frontline болон хөдөлгөөн багатай hero-гийн эсрэг.";
+        }
+        if (/close quarters|point blank|melee|fist|hollow point/.test(text)) {
+          guide.heroes = ["Abrams", "Shiv", "Mo & Krill", "Yamato"];
+          guide.builds = ["Brawler", "Close-range", "Melee hybrid"];
+          guide.counter =
+            "Gap close хийж чаддаг бол зай барьдаг marksman/caster hero-г тулгаж тоглоход.";
+        }
+        if (/lifesteal|healing|regen|restorative|rite|booster/.test(text)) {
+          guide.heroes = ["Abrams", "Shiv", "Infernus", "Dynamo"];
+          guide.builds = ["Sustain", "Extended fight", "Lane recovery"];
+          guide.counter =
+            "Poke damage ихтэй, fight-ийг удаан сунгадаг багийн эсрэг HP-гаа тогтвортой барихад.";
+          guide.caution =
+            "Healbane, Toxic Bullets зэрэг anti-heal авсан дайсны эсрэг үр ашиг нь буурна.";
+        }
+        if (/stamina|sprint|fleet|dash|speed|leap/.test(text)) {
+          guide.heroes = ["Lash", "Pocket", "Yamato", "Ivy"];
+          guide.builds = ["Mobility", "Roam", "Dive / escape"];
+          guide.counter =
+            "Skillshot, slow zone болон positioning шийддэг matchup-д dodge/rotation хийхэд.";
+        }
+        if (/spirit|mystic|arcane|spell|enchant|cooldown/.test(text)) {
+          guide.heroes = ["Seven", "Lady Geist", "Bebop", "Pocket", "Dynamo"];
+          guide.builds = ["Spirit scaling", "Ability burst", "Cooldown combo"];
+        }
+        if (/barrier|resilience|armor|health|fortitude|shield|vest/.test(text)) {
+          guide.heroes = ["Abrams", "Mo & Krill", "Shiv", "Kelvin"];
+          guide.builds = ["Frontline", "Anti-burst", "Dive survival"];
+          guide.counter =
+            "Burst damage ихтэй enemy carry-гийн эхний combo-г давж, fight-д удаан үлдэхэд.";
+        }
+        if (/ricochet|tesla|split shot|area|vortex|alchemical/.test(text)) {
+          guide.builds = ["Teamfight AoE", "Wave clear", "Multi-target"];
+          guide.counter =
+            "Бөөгнөрсөн баг, summon, creep wave болон objective орчмын teamfight-д.";
+        }
+        if (/healbane|toxic/.test(text)) {
+          guide.counter =
+            "Abrams, Shiv, Infernus, Dynamo зэрэг heal болон sustain ихтэй hero-гийн эсрэг.";
+          guide.builds = ["Anti-heal", "DoT", "Teamfight utility"];
+        }
+
+        return Object.assign(guide, GUIDE_OVERRIDES[item.n] || {});
+      }
+
+      function escapeHtml(value) {
+        return String(value)
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      function tagList(values) {
+        return values
+          .map((value) => `<span class="guide-tag">${escapeHtml(value)}</span>`)
+          .join("");
+      }
+
+      let lastFocusedCard = null;
+
+      function openItemGuide(item, shopKey) {
+        const shop = DATA[shopKey];
+        const guide = getItemGuide(item, shopKey);
+        const modal = document.getElementById("itemModal");
+        const body = document.getElementById("itemModalBody");
+        const visual = item.img
+          ? `<img src="${escapeHtml(item.img)}" alt="${escapeHtml(item.n)}" referrerpolicy="no-referrer" />`
+          : '<div class="modal-placeholder">Зураг оруулаагүй</div>';
+
+        body.innerHTML = `
+          <aside class="modal-visual">
+            ${visual}
+            <div class="modal-meta">
+              <span class="meta-pill">${escapeHtml(shop.label)}</span>
+              <span class="meta-pill">Tier ${item.t}</span>
+              <span class="meta-pill">${escapeHtml(shop.tierPrices[item.t])}</span>
+              ${item.active ? '<span class="meta-pill">Active</span>' : ""}
+              ${item.imbue ? '<span class="meta-pill">Imbue</span>' : ""}
+            </div>
+          </aside>
+          <section>
+            <div class="modal-kicker">${escapeHtml(guide.role)} · Item guide</div>
+            <h2 class="modal-title" id="itemModalTitle">${escapeHtml(item.n)}</h2>
+            <p class="modal-summary">${escapeHtml(item.d)}</p>
+            <div class="guide-grid">
+              <div class="guide-section">
+                <h3>◎ Хэзээ авах вэ?</h3>
+                <p>${escapeHtml(guide.when)}</p>
+              </div>
+              <div class="guide-section">
+                <h3>◇ Тохирох build</h3>
+                <div class="tag-list">${tagList(guide.builds)}</div>
+              </div>
+              <div class="guide-section">
+                <h3>♟ Тохирох hero</h3>
+                <div class="tag-list">${tagList(guide.heroes)}</div>
+              </div>
+              <div class="guide-section">
+                <h3>⚔ Counter / matchup</h3>
+                <p>${escapeHtml(guide.counter)}</p>
+              </div>
+              <div class="guide-section wide">
+                <h3>! Анхаарах зүйл</h3>
+                <p>${escapeHtml(guide.caution)}</p>
+              </div>
+            </div>
+            <p class="guide-note">Зөвлөмж нь ерөнхий build чиглэл. Patch, багийн composition, lane болон тоглолтын нөхцөлөөс шалтгаалан сонголтоо өөрчлөөрэй.</p>
+          </section>
+        `;
+
+        lastFocusedCard = document.activeElement;
+        modal.classList.add("open");
+        modal.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+        document.getElementById("itemClose").focus();
+      }
+
+      function closeItemGuide() {
+        const modal = document.getElementById("itemModal");
+        if (!modal.classList.contains("open")) return;
+        modal.classList.remove("open");
+        modal.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+        if (lastFocusedCard && typeof lastFocusedCard.focus === "function") {
+          lastFocusedCard.focus();
+        }
+      }
+
       let currentShop = "fairfax";
       let currentTier = "all";
       let currentSearch = "";
@@ -1763,6 +2572,12 @@
           items.forEach((it) => {
             const card = document.createElement("div");
             card.className = "card";
+            card.setAttribute("role", "button");
+            card.setAttribute("tabindex", "0");
+            card.setAttribute(
+              "aria-label",
+              `${it.n} item-ийн дэлгэрэнгүй тайлбарыг нээх`,
+            );
 
             const imgSlot = it.img
               ? `<div class="item-img-slot"><img src="${it.img}" alt="${it.n}" loading="lazy"></div>`
@@ -1778,7 +2593,15 @@
           </div>
         </div>
         <div class="item-desc">${it.d}</div>
+        <div class="guide-link">Дэлгэрэнгүй guide</div>
       `;
+            card.addEventListener("click", () => openItemGuide(it, currentShop));
+            card.addEventListener("keydown", (event) => {
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                openItemGuide(it, currentShop);
+              }
+            });
             grid.appendChild(card);
           });
           block.appendChild(grid);
@@ -1820,6 +2643,9 @@
       const donationQr = document.getElementById("donationQr");
       const qrModal = document.getElementById("qrModal");
       const qrClose = document.getElementById("qrClose");
+      const itemModal = document.getElementById("itemModal");
+      const itemClose = document.getElementById("itemClose");
+      const backToTop = document.getElementById("backToTop");
 
       function closeQr() {
         qrModal.classList.remove("open");
@@ -1835,8 +2661,26 @@
       qrModal.addEventListener("click", (e) => {
         if (e.target === qrModal) closeQr();
       });
+      itemClose.addEventListener("click", closeItemGuide);
+      itemModal.addEventListener("click", (e) => {
+        if (e.target === itemModal) closeItemGuide();
+      });
       document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") closeQr();
+        if (e.key === "Escape") {
+          closeQr();
+          closeItemGuide();
+        }
+      });
+
+      window.addEventListener(
+        "scroll",
+        () => {
+          backToTop.classList.toggle("visible", window.scrollY > 520);
+        },
+        { passive: true },
+      );
+      backToTop.addEventListener("click", () => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
       });
 
       render();
