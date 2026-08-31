@@ -702,6 +702,96 @@
         font-size: 9px;
         line-height: 1.5;
       }
+      .mechanic-hero {
+        grid-column: 1 / -1;
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        gap: 13px;
+        align-items: start;
+        padding: 16px;
+        border: 1px solid color-mix(in srgb, var(--shop-accent) 52%, var(--line));
+        border-radius: 7px;
+        background: color-mix(in srgb, var(--shop-accent) 9%, rgba(22, 19, 16, 0.9));
+      }
+      .mechanic-icon {
+        display: grid;
+        place-items: center;
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: color-mix(in srgb, var(--shop-accent) 20%, transparent);
+        color: var(--shop-accent);
+        font-size: 18px;
+      }
+      .mechanic-hero strong {
+        display: block;
+        margin-bottom: 5px;
+        color: var(--ink);
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      .mechanic-hero p {
+        margin: 0;
+        color: #c9beb0;
+        font-size: 13px;
+        line-height: 1.65;
+      }
+      .usage-steps {
+        display: grid;
+        gap: 8px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        counter-reset: guide-step;
+      }
+      .usage-steps li {
+        position: relative;
+        min-height: 28px;
+        padding-left: 34px;
+        color: var(--ink-dim);
+        font-size: 12.5px;
+        line-height: 1.55;
+        counter-increment: guide-step;
+      }
+      .usage-steps li::before {
+        content: counter(guide-step);
+        position: absolute;
+        left: 0;
+        top: 0;
+        display: grid;
+        place-items: center;
+        width: 24px;
+        height: 24px;
+        border: 1px solid var(--line);
+        border-radius: 50%;
+        color: var(--shop-accent);
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 9px;
+      }
+      .guide-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 14px;
+      }
+      .guide-action {
+        min-height: 34px;
+        padding: 7px 11px;
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        background: rgba(255, 255, 255, 0.025);
+        color: var(--ink-dim);
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 9px;
+        cursor: pointer;
+      }
+      .guide-action:hover,
+      .guide-action:focus-visible {
+        border-color: var(--shop-accent);
+        color: var(--ink);
+      }
       .upgrade-path {
         display: flex;
         flex-wrap: wrap;
@@ -3262,6 +3352,99 @@
         4: "Late game — үндсэн core build бэлэн болсон хойно өндөр өртөгтэй finisher байдлаар.",
       };
 
+      function getTriggerCondition(item) {
+        const text = `${item.n} ${item.d}`.toLowerCase();
+        if (item.active)
+          return "Item-ийн active товчийг өөрөө дарахад идэвхжинэ. Cooldown дуусаагүй үед дахин ашиглагдахгүй.";
+        if (item.imbue)
+          return "Худалдаж авах үед нэг ability сонгож Imbue хийнэ. Дараа нь зөвхөн сонгосон ability-тай холбоотойгоор гол эффект ажиллана.";
+        if (/headshot|толгой/.test(text))
+          return "Дайсны толгойд сум онож headshot бүртгэгдэх үед нэмэлт эффект шалгагдана.";
+        if (/reload|цэнэгл|magazine|магазин/.test(text))
+          return "Буугаа reload хийх, эсвэл magazine-ийн заасан хэсэгт хүрэх үед нөхцөл нь биелнэ.";
+        if (/dash|stamina|leap|үср|гулс|sprint|хөдөлгөөн/.test(text))
+          return "Movement action буюу dash, sprint, leap эсвэл stamina ашигласан мөчтэй холбогдож ажиллана.";
+        if (/melee|цохилт/.test(text))
+          return "Melee цохилт хийх эсвэл melee онох үед гол эффект идэвхжинэ.";
+        if (/low hp|hp баг|health баг|багасах тусам/.test(text))
+          return "Таны HP заасан хэмжээнээс доош ороход нөхцөл автоматаар идэвхжинэ.";
+        if (/damage авах|хохирол авах|on damage|resilience/.test(text))
+          return "Дайснаас хохирол авсны дараа автоматаар stack эсвэл түр эффект үүсгэнэ.";
+        if (/kill|алах|үхэл|assist/.test(text))
+          return "Kill эсвэл item-ийн заасан elimination нөхцөл биелэхэд автоматаар ажиллана.";
+        if (/close|ойр зай|point blank|hollow/.test(text))
+          return "Дайсан item-ийн ойрын зайн босгон дотор байх үед bonus автоматаар тооцогдоно.";
+        if (/long range|хол зай|алсын зай|stalker/.test(text))
+          return "Дайсан item-ийн шаардсан холын зайн босгоос цаана байх үед bonus автоматаар тооцогдоно.";
+        if (/ability|spirit|mystic|spell/.test(text))
+          return "Ability ашиглах эсвэл spirit damage хүргэх үед item-ийн нөхцөл таарвал автоматаар ажиллана.";
+        if (/bullet|сум|буу|shot|round/.test(text))
+          return "Бууны сум дайсанд онох үед item-ийн нэмэлт bullet эффект автоматаар шалгагдана.";
+        return "Inventory-д байхад үндсэн stat нь байнга ажиллана; тайлбарт дурдсан нөхцөл биелэхэд нэмэлт passive эффект автоматаар асна.";
+      }
+
+      function getMechanicGuide(item) {
+        const text = `${item.n} ${item.d}`.toLowerCase();
+        const type = item.active
+          ? "Active · гараар ашиглана"
+          : item.imbue
+            ? "Imbue · ability-д холбоно"
+            : "Passive · автоматаар ажиллана";
+        const icon = item.active ? "⚡" : item.imbue ? "✦" : "∞";
+        const trigger = getTriggerCondition(item);
+        let timing = item.active
+          ? "Fight эхлэхээс яг өмнө эсвэл дайсны гол combo эхлэх мөчид дар. Хэт эрт ашиглавал duration дуусна, хэт орой ашиглавал хамгаалалт/tempo авч амжихгүй."
+          : "Нөхцөл нь биелэх байрлал, зай эсвэл action-оо урьдчилан бэлд. Passive item учраас товч дарахгүй, харин тоглолтын хэв маягаа item-д тааруулах нь чухал.";
+        let signal = item.active
+          ? "HUD дээрх active item icon асаж байвал бэлэн. Ашигласны дараа icon cooldown болж, зарим item buff/debuff icon эсвэл дүрсний эффектээр хугацаагаа харуулна."
+          : "HUD-ийн buff/debuff icon, дайсан дээрх тэмдэг, damage number эсвэл stat-ийн өөрчлөлтөөр ажилласныг танина. Cooldown-той passive бол icon бүдгэрэхийг ажигла.";
+
+        if (/heal|regen|lifesteal|restorative|leech/.test(text)) {
+          timing = "HP дүүрэн үед value үрэхгүй. Damage авсны дараа, гэхдээ дараагийн burst-д шууд үхэхээс өмнө ашиглаж sustain-аа бүрэн ав.";
+          signal = "HP bar өсөх, healing number/эффект эсвэл buff icon гарвал ажиллаж байна. Anti-heal debuff байвал сэргэлт мэдэгдэхүйц багасна.";
+        } else if (/silence|disarm|knockdown|slow|hex|inhibitor/.test(text)) {
+          timing = "Дайсан зугтах ability эсвэл гол combo-гоо ашиглахын өмнө target дээр тавь. CC давхардуулж хугацааг дэмий үрэхгүйгээр багийнхаа engage-тэй холбо.";
+          signal = "Target дээр debuff icon/visual гарч, тохирох action нь хаагдах эсвэл хөдөлгөөн нь удаашрахад эффект ажилласан байна.";
+        } else if (/barrier|resist|armor|metal skin|unstoppable|ethereal/.test(text)) {
+          timing = "Дайсны хамгийн хүчтэй burst эсвэл control ирэхээс агшин өмнө ашигла. Damage авсны дараа хэт орой дарах нь гол value-г алдана.";
+          signal = "Таны hero дээр barrier/buff icon, өнгөт бүрхүүл эсвэл damage багассан өөрчлөлт харагдана. Duration дуусах мөчийг icon-оор ажигла.";
+        } else if (/reload|magazine|round/.test(text)) {
+          timing = "Fight эхлэхдээ magazine-ийн аль хэсэг bonus авдгийг мэдэж ор. Reload хийх аюулгүй цонхоо cover, dash эсвэл ability-тай холбо.";
+          signal = "Magazine/reload UI, buff icon болон эхний/сүүлийн сумны damage өөрчлөлтөөр нөхцөл ажилласныг мэднэ.";
+        } else if (/headshot|long range|stalker|close quarters|point blank/.test(text)) {
+          timing = "Item-ийн шаардсан зай, өнцөг болон aim нөхцөлийг эхлээд бүрдүүл. Position буруу бол item байгаа ч bonus огт ажиллахгүй байж болно.";
+          signal = "Headshot marker, damage number эсвэл range нөхцөл солигдоход гардаг buff icon-оор bonus орсныг шалга.";
+        }
+
+        const steps = item.active
+          ? [
+              "Fight-ээс өмнө active item cooldown бэлэн эсэхийг HUD дээр шалга.",
+              "Зөв target, зай эсвэл incoming damage/combo-г хүлээгээд item hotkey-г нэг удаа дар.",
+              "Effect-ийн duration дотор damage, engage, escape эсвэл хамгаалалтын үйлдлээ хий; cooldown эхэлмэгц дахин дарах гэж бүү оролд.",
+            ]
+          : item.imbue
+            ? [
+                "Худалдаж авах үед build-ийнхээ хамгийн чухал, тогтмол ашигладаг ability-г сонго.",
+                "Сонгосон ability-гаа item-ийн тайлбарт тохирох target/зайгаар ашиглаж эффектийг trigger хий.",
+                "Cooldown болон buff/debuff indicator-ийг ажиглаад дараагийн combo-гоо бэлд.",
+              ]
+            : [
+                "Item-ийн тайлбар дахь trigger нөхцөлийг тоглолт эхлэхээс өмнө тодорхойл.",
+                "Зай, HP, headshot, movement эсвэл hit гэсэн тэр нөхцөлийг зориудаар бүрдүүл.",
+                "Indicator/damage өөрчлөлтөөр proc орсныг шалгаад cooldown дуусах хүртэл дахин force хийхгүй байрлалаа хадгал.",
+              ];
+
+        return {
+          type,
+          icon,
+          trigger,
+          timing,
+          signal,
+          steps,
+          effect: `${item.d} Энэ нь ${item.active ? "товч дарсны дараах хязгаарлагдмал хугацаанд" : item.imbue ? "сонгосон ability дээр" : "нөхцөл биелсэн үед автоматаар"} ажиллах үндсэн механизмтай.`,
+        };
+      }
+
       function getItemGuide(item, shopKey) {
         const base = SHOP_GUIDES[shopKey];
         const guide = {
@@ -3405,6 +3588,7 @@
       function openItemGuide(item, shopKey) {
         const shop = DATA[shopKey];
         const guide = getItemGuide(item, shopKey);
+        const mechanic = getMechanicGuide(item);
         const modal = document.getElementById("itemModal");
         const body = document.getElementById("itemModalBody");
         const visual = item.img
@@ -3418,8 +3602,7 @@
               <span class="meta-pill">${escapeHtml(shop.label)}</span>
               <span class="meta-pill">Tier ${item.t}</span>
               <span class="meta-pill">${escapeHtml(shop.tierPrices[item.t])}</span>
-              ${item.active ? '<span class="meta-pill">Active</span>' : ""}
-              ${item.imbue ? '<span class="meta-pill">Imbue</span>' : ""}
+              <span class="meta-pill">${escapeHtml(mechanic.type)}</span>
             </div>
           </aside>
           <section>
@@ -3427,6 +3610,31 @@
             <h2 class="modal-title" id="itemModalTitle">${escapeHtml(item.n)}</h2>
             <p class="modal-summary">${escapeHtml(readableItemSummary(item, guide))}</p>
             <div class="guide-grid">
+              <div class="mechanic-hero">
+                <span class="mechanic-icon" aria-hidden="true">${mechanic.icon}</span>
+                <div>
+                  <strong>Яг яаж ажилладаг вэ?</strong>
+                  <p>${escapeHtml(mechanic.effect)}</p>
+                </div>
+              </div>
+              <div class="guide-section wide">
+                <h3>⚡ Ямар үед, яаж идэвхждэг вэ?</h3>
+                <p>${escapeHtml(mechanic.trigger)}</p>
+              </div>
+              <div class="guide-section wide">
+                <h3>1 → 2 → 3 Хэрэглэх дараалал</h3>
+                <ol class="usage-steps">
+                  ${mechanic.steps.map((step) => `<li>${escapeHtml(step)}</li>`).join("")}
+                </ol>
+              </div>
+              <div class="guide-section">
+                <h3>◉ Ажиллаж байгааг яаж мэдэх вэ?</h3>
+                <p>${escapeHtml(mechanic.signal)}</p>
+              </div>
+              <div class="guide-section">
+                <h3>⏱ Зөв timing</h3>
+                <p>${escapeHtml(mechanic.timing)}</p>
+              </div>
               <div class="guide-section">
                 <h3>◎ Хэзээ худалдаж авах вэ?</h3>
                 <p>${escapeHtml(guide.when)}</p>
@@ -3449,6 +3657,9 @@
                 <p>${escapeHtml(guide.caution)}</p>
               </div>
             </div>
+            <div class="guide-actions">
+              <button class="guide-action" id="copyItemGuide" type="button">Guide хуулах</button>
+            </div>
             <p class="guide-note">Зөвлөмж нь ерөнхий build чиглэл. Patch, багийн composition, lane болон тоглолтын нөхцөлөөс шалтгаалан сонголтоо өөрчлөөрэй.</p>
           </section>
         `;
@@ -3463,6 +3674,19 @@
             if (found) openItemGuide(found.item, found.shopKey);
           });
         });
+        document
+          .getElementById("copyItemGuide")
+          ?.addEventListener("click", async (event) => {
+            const button = event.currentTarget;
+            const copyText = `${item.n} — ${mechanic.type}\n\nЯаж ажилладаг: ${mechanic.effect}\nИдэвхжих нөхцөл: ${mechanic.trigger}\nЗөв timing: ${mechanic.timing}\nТохирох hero: ${guide.heroes.join(", ")}\nBuild: ${guide.builds.join(", ")}\nАнхаарах: ${guide.caution}`;
+            try {
+              await navigator.clipboard.writeText(copyText);
+              button.textContent = "Хуулагдлаа ✓";
+              setTimeout(() => (button.textContent = "Guide хуулах"), 1600);
+            } catch {
+              button.textContent = "Хуулж чадсангүй";
+            }
+          });
         document.getElementById("itemClose").focus();
       }
 
