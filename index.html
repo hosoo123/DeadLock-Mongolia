@@ -20,7 +20,7 @@
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://dead-lock-mongolia.vercel.app/" />
     <link rel="canonical" href="https://dead-lock-mongolia.vercel.app/" />
-    <title>Deadlock Item Guide — Монгол</title>
+    <title>Deadlock хэрэгслийн тайлбар — Монгол</title>
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap");
 
@@ -891,6 +891,38 @@
         border-color: var(--shop-accent);
         color: var(--ink);
       }
+      .term-help {
+        margin-top: 10px;
+        border: 1px dashed var(--line);
+        border-radius: 6px;
+        background: rgba(0, 0, 0, 0.12);
+      }
+      .term-help summary {
+        padding: 11px 13px;
+        color: var(--ink-dim);
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 9px;
+        font-weight: 600;
+        cursor: pointer;
+        list-style-position: inside;
+      }
+      .term-help-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        padding: 0 13px 13px;
+      }
+      .term-help-grid p {
+        margin: 0;
+        padding: 9px 10px;
+        border-left: 2px solid var(--line);
+        color: var(--ink-dim);
+        font-size: 11px;
+        line-height: 1.55;
+      }
+      .term-help-grid strong {
+        color: var(--ink);
+      }
       .upgrade-path {
         display: flex;
         flex-wrap: wrap;
@@ -1502,6 +1534,9 @@
         .glance-card:last-child {
           grid-column: 1 / -1;
         }
+        .term-help-grid {
+          grid-template-columns: 1fr;
+        }
         .guide-grid {
           grid-template-columns: 1fr;
         }
@@ -1582,10 +1617,10 @@
           </button>
         </nav>
         <div class="kicker">Deadlock · Reference No. 03</div>
-        <h1>Item Guide</h1>
+        <h1>Хэрэгслийн тайлбар</h1>
         <p class="sub">
-          Item дээр дараад дэлгэрэнгүй тайлбар, тохирох hero ба build, counter
-          хийх нөхцөлийг нэг дороос хараарай.
+          Хэрэгсэл дээр дараад яаж ажилладаг, ямар баатарт тохирдог,
+          хэзээ авах болон ямар дайсны эсрэг ашиглахыг нэг дороос хараарай.
         </p>
       </header>
 
@@ -1615,11 +1650,11 @@
         <div class="meta-builder-head">
           <div>
             <div class="kicker">Live meta · Сүүлийн 30 хоног</div>
-            <h2 id="metaBuilderTitle">Hero build автоматаар гаргах</h2>
+            <h2 id="metaBuilderTitle">Баатрын хэрэгслийн бүрдэл гаргах</h2>
             <p class="meta-builder-copy">
-              Hero-гоо сонгоход тухайн үеийн бодит тоглолтуудын item сонголт,
-              ялалтын хувь болон sample хэмжээг харьцуулж, эхлэлээс late game
-              хүртэл уншихад хялбар build санал болгоно.
+              Баатраа сонгоход сүүлийн үеийн бодит тоглолтын хэрэгслийн сонголт,
+              ялалтын хувь болон ашигласан тоглолтын тоог харьцуулна. Дараа нь
+              тоглолтын эхнээс төгсгөл хүртэл авахад хялбар дараалал санал болгоно.
             </p>
           </div>
           <div class="api-status" id="apiStatus">
@@ -1636,7 +1671,7 @@
             type="button"
             disabled
           >
-            Build гаргах
+            Бүрдэл гаргах
           </button>
         </div>
         <div class="build-output" id="buildOutput" aria-live="polite"></div>
@@ -1664,10 +1699,10 @@
         </div>
         <div class="filter-chips" id="tierChips">
           <button class="chip active" data-tier="all">Бүгд</button>
-          <button class="chip" data-tier="1">Tier 1</button>
-          <button class="chip" data-tier="2">Tier 2</button>
-          <button class="chip" data-tier="3">Tier 3</button>
-          <button class="chip" data-tier="4">Tier 4</button>
+          <button class="chip" data-tier="1">Түвшин 1</button>
+          <button class="chip" data-tier="2">Түвшин 2</button>
+          <button class="chip" data-tier="3">Түвшин 3</button>
+          <button class="chip" data-tier="4">Түвшин 4</button>
         </div>
       </div>
 
@@ -3252,26 +3287,26 @@
               return entry;
             });
         return [
-          { title: "Эхлэл · Lane", items: take(1, 3) },
-          { title: "Early game", items: take(2, 3) },
-          { title: "Core · Mid game", items: take(3, 3) },
-          { title: "Late upgrade", items: take(4, 3) },
+          { title: "Шугамын эхлэл", items: take(1, 3) },
+          { title: "Тоглолтын эхэн", items: take(2, 3) },
+          { title: "Тоглолтын дунд үе", items: take(3, 3) },
+          { title: "Тоглолтын төгсгөл", items: take(4, 3) },
         ];
       }
 
       function buildItemHtml(entry) {
         const meta = entry.metric.matches
           ? `${(entry.metric.rate * 100).toFixed(1)}% WR · ${entry.metric.matches.toLocaleString()} тоглолт`
-          : "Role тохироо";
+          : "Баатрын үүрэгтэй тохирсон";
         return `<div class="build-item-row"><span>${escapeHtml(entry.name)}</span><small>${escapeHtml(meta)}</small></div>`;
       }
 
       function renderGeneratedBuild(hero, phases, isLive) {
         const output = document.getElementById("buildOutput");
         output.innerHTML = `
-          <p class="build-summary"><strong>${escapeHtml(heroName(hero))}</strong>-ийн санал болгосон build. Item-үүдийг заавал яг энэ дарааллаар авахгүй; lane болон дайсны composition-д тааруулж defensive/counter item сольж болно.</p>
+          <p class="build-summary"><strong>${escapeHtml(heroName(hero))}</strong>-д санал болгож буй хэрэгслийн бүрдэл. Заавал яг энэ дарааллаар авах албагүй. Тоглож буй шугам, дайсны баатрууд болон өөрт тулгарсан асуудалд тааруулж хамгаалах эсвэл сөрөх хэрэгслээр сольж болно.</p>
           <div class="build-phases">${phases.map((phase) => `<div class="build-phase"><h3>${escapeHtml(phase.title)}</h3>${phase.items.length ? phase.items.map(buildItemHtml).join("") : '<div class="build-item-row"><span>Мэдээлэл хангалтгүй</span></div>'}</div>`).join("")}</div>
-          <p class="build-footnote">${isLive ? "Сүүлийн 30 хоногийн бодит тоглолтын өгөгдлийг sample хэмжээтэй нь жигнэж эрэмбэлэв." : "API түр холбогдоогүй тул hero-гийн үүрэг болон item synergy-д суурилсан fallback build харуулж байна."} Build бол чиглэл болохоос бүх тоглолтод өөрчлөхгүй жор биш.</p>`;
+          <p class="build-footnote">${isLive ? "Сүүлийн 30 хоногийн бодит тоглолтод хэдэн удаа ашигласан болон ялалтын хувийг хамтад нь харьцуулж эрэмбэлэв." : "Шинэ мэдээлэл түр ирээгүй тул баатрын үндсэн үүрэг болон хэрэгслүүдийн зохицолд тулгуурласан санал харуулж байна."} Энэ нь баримжаа болохоос тоглолт бүрт өөрчлөхгүй хатуу дараалал биш.</p>`;
         output.classList.add("visible");
       }
 
@@ -3283,7 +3318,7 @@
         );
         if (!hero) {
           document.getElementById("buildOutput").innerHTML =
-            '<p class="build-summary">Эхлээд hero-оо сонгоно уу.</p>';
+            '<p class="build-summary">Эхлээд баатраа сонгоно уу.</p>';
           document.getElementById("buildOutput").classList.add("visible");
           return;
         }
@@ -3318,7 +3353,7 @@
           );
         } finally {
           button.disabled = false;
-          button.textContent = "Build гаргах";
+          button.textContent = "Бүрдэл гаргах";
         }
       }
 
@@ -3453,92 +3488,92 @@
       };
 
       const STAGE_GUIDE = {
-        1: "Lane эхлэл — хямдхан power spike эсвэл lane-ийн сул талаа нөхөх үед.",
-        2: "Early game — эхний core item-үүдийн нэг болгож build-ийн чиглэлээ тогтоох үед.",
-        3: "Mid game — lane-ээс teamfight руу шилжихэд тодорхой matchup эсвэл combo-д зориулж.",
-        4: "Late game — үндсэн core build бэлэн болсон хойно өндөр өртөгтэй finisher байдлаар.",
+        1: "Шугамын эхлэл — бага үнээр эрт хүч авах эсвэл өөрийн сул талыг нөхөх үед.",
+        2: "Тоглолтын эхэн үе — үндсэн хэрэгслүүдийн нэг болгон авч, ямар чиглэлээр тоглохоо тогтоох үед.",
+        3: "Тоглолтын дунд үе — багийн тулаан эхлэх үед тодорхой дайсан эсвэл өөрийн гол дайралтад зориулж авна.",
+        4: "Тоглолтын төгсгөл — үндсэн хэрэгслүүдээ авсны дараа хүчээ гүйцээх үнэтэй сонголт болгон авна.",
       };
 
       function getTriggerCondition(item) {
         const text = `${item.n} ${item.d}`.toLowerCase();
         if (item.active)
-          return "Item-ийн active товчийг өөрөө дарахад идэвхжинэ. Cooldown дуусаагүй үед дахин ашиглагдахгүй.";
+          return "Хэрэгслийн тусгай товчийг өөрөө дарахад ажиллана. Нэг ашигласны дараа дэлгэц дээрх хүлээлгийн хугацаа дуусах хүртэл дахин ашиглаж болохгүй.";
         if (item.imbue)
-          return "Худалдаж авах үед нэг ability сонгож Imbue хийнэ. Дараа нь зөвхөн сонгосон ability-тай холбоотойгоор гол эффект ажиллана.";
+          return "Худалдаж авах үедээ нэг чадвар сонгож энэ хэрэгсэлтэй холбоно. Үүнээс хойш гол нөлөө нь зөвхөн сонгосон чадварт үйлчилнэ.";
         if (/headshot|толгой/.test(text))
-          return "Дайсны толгойд сум онож headshot бүртгэгдэх үед нэмэлт эффект шалгагдана.";
+          return "Дайсны толгойд сумаа оновол нэмэлт нөлөө автоматаар ажиллана. Бие рүү оносон сум энэ нөхцөлийг идэвхжүүлэхгүй.";
         if (/reload|цэнэгл|magazine|магазин/.test(text))
-          return "Буугаа reload хийх, эсвэл magazine-ийн заасан хэсэгт хүрэх үед нөхцөл нь биелнэ.";
+          return "Сумаа дахин цэнэглэх үед, эсвэл дайзанд үлдсэн сум заасан хэмжээнд хүрэх үед нөлөө нь ажиллана.";
         if (/dash|stamina|leap|үср|гулс|sprint|хөдөлгөөн/.test(text))
-          return "Movement action буюу dash, sprint, leap эсвэл stamina ашигласан мөчтэй холбогдож ажиллана.";
+          return "Огцом бултах, хурдан гүйх, үсрэх зэрэг хөдөлгөөн хийсний дараа нөлөө нь автоматаар ажиллана.";
         if (/melee|цохилт/.test(text))
-          return "Melee цохилт хийх эсвэл melee онох үед гол эффект идэвхжинэ.";
+          return "Ойрын гар цохилтоо дайсанд оновол гол нөлөө нь идэвхжинэ.";
         if (/low hp|hp баг|health баг|багасах тусам/.test(text))
           return "Таны HP заасан хэмжээнээс доош ороход нөхцөл автоматаар идэвхжинэ.";
         if (/damage авах|хохирол авах|on damage|resilience/.test(text))
-          return "Дайснаас хохирол авсны дараа автоматаар stack эсвэл түр эффект үүсгэнэ.";
+          return "Дайснаас хохирол авах бүрт хамгаалалт эсвэл нэмэлт нөлөө тодорхой хэмжээгээр давхарлан нэмэгдэнэ.";
         if (/kill|алах|үхэл|assist/.test(text))
-          return "Kill эсвэл item-ийн заасан elimination нөхцөл биелэхэд автоматаар ажиллана.";
+          return "Дайсныг өөрөө алах эсвэл алахад нь туслах нөхцөл биелэхэд автоматаар ажиллана.";
         if (/close|ойр зай|point blank|hollow/.test(text))
-          return "Дайсан item-ийн ойрын зайн босгон дотор байх үед bonus автоматаар тооцогдоно.";
+          return "Дайсантай хангалттай ойрхон байх үед нэмэлт хүч автоматаар орно. Зай холдвол тэр нэмэлт хүч ажиллахгүй.";
         if (/long range|хол зай|алсын зай|stalker/.test(text))
-          return "Дайсан item-ийн шаардсан холын зайн босгоос цаана байх үед bonus автоматаар тооцогдоно.";
+          return "Дайснаас хангалттай хол байх үед нэмэлт хүч автоматаар орно. Хэт ойртвол тэр нэмэлт хүч ажиллахгүй.";
         if (/ability|spirit|mystic|spell/.test(text))
-          return "Ability ашиглах эсвэл spirit damage хүргэх үед item-ийн нөхцөл таарвал автоматаар ажиллана.";
+          return "Чадвараа ашиглаж дайсанд хохирол өгөх үед тайлбарт байгаа нөхцөл таарвал автоматаар ажиллана.";
         if (/bullet|сум|буу|shot|round/.test(text))
-          return "Бууны сум дайсанд онох үед item-ийн нэмэлт bullet эффект автоматаар шалгагдана.";
-        return "Inventory-д байхад үндсэн stat нь байнга ажиллана; тайлбарт дурдсан нөхцөл биелэхэд нэмэлт passive эффект автоматаар асна.";
+          return "Бууны сум дайсанд онох бүрт нэмэлт нөлөө ажиллах эсэхийг тоглоом автоматаар шалгана.";
+        return "Хэрэгслийг авсан даруйд үндсэн нэмэгдэл нь байнга ажиллана. Харин нэмэлт нөлөө нь тайлбарт дурдсан нөхцөл биелэх үед өөрөө асна.";
       }
 
       function getMechanicGuide(item) {
         const text = `${item.n} ${item.d}`.toLowerCase();
         const type = item.active
-          ? "Active · гараар ашиглана"
+          ? "Гараар идэвхжүүлнэ"
           : item.imbue
-            ? "Imbue · ability-д холбоно"
-            : "Passive · автоматаар ажиллана";
+            ? "Нэг чадварт холбож өгнө"
+            : "Өөрөө автоматаар ажиллана";
         const icon = item.active ? "⚡" : item.imbue ? "✦" : "∞";
         const trigger = getTriggerCondition(item);
         let timing = item.active
-          ? "Fight эхлэхээс яг өмнө эсвэл дайсны гол combo эхлэх мөчид дар. Хэт эрт ашиглавал duration дуусна, хэт орой ашиглавал хамгаалалт/tempo авч амжихгүй."
-          : "Нөхцөл нь биелэх байрлал, зай эсвэл action-оо урьдчилан бэлд. Passive item учраас товч дарахгүй, харин тоглолтын хэв маягаа item-д тааруулах нь чухал.";
+          ? "Тулаан эхлэхийн яг өмнө, эсвэл дайсан гол дайралтаа эхлүүлэх мөчид дар. Хэт эрт дарвал үйлчлэх хугацаа дэмий дуусна. Хэт орой дарвал хамгаалалт авч амжихгүй."
+          : "Товч дарах шаардлагагүй. Харин нэмэлт нөлөө ажиллах зай, байрлал эсвэл үйлдлээ урьдчилан бүрдүүлэх хэрэгтэй.";
         let signal = item.active
-          ? "HUD дээрх active item icon асаж байвал бэлэн. Ашигласны дараа icon cooldown болж, зарим item buff/debuff icon эсвэл дүрсний эффектээр хугацаагаа харуулна."
-          : "HUD-ийн buff/debuff icon, дайсан дээрх тэмдэг, damage number эсвэл stat-ийн өөрчлөлтөөр ажилласныг танина. Cooldown-той passive бол icon бүдгэрэхийг ажигла.";
+          ? "Дэлгэц дээрх хэрэгслийн тэмдэг гэрэлтэй байвал ашиглахад бэлэн. Дарсны дараа тэмдэг нь бүдгэрч, дахин ашиглах хүртэл үлдсэн хугацааг харуулна."
+          : "Таны эсвэл дайсны дээр гарсан жижиг тэмдэг, дүрсний нөлөө, хохирлын тоо өөрчлөгдөх зэргээр ажилласныг мэдэж болно.";
 
         if (/heal|regen|lifesteal|restorative|leech/.test(text)) {
-          timing = "HP дүүрэн үед value үрэхгүй. Damage авсны дараа, гэхдээ дараагийн burst-д шууд үхэхээс өмнө ашиглаж sustain-аа бүрэн ав.";
-          signal = "HP bar өсөх, healing number/эффект эсвэл buff icon гарвал ажиллаж байна. Anti-heal debuff байвал сэргэлт мэдэгдэхүйц багасна.";
+          timing = "Амь дүүрэн үед бүү ашигла. Хохирол авсны дараа, гэхдээ дараагийн хүчтэй дайралтад үхэхээсээ өмнө ашиглавал хамгийн их амь нөхнө.";
+          signal = "Амийн зурвас нэмэгдэх, ногоон тоо эсвэл эмчилгээний дүрс гарах үед ажиллаж байна. Эмчилгээ бууруулах нөлөөнд орсон бол нөхөгдөх амь багасна.";
         } else if (/silence|disarm|knockdown|slow|hex|inhibitor/.test(text)) {
-          timing = "Дайсан зугтах ability эсвэл гол combo-гоо ашиглахын өмнө target дээр тавь. CC давхардуулж хугацааг дэмий үрэхгүйгээр багийнхаа engage-тэй холбо.";
-          signal = "Target дээр debuff icon/visual гарч, тохирох action нь хаагдах эсвэл хөдөлгөөн нь удаашрахад эффект ажилласан байна.";
+          timing = "Дайсан зугтах чадвар эсвэл гол дайралтаа ашиглахаас өмнө тавь. Багийн хүний саатуулах чадвартай яг зэрэг ашиглалгүй, араас нь залгуулбал дайсныг удаан барина.";
+          signal = "Дайсны дээр сулруулах тэмдэг гарч, хөдөлгөөн удаашрах эсвэл тухайн үйлдлээ хийж чадахгүй болоход нөлөө ажилласан байна.";
         } else if (/barrier|resist|armor|metal skin|unstoppable|ethereal/.test(text)) {
-          timing = "Дайсны хамгийн хүчтэй burst эсвэл control ирэхээс агшин өмнө ашигла. Damage авсны дараа хэт орой дарах нь гол value-г алдана.";
-          signal = "Таны hero дээр barrier/buff icon, өнгөт бүрхүүл эсвэл damage багассан өөрчлөлт харагдана. Duration дуусах мөчийг icon-оор ажигла.";
+          timing = "Дайсны хамгийн хүчтэй хохирол эсвэл саатуулах чадвар ирэхийн яг өмнө ашигла. Их хохирол авсныхаа дараа дарах нь оройтсон байж болно.";
+          signal = "Баатрын бие дээр хамгаалалтын бүрхүүл, жижиг тэмдэг эсвэл өнгөний өөрчлөлт гарна. Тэр тэмдэг алга болоход хамгаалалтын хугацаа дууссан гэсэн үг.";
         } else if (/reload|magazine|round/.test(text)) {
-          timing = "Fight эхлэхдээ magazine-ийн аль хэсэг bonus авдгийг мэдэж ор. Reload хийх аюулгүй цонхоо cover, dash эсвэл ability-тай холбо.";
-          signal = "Magazine/reload UI, buff icon болон эхний/сүүлийн сумны damage өөрчлөлтөөр нөхцөл ажилласныг мэднэ.";
+          timing = "Тулаанд орохоосоо өмнө нэмэлт хүч нь эхний суманд уу, сүүлийн суманд уу гэдгийг шалга. Сумаа цэнэглэхдээ халхавчны ард ор.";
+          signal = "Сумны тоо, цэнэглэх зурвас болон эхний эсвэл сүүлийн сумны хохирол өөрчлөгдөхөд нөлөө ажилласныг мэднэ.";
         } else if (/headshot|long range|stalker|close quarters|point blank/.test(text)) {
-          timing = "Item-ийн шаардсан зай, өнцөг болон aim нөхцөлийг эхлээд бүрдүүл. Position буруу бол item байгаа ч bonus огт ажиллахгүй байж болно.";
-          signal = "Headshot marker, damage number эсвэл range нөхцөл солигдоход гардаг buff icon-оор bonus орсныг шалга.";
+          timing = "Эхлээд хэрэгслийн шаардсан зай, өнцөг болон онилолтоо бүрдүүл. Буруу байрлалд байвал хэрэгсэл авсан ч нэмэлт хүч нь ажиллахгүй.";
+          signal = "Толгойд оносон тэмдэг, хохирлын тоо эсвэл зай өөрчлөгдөхөд гардаг жижиг тэмдгээр нэмэлт хүч орсныг шалга.";
         }
 
         const steps = item.active
           ? [
-              "Fight-ээс өмнө active item cooldown бэлэн эсэхийг HUD дээр шалга.",
-              "Зөв target, зай эсвэл incoming damage/combo-г хүлээгээд item hotkey-г нэг удаа дар.",
-              "Effect-ийн duration дотор damage, engage, escape эсвэл хамгаалалтын үйлдлээ хий; cooldown эхэлмэгц дахин дарах гэж бүү оролд.",
+              "Тулаанд орохоосоо өмнө хэрэгслийн тэмдэг гэрэлтэй, ашиглахад бэлэн эсэхийг шалга.",
+              "Зөв дайсан, зөв зай эсвэл дайсны хүчтэй дайралтыг хүлээгээд хэрэгслийн товчийг нэг удаа дар.",
+              "Нөлөө ажиллаж байх хугацаанд довтлох, зугтах эсвэл хамгаалах үйлдлээ хий. Тэмдэг бүдгэрсэн бол дахин ашиглах боломжгүй.",
             ]
           : item.imbue
             ? [
-                "Худалдаж авах үед build-ийнхээ хамгийн чухал, тогтмол ашигладаг ability-г сонго.",
-                "Сонгосон ability-гаа item-ийн тайлбарт тохирох target/зайгаар ашиглаж эффектийг trigger хий.",
-                "Cooldown болон buff/debuff indicator-ийг ажиглаад дараагийн combo-гоо бэлд.",
+                "Худалдаж авах үедээ хамгийн чухал бөгөөд тогтмол ашигладаг чадвараа сонго.",
+                "Сонгосон чадвараа тайлбарт тохирох дайсан болон зайд ашигла.",
+                "Дэлгэц дээрх тэмдгийг ажиглаад нөлөө дууссаны дараа дараагийн дайралтаа бэлд.",
               ]
             : [
-                "Item-ийн тайлбар дахь trigger нөхцөлийг тоглолт эхлэхээс өмнө тодорхойл.",
-                "Зай, HP, headshot, movement эсвэл hit гэсэн тэр нөхцөлийг зориудаар бүрдүүл.",
-                "Indicator/damage өөрчлөлтөөр proc орсныг шалгаад cooldown дуусах хүртэл дахин force хийхгүй байрлалаа хадгал.",
+                "Тайлбараас нэмэлт нөлөө яг ямар нөхцөлд ажиллахыг эхлээд унш.",
+                "Шаардлагатай зай, амийн хэмжээ, толгойн оновч эсвэл хөдөлгөөнийг зориудаар бүрдүүл.",
+                "Тэмдэг болон хохирлын тоо өөрчлөгдсөн эсэхийг хараад нөлөө ажилласныг шалга.",
               ];
 
         return {
@@ -3548,7 +3583,7 @@
           timing,
           signal,
           steps,
-          effect: `${item.d} Энэ нь ${item.active ? "товч дарсны дараах хязгаарлагдмал хугацаанд" : item.imbue ? "сонгосон ability дээр" : "нөхцөл биелсэн үед автоматаар"} ажиллах үндсэн механизмтай.`,
+          effect: `${item.d} Энэ нөлөө ${item.active ? "тусгай товч дарсны дараа богино хугацаанд" : item.imbue ? "таны сонгосон нэг чадварт" : "шаардлагатай нөхцөл биелэхэд өөрөө"} ажиллана.`,
         };
       }
 
@@ -3627,10 +3662,145 @@
           .replaceAll("'", "&#039;");
       }
 
+      function plainMongolianText(value) {
+        const replacements = [
+          [/Active item-ийг fight эхлэхээс өмнө/gi, "Гараар ажиллуулдаг хэрэгслийг тулаан эхлэхээс өмнө"],
+          [/Tier 4 тул core survivability\s*\/\s*damage бэлэн болсны дараа авах luxury сонголт\./gi, "Түвшин 4-ийн үнэтэй сонголт тул амь, хамгаалалт болон хохирлын үндсэн хэрэгслүүдээ авсны дараа сонго."],
+          [/lane дээр аюултай engage-ээс гарахад/gi, "шугам дээр аюултай дайралтаас зугтахад"],
+          [/skillshot/gi, "гараар онилдог чадвар"],
+          [/bullet carry/gi, "буугаар гол хохирол гаргах"],
+          [/sustain build/gi, "удаан тулалдахад чиглэсэн бүрдэл"],
+          [/Imbue хийх ability-гаа/gi, "Хэрэгслээ холбох чадвараа"],
+          [/active item/gi, "гараар ажиллуулдаг хэрэгсэл"],
+          [/damage over time|DoT/gi, "хугацааны турш үргэлжлэх хохирол"],
+          [/teamfight timing/gi, "багийн тулаанд ашиглах мөчөө"],
+          [/олон target-тэй/gi, "олон дайсантай"],
+          [/utility skill/gi, "туслах зориулалтын чадвар"],
+          [/core survivability\s*\/\s*damage/gi, "амь, хамгаалалт болон хохирлын үндсэн хэрэгслүүд"],
+          [/survivability/gi, "амьд үлдэх чадвар"],
+          [/fight/gi, "тулаан"],
+          [/burst damage/gi, "богино хугацаанд өгөх их хохирол"],
+          [/spirit damage/gi, "чадвараас өгөх хохирол"],
+          [/bullet damage/gi, "бууны сумны хохирол"],
+          [/power spike/gi, "хүч мэдэгдэхүйц нэмэгдэх үе"],
+          [/teamfight/gi, "багийн тулаан"],
+          [/frontline/gi, "багийн урд талд тулалддаг"],
+          [/late game/gi, "тоглолтын төгсгөл"],
+          [/mid game/gi, "тоглолтын дунд үе"],
+          [/early game/gi, "тоглолтын эхэн үе"],
+          [/weapon/gi, "зэвсэг"],
+          [/vitality/gi, "амь ба хамгаалалт"],
+          [/survival/gi, "амьд үлдэх чадвар"],
+          [/support/gi, "багаа дэмжих"],
+          [/hybrid/gi, "хосолсон"],
+          [/precision/gi, "оновчтой буудалт"],
+          [/mobility/gi, "хөдөлгөөн"],
+          [/active/gi, "гараар ажиллуулах"],
+          [/hero/gi, "баатар"],
+          [/role/gi, "үүрэг"],
+          [/tier/gi, "түвшин"],
+          [/core/gi, "үндсэн"],
+          [/skill/gi, "чадвар"],
+          [/sample/gi, "ашигласан тоглолтын тоо"],
+          [/fallback/gi, "нөөц хувилбар"],
+          [/synergy/gi, "хоорондын зохицол"],
+          [/area of effect|AoE/gi, "талбай хамарсан нөлөө"],
+          [/crowd control|CC/gi, "хөдөлгөөн болон чадварыг хязгаарлах нөлөө"],
+          [/incoming damage/gi, "ирж буй хохирол"],
+          [/core build/gi, "үндсэн хэрэгслийн бүрдэл"],
+          [/core item/gi, "үндсэн хэрэгсэл"],
+          [/wave clear/gi, "цэргүүдийг хурдан цэвэрлэх"],
+          [/pick-off/gi, "ганцаар явсан дайсныг барих"],
+          [/gap close/gi, "дайсанд хурдан ойртох"],
+          [/chain damage/gi, "нэгээс нөгөөд дамжих хохирол"],
+          [/single-target/gi, "нэг дайсанд чиглэсэн"],
+          [/on-hit/gi, "онох бүрд ажиллах"],
+          [/point blank/gi, "тулсан зай"],
+          [/slow zone/gi, "удаашруулах талбай"],
+          [/marksman/gi, "холын буудагч"],
+          [/caster/gi, "чадвараар голлон тоглодог баатар"],
+          [/summon/gi, "дуудсан туслах нэгж"],
+          [/corridor/gi, "нарийн зам"],
+          [/matchup/gi, "эсрэг таарсан баатар"],
+          [/finisher/gi, "хүчээ гүйцээх сонголт"],
+          [/luxury/gi, "үндсэн хэрэгслээс хойш авах үнэтэй нэмэлт"],
+          [/tempo/gi, "тоглолтын давуу хэмнэл"],
+          [/roam/gi, "шугам хооронд явж туслах"],
+          [/dive/gi, "дайсны дунд гүн орох"],
+          [/pure/gi, "цэвэр"],
+          [/value/gi, "үр ашиг"],
+          [/carry/gi, "гол хохирол гаргах"],
+          [/scaling/gi, "тоглолт ахих тусам хүчжих"],
+          [/utility/gi, "багт туслах нэмэлт хэрэгцээ"],
+          [/engage/gi, "тулаан эхлүүлэх"],
+          [/escape/gi, "аюулаас гарах"],
+          [/indicator/gi, "ажиллаж буйг харуулах тэмдэг"],
+          [/effect/gi, "нөлөө"],
+          [/damage/gi, "хохирол"],
+          [/build/gi, "хэрэгслийн бүрдэл"],
+          [/anti-heal/gi, "эмчилгээ болон амь нөхөлтийг бууруулах нөлөө"],
+          [/lifesteal/gi, "өгсөн хохирлоосоо амь нөхөх"],
+          [/fire rate/gi, "буудах хурд"],
+          [/attack speed/gi, "буудах хурд"],
+          [/movement speed/gi, "хөдөлгөөний хурд"],
+          [/move speed/gi, "хөдөлгөөний хурд"],
+          [/active товч/gi, "хэрэгслийн товч"],
+          [/passive/gi, "автоматаар ажиллах нөлөө"],
+          [/imbue/gi, "нэг чадварт холбох"],
+          [/cooldown/gi, "дахин ашиглах хүлээлгийн хугацаа"],
+          [/duration/gi, "үйлчлэх хугацаа"],
+          [/HUD/gi, "дэлгэц дээрх төлөвийн тэмдэг"],
+          [/buff/gi, "хүч нэмэх нөлөө"],
+          [/debuff/gi, "сулруулах нөлөө"],
+          [/headshot/gi, "толгойн оновчтой буудалт"],
+          [/reload/gi, "сумаа дахин цэнэглэх"],
+          [/magazine/gi, "сумны дайз"],
+          [/spirit/gi, "чадварын хүч"],
+          [/bullet/gi, "бууны сум"],
+          [/ability/gi, "чадвар"],
+          [/dash/gi, "огцом бултах хөдөлгөөн"],
+          [/sprint/gi, "хурдан гүйлт"],
+          [/melee/gi, "ойрын гар цохилт"],
+          [/stamina/gi, "хөдөлгөөний цэнэг"],
+          [/range/gi, "зай"],
+          [/target/gi, "сонгосон бай"],
+          [/timing/gi, "ашиглах зөв мөч"],
+          [/combo/gi, "дараалсан дайралт"],
+          [/barrier/gi, "түр хамгаалалтын бүрхүүл"],
+          [/resistance/gi, "хохирол тэсвэрлэх чадвар"],
+          [/proc/gi, "нэмэлт нөлөө идэвхжих"],
+          [/stack/gi, "давхарга"],
+          [/sustain/gi, "удаан тулалдах тэсвэр"],
+          [/poke/gi, "зайнаас бага багаар хохироох"],
+          [/lane/gi, "тоглож буй шугам"],
+          [/counter/gi, "сөрөх сонголт"],
+          [/item/gi, "хэрэгсэл"],
+        ];
+        const translated = replacements.reduce(
+          (text, [pattern, replacement]) => text.replace(pattern, replacement),
+          String(value || ""),
+        );
+        return translated
+          .replaceAll("хэрэгсэл-ийг", "хэрэгслийг")
+          .replaceAll("хэрэгсэл-ийн", "хэрэгслийн")
+          .replaceAll("баатар-гийн", "баатрын")
+          .replaceAll("баатар баатар", "баатар")
+          .replaceAll("чадвар-гаа", "чадвараа")
+          .replaceAll("чадвар-тай", "чадвартай")
+          .replaceAll("тэмдэг-ийг", "тэмдгийг")
+          .replaceAll("нөлөө-ийг", "нөлөөг")
+          .replaceAll("хохирол-оор", "хохирлоор")
+          .replaceAll("сонгосон бай-тэй", "сонгосон байтай")
+          .replaceAll("тулаан-д", "тулаанд")
+          .replaceAll("нөлөө-оос", "нөлөөнөөс")
+          .replaceAll("эхлүүлэх-ээс", "эхлүүлэхээс")
+          .replaceAll("чадвар-ийг", "чадварыг");
+      }
+
       function formatGuideText(value) {
-        const safe = escapeHtml(value);
+        const safe = escapeHtml(plainMongolianText(value));
         const keywords =
-          /(Active|Passive|Imbue|cooldown|duration|HUD|buff|debuff|headshot|reload|magazine|damage|spirit|bullet|lifesteal|anti-heal|HP|ability|dash|sprint|melee|stamina|range|target|timing|combo|barrier|resistance|proc|stack)/gi;
+          /(гараар ажиллуулдаг|автоматаар ажиллах|нэг чадварт холбох|дахин ашиглах хүлээлгийн хугацаа|үйлчлэх хугацаа|толгойн оновчтой буудалт|сумаа дахин цэнэглэх|сумны дайз|чадварын хүч|бууны сум|амь нөхөх|эмчилгээ|HP|чадвар|огцом бултах хөдөлгөөн|хөдөлгөөний цэнэг|ашиглах зөв мөч|дараалсан дайралт|хамгаалалтын бүрхүүл|давхарга|хохирол)/gi;
         return safe.replace(
           keywords,
           '<strong class="guide-keyword">$1</strong>',
@@ -3639,7 +3809,7 @@
 
       function tagList(values) {
         return values
-          .map((value) => `<span class="guide-tag">${escapeHtml(value)}</span>`)
+          .map((value) => `<span class="guide-tag">${escapeHtml(plainMongolianText(value))}</span>`)
           .join("");
       }
 
@@ -3666,7 +3836,7 @@
         const { item, shop } = found;
         return `<button class="upgrade-item" type="button" data-upgrade-name="${escapeHtml(item.n)}">
           ${item.img ? `<img src="${escapeHtml(item.img)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : ""}
-          <span><strong>${escapeHtml(item.n)}</strong><small>Tier ${item.t} · ${escapeHtml(shop.tierPrices[item.t])}</small></span>
+          <span><strong>${escapeHtml(item.n)}</strong><small>Түвшин ${item.t} · ${escapeHtml(shop.tierPrices[item.t])}</small></span>
         </button>`;
       }
 
@@ -3689,15 +3859,15 @@
             upgradeButton(entry),
           ),
         );
-        return `<div class="guide-section wide"><h3>↗ Item upgrade зам</h3><div class="upgrade-path">${parts.join("")}</div></div>`;
+        return `<div class="guide-section wide"><h3>↗ Дараагийн хүчтэй хувилбар</h3><div class="upgrade-path">${parts.join("")}</div></div>`;
       }
 
       function readableItemSummary(item, guide) {
         const description = String(item.d || "").trim();
         const purpose = guide.builds.slice(0, 2).join(" болон ");
         if (!description)
-          return `${item.n} нь ${purpose} чиглэлийн build-д ашиглагддаг item.`;
-        return `${description} Ерөнхийдөө ${purpose} чиглэлийн build-д хамгийн сайн үр дүн өгнө.`;
+          return `${item.n} нь ${purpose} чиглэлийн хэрэгслийн бүрдэлд ашиглагдана.`;
+        return `${description} Ерөнхийдөө ${purpose} чиглэлээр тоглоход илүү тохиромжтой.`;
       }
 
       let lastFocusedCard = null;
@@ -3717,22 +3887,22 @@
             ${visual}
             <div class="modal-meta">
               <span class="meta-pill">${escapeHtml(shop.label)}</span>
-              <span class="meta-pill">Tier ${item.t}</span>
+              <span class="meta-pill">Түвшин ${item.t}</span>
               <span class="meta-pill">${escapeHtml(shop.tierPrices[item.t])}</span>
               <span class="meta-pill">${escapeHtml(mechanic.type)}</span>
             </div>
           </aside>
           <section>
-            <div class="modal-kicker">${escapeHtml(guide.role)} · Item guide</div>
+            <div class="modal-kicker">${escapeHtml(plainMongolianText(guide.role))} · Хэрэгслийн тайлбар</div>
             <h2 class="modal-title" id="itemModalTitle">${escapeHtml(item.n)}</h2>
             <div class="summary-card">
               <span class="summary-label">Товч ойлголт</span>
               <p class="modal-summary">${formatGuideText(readableItemSummary(item, guide))}</p>
             </div>
-            <div class="quick-glance" aria-label="Item-ийн хурдан мэдээлэл">
+            <div class="quick-glance" aria-label="Хэрэгслийн хурдан мэдээлэл">
               <div class="glance-card"><small>Механик</small><strong>${escapeHtml(mechanic.type.split(" · ")[0])}</strong></div>
-              <div class="glance-card"><small>Авах үе</small><strong>Tier ${item.t} · ${escapeHtml(String(guide.when).split("—")[0].trim())}</strong></div>
-              <div class="glance-card"><small>Гол чиглэл</small><strong>${escapeHtml(guide.builds[0] || guide.role)}</strong></div>
+              <div class="glance-card"><small>Авах үе</small><strong>Түвшин ${item.t} · ${escapeHtml(String(guide.when).split("—")[0].trim())}</strong></div>
+              <div class="glance-card"><small>Гол чиглэл</small><strong>${escapeHtml(plainMongolianText(guide.builds[0] || guide.role))}</strong></div>
             </div>
             <div class="guide-grid">
               <div class="mechanic-hero">
@@ -3757,7 +3927,7 @@
                 <p>${formatGuideText(mechanic.signal)}</p>
               </div>
               <div class="guide-section">
-                <h3>⏱ Зөв timing</h3>
+                <h3>⏱ Ашиглах зөв мөч</h3>
                 <p>${formatGuideText(mechanic.timing)}</p>
               </div>
               <div class="guide-section">
@@ -3765,15 +3935,15 @@
                 <p>${formatGuideText(guide.when)}</p>
               </div>
               <div class="guide-section">
-                <h3>◇ Ямар build-д тохирох вэ?</h3>
+                <h3>◇ Ямар хэрэгслийн бүрдэлд тохирох вэ?</h3>
                 <div class="tag-list">${tagList(guide.builds)}</div>
               </div>
               <div class="guide-section">
-                <h3>♟ Аль hero-д илүү тохирох вэ?</h3>
+                <h3>♟ Аль баатарт илүү тохирох вэ?</h3>
                 <div class="tag-list">${tagList(guide.heroes)}</div>
               </div>
               <div class="guide-section">
-                <h3>⚔ Ямар үед counter болох вэ?</h3>
+                <h3>⚔ Ямар дайсны эсрэг авах вэ?</h3>
                 <p>${formatGuideText(guide.counter)}</p>
               </div>
               ${renderUpgradePath(item.n)}
@@ -3783,9 +3953,18 @@
               </div>
             </div>
             <div class="guide-actions">
-              <button class="guide-action" id="copyItemGuide" type="button">Guide хуулах</button>
+              <button class="guide-action" id="copyItemGuide" type="button">Тайлбар хуулах</button>
             </div>
-            <p class="guide-note">Зөвлөмж нь ерөнхий build чиглэл. Patch, багийн composition, lane болон тоглолтын нөхцөлөөс шалтгаалан сонголтоо өөрчлөөрэй.</p>
+            <details class="term-help">
+              <summary>Үг ойлгомжгүй байвал энд дар</summary>
+              <div class="term-help-grid">
+                <p><strong>Гараар идэвхжүүлнэ</strong><br />Хэрэгслийн тусгай товчийг өөрөө дарж ажиллуулна.</p>
+                <p><strong>Өөрөө автоматаар ажиллана</strong><br />Тайлбарт байгаа нөхцөл биелмэгц товч дарахгүйгээр асна.</p>
+                <p><strong>Нэг чадварт холбоно</strong><br />Худалдаж авах үедээ нэг чадвар сонгоход зөвхөн тэр чадварт нөлөөлнө.</p>
+                <p><strong>Түвшин</strong><br />Хэрэгслийн үнэ болон хүчний ангилал. Түвшин өндөр байх тусам ихэвчлэн үнэтэй.</p>
+              </div>
+            </details>
+            <p class="guide-note">Энэ бол ерөнхий зөвлөмж. Тоглоомын шинэчлэлт, хоёр багийн баатар, тоглож буй шугам болон тухайн тулааны нөхцөлд тааруулж сонголтоо өөрчлөөрэй.</p>
           </section>
         `;
 
@@ -3803,11 +3982,11 @@
           .getElementById("copyItemGuide")
           ?.addEventListener("click", async (event) => {
             const button = event.currentTarget;
-            const copyText = `${item.n} — ${mechanic.type}\n\nЯаж ажилладаг: ${mechanic.effect}\nИдэвхжих нөхцөл: ${mechanic.trigger}\nЗөв timing: ${mechanic.timing}\nТохирох hero: ${guide.heroes.join(", ")}\nBuild: ${guide.builds.join(", ")}\nАнхаарах: ${guide.caution}`;
+            const copyText = `${item.n} — ${mechanic.type}\n\nЯаж ажилладаг: ${plainMongolianText(mechanic.effect)}\nИдэвхжих нөхцөл: ${plainMongolianText(mechanic.trigger)}\nАшиглах зөв мөч: ${plainMongolianText(mechanic.timing)}\nТохирох баатар: ${guide.heroes.join(", ")}\nХэрэгслийн бүрдэл: ${guide.builds.map(plainMongolianText).join(", ")}\nАнхаарах зүйл: ${plainMongolianText(guide.caution)}`;
             try {
               await navigator.clipboard.writeText(copyText);
               button.textContent = "Хуулагдлаа ✓";
-              setTimeout(() => (button.textContent = "Guide хуулах"), 1600);
+              setTimeout(() => (button.textContent = "Тайлбар хуулах"), 1600);
             } catch {
               button.textContent = "Хуулж чадсангүй";
             }
@@ -3864,7 +4043,7 @@
           const head = document.createElement("div");
           head.className = "tier-head";
           head.innerHTML = `
-      <span class="tier-num">Tier ${t}</span>
+      <span class="tier-num">Түвшин ${t}</span>
       <span class="tier-price">${shop.tierPrices[t]}</span>
       ${shop.tierNote[t] ? `<span class="tier-note">${shop.tierNote[t]}</span>` : ""}
     `;
@@ -3891,12 +4070,12 @@
         <div class="card-top">
           <div class="item-name">${it.n}</div>
           <div class="badges">
-            ${it.active ? '<span class="badge active">Active</span>' : ""}
-            ${it.imbue ? '<span class="badge imbue">Imbue</span>' : ""}
+            ${it.active ? '<span class="badge active">Гараар</span>' : ""}
+            ${it.imbue ? '<span class="badge imbue">Чадварт</span>' : ""}
           </div>
         </div>
-        <div class="item-desc">${it.d}</div>
-        <div class="guide-link">Дэлгэрэнгүй guide</div>
+        <div class="item-desc">${formatGuideText(it.d)}</div>
+        <div class="guide-link">Дэлгэрэнгүй тайлбар</div>
       `;
             card.addEventListener("click", () =>
               openItemGuide(it, currentShop),
