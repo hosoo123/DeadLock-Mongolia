@@ -9,7 +9,7 @@
 */
 
       const WIRE_SUPPORT_URL =
-        "https://pay.wire.mn/link/plink_krd6jmuhq3y6mrrkog7o43mvne";
+        "https://pay.wire.mn/link/plink_v27y3riefe7y57gsajlke56yei";
 
       const DATA = {
         fairfax: {
@@ -2175,10 +2175,10 @@
               <div>
                 <span class="wire-support-kicker">Wire · QPay</span>
                 <strong>Deadlock Mongolia-г дэмжих</strong>
-                <p>Энэ тайлбар хэрэг болсон бол хүссэн дүнгээрээ төслийг дэмжээрэй.</p>
+                <p>Энэ тайлбар хэрэг болсон бол 500₮-өөр төслийг дэмжээрэй.</p>
               </div>
               <a class="wire-support-button" href="${WIRE_SUPPORT_URL}" target="_blank" rel="noopener noreferrer">
-                QPay-аар дэмжих
+                500₮-өөр дэмжих
               </a>
             </div>
             <div class="guide-actions">

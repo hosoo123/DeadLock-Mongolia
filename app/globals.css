@@ -1276,6 +1276,63 @@
         transform: translateY(0);
       }
 
+      /* ---------- FIXED WIRE SUPPORT ---------- */
+      .wire-float {
+        position: fixed;
+        right: 18px;
+        bottom: 18px;
+        z-index: 210;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        width: 150px;
+        min-height: 112px;
+        padding: 16px;
+        border: 1px solid rgba(74, 222, 128, 0.72);
+        border-radius: 14px;
+        background:
+          radial-gradient(circle at 100% 0%, rgba(74, 222, 128, 0.2), transparent 50%),
+          rgba(14, 25, 18, 0.96);
+        color: #f7fff9;
+        box-shadow: 0 16px 45px rgba(0, 0, 0, 0.42);
+        text-decoration: none;
+        backdrop-filter: blur(12px);
+        transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+      }
+      .wire-float:hover,
+      .wire-float:focus-visible {
+        transform: translateY(-3px);
+        border-color: #4ade80;
+        box-shadow: 0 20px 52px rgba(0, 0, 0, 0.52);
+      }
+      .wire-float-brand {
+        margin-bottom: 7px;
+        color: #4ade80;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      .wire-float strong {
+        font-family: "Oswald", sans-serif;
+        font-size: 23px;
+        line-height: 1.1;
+        letter-spacing: 0.03em;
+      }
+      .wire-float small {
+        margin-top: 7px;
+        color: rgba(247, 255, 249, 0.66);
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 9px;
+      }
+
+      /* Хуучин SocialPay QR хэсгийг Wire-ийн тогтмол товчоор сольсон. */
+      .donation,
+      .qr-modal {
+        display: none !important;
+      }
+
       /* ---------- FOOTER ---------- */
       footer {
         margin-top: 50px;
@@ -1445,7 +1502,7 @@
 
       @media (max-width: 720px) {
         body {
-          padding-bottom: 84px;
+          padding-bottom: 152px;
         }
         .wrap {
           padding: 0 12px;
@@ -1656,6 +1713,17 @@
           bottom: max(14px, env(safe-area-inset-bottom));
           width: 44px;
           height: 44px;
+        }
+        .wire-float {
+          right: 14px;
+          bottom: 76px;
+          width: 138px;
+          min-height: 88px;
+          padding: 13px;
+          border-radius: 12px;
+        }
+        .wire-float strong {
+          font-size: 20px;
         }
       }
 
