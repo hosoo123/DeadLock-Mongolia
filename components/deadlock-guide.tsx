@@ -20,9 +20,8 @@ export function DeadlockGuide() {
         rel="noopener noreferrer"
         aria-label="Deadlock Mongolia-г Wire QPay-аар 500 төгрөгөөр дэмжих"
       >
-        <span className="wire-float-brand">Wire · QPay</span>
+        <span className="wire-float-brand">QPay</span>
         <strong>500₮ дэмжих</strong>
-        <small>Тогтмол дүн</small>
       </a>
       <Script src="/deadlock-app.js" strategy="afterInteractive" />
     </>
