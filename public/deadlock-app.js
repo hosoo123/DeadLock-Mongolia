@@ -8,6 +8,9 @@
   {t:1,n:"Close Quarters",d:"...", img:"https://example.com/close-quarters.png"}
 */
 
+      const WIRE_SUPPORT_URL =
+        "https://pay.wire.mn/link/plink_krd6jmuhq3y6mrrkog7o43mvne";
+
       const DATA = {
         fairfax: {
           label: "Fairfax",
@@ -2167,6 +2170,16 @@
                 <h3>! Сонгохын өмнө анхаарах зүйл</h3>
                 <p>${formatGuideText(guide.caution)}</p>
               </div>
+            </div>
+            <div class="wire-support-card">
+              <div>
+                <span class="wire-support-kicker">Wire · QPay</span>
+                <strong>Deadlock Mongolia-г дэмжих</strong>
+                <p>Энэ тайлбар хэрэг болсон бол хүссэн дүнгээрээ төслийг дэмжээрэй.</p>
+              </div>
+              <a class="wire-support-button" href="${WIRE_SUPPORT_URL}" target="_blank" rel="noopener noreferrer">
+                QPay-аар дэмжих
+              </a>
             </div>
             <div class="guide-actions">
               <button class="guide-action" id="copyItemGuide" type="button">Тайлбар хуулах</button>
