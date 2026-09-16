@@ -2402,5 +2402,40 @@
         window.scrollTo({ top: 0, behavior: "smooth" });
       });
 
+      function showPaymentResult() {
+        const url = new URL(window.location.href);
+        const result = url.searchParams.get("payment");
+        if (result !== "success" && result !== "cancelled") return;
+
+        const notice = document.createElement("div");
+        notice.className = `payment-result ${result}`;
+        notice.setAttribute("role", "status");
+
+        const message = document.createElement("div");
+        const title = document.createElement("strong");
+        const description = document.createElement("span");
+        title.textContent =
+          result === "success" ? "Төлбөр амжилттай боллоо ✓" : "Төлбөр цуцлагдлаа";
+        description.textContent =
+          result === "success"
+            ? "Deadlock Mongolia-г дэмжсэнд баярлалаа!"
+            : "Хүсвэл item-ийн дэлгэрэнгүйгээс дахин оролдоорой.";
+        message.append(title, description);
+
+        const close = document.createElement("button");
+        close.type = "button";
+        close.setAttribute("aria-label", "Мэдэгдэл хаах");
+        close.textContent = "×";
+        close.addEventListener("click", () => notice.remove());
+
+        notice.append(message, close);
+        document.body.appendChild(notice);
+
+        url.searchParams.delete("payment");
+        window.history.replaceState({}, "", `${url.pathname}${url.search}${url.hash}`);
+        setTimeout(() => notice.remove(), 8000);
+      }
+
       render();
       initializeLiveMeta();
+      showPaymentResult();
