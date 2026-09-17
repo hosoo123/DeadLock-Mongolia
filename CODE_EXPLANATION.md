@@ -350,9 +350,136 @@ CSS файл дараах үндсэн хэсгүүдтэй:
 }
 ```
 
-гэж нууж, Wire-ийн тогтмол товчоор сольсон.
+гэж нууж, Wire floating товчоор сольсон.
 
-## 10. Wire webhook backend
+## 10. Wire холболтын дэлгэрэнгүй
+
+### 10.1 Одоогийн төсөл Wire-ийг яг яаж ашигладаг вэ?
+
+Одоогийн хувилбарын Wire холболт хоёр тусдаа хэсэгтэй:
+
+1. **Payment link** — хэрэглэгчийг Wire-ийн бэлэн checkout хуудас руу оруулж төлбөр авна.
+2. **Webhook API route** — Wire-ээс сервер рүү ирсэн event жинхэнэ эсэхийг шалгана.
+
+```mermaid
+flowchart TD
+    A[Сайт дахь Wire товч] --> B[Wire нээлттэй дүнгийн линк]
+    B --> C[Хэрэглэгч QPay-аар төлнө]
+    C --> D[Wire signed webhook илгээнэ]
+    D --> E[Next.js API route signature шалгана]
+    C --> F[Success эсвэл cancel URL]
+```
+
+> Чухал ялгаа: Одоогийн сайт Wire REST API ашиглан шинэ `PaymentIntent` үүсгэдэггүй. `sk_live_...` API key ч frontend кодод байхгүй. Төлбөрийг Wire dashboard дээр урьдчилан үүсгэсэн дахин ашиглах payment link-ээр авдаг. Харин `/api/wire/webhook` нь манай өөрийн Next.js API endpoint юм.
+
+### 10.2 Wire dashboard дээр хийсэн тохиргоо
+
+Wire dashboard дээр дараах дарааллаар тохируулсан:
+
+1. `Deadlock Mongolia` project үүсгэсэн.
+2. QPay оператор болон төлбөр хүлээн авах дансыг идэвхжүүлсэн.
+3. **Төлбөрийн линк** хэсэгт `Deadlock Mongolia-г дэмжих` линк үүсгэсэн.
+4. Дүнгийн төрлийг **Нээлттэй дүн** болгосон.
+5. **Checkout → Үр дүнгийн хуудас** хэсэгт success/cancel буцах URL тохируулсан.
+6. **Webhook** хэсэгт production endpoint URL бүртгэсэн.
+7. Endpoint үүсэх үед гарсан `whsec_...` secret-ийг Vercel environment variable-д хадгалсан.
+
+Одоогийн нээлттэй дүнгийн public URL:
+
+```text
+https://pay.wire.mn/link/plink_krd6jmuhq3y6mrrkog7o43mvne
+```
+
+Нээлттэй дүн учраас хэрэглэгч Wire checkout дээр төлөх мөнгөө өөрөө оруулна.
+
+### 10.3 Frontend дээр payment link холбосон код
+
+`components/deadlock-guide.tsx` файлд линкийг тогтмол хувьсагчаар хадгалдаг:
+
+```tsx
+const WIRE_SUPPORT_URL =
+  "https://pay.wire.mn/link/plink_krd6jmuhq3y6mrrkog7o43mvne";
+```
+
+Баруун доод floating товч:
+
+```tsx
+<a
+  className="wire-float"
+  href={WIRE_SUPPORT_URL}
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-label="Deadlock Mongolia-г Wire QPay-аар хүссэн дүнгээр дэмжих"
+>
+  <span className="wire-float-brand">Wire · QPay</span>
+  <strong>Дэмжлэг өгөх</strong>
+  <small>Дүнгээ өөрөө оруулна</small>
+</a>
+```
+
+- `target="_blank"` — Wire checkout-ийг шинэ tab-д нээнэ.
+- `rel="noopener noreferrer"` — шинэ tab эх сайтыг JavaScript-аар удирдахаас хамгаална.
+- `aria-label` — screen reader хэрэглэгчид товчны зорилгыг тодорхой хэлнэ.
+
+Item modal нь `public/deadlock-app.js` дотор ижил URL ашигладаг:
+
+```js
+const WIRE_SUPPORT_URL =
+  "https://pay.wire.mn/link/plink_krd6jmuhq3y6mrrkog7o43mvne";
+```
+
+```html
+<a
+  class="wire-support-button"
+  href="${WIRE_SUPPORT_URL}"
+  target="_blank"
+  rel="noopener noreferrer"
+>
+  QPay-аар дэмжих
+</a>
+```
+
+Payment URL хоёр файлд давхар байгаа. Линкийг солих үед хоёуланг шинэчлэх шаардлагатай. Цаашид нэг environment variable эсвэл config файлд төвлөрүүлэх нь зөв.
+
+### 10.4 Success болон cancel URL
+
+Wire checkout тохиргоонд:
+
+```text
+Амжилттай: https://dead-lock-mongolia.vercel.app/?payment=success
+Цуцлагдсан: https://dead-lock-mongolia.vercel.app/?payment=cancelled
+```
+
+гэж тохируулсан.
+
+`public/deadlock-app.js` доторх `showPaymentResult()` URL-ийг шалгана:
+
+```js
+function showPaymentResult() {
+  const url = new URL(window.location.href);
+  const result = url.searchParams.get("payment");
+
+  if (result !== "success" && result !== "cancelled") return;
+
+  const notice = document.createElement("div");
+  notice.className = `payment-result ${result}`;
+  notice.setAttribute("role", "status");
+
+  // Success эсвэл cancelled мессеж үүсгэнэ.
+  document.body.appendChild(notice);
+
+  url.searchParams.delete("payment");
+  window.history.replaceState(
+    {},
+    "",
+    `${url.pathname}${url.search}${url.hash}`,
+  );
+}
+```
+
+Энэ query parameter зөвхөн хэрэглэгчид UI мэдэгдэл харуулна. Хүн URL-ийг гараар `?payment=success` болгож чаддаг учраас үүнийг төлбөрийн баталгаа гэж үзэж болохгүй. Жинхэнэ баталгаажуулалтыг webhook хийнэ.
+
+## 11. Wire webhook backend
 
 Файл:
 
@@ -366,9 +493,40 @@ Production endpoint:
 https://dead-lock-mongolia.vercel.app/api/wire/webhook
 ```
 
-### GET request
+### 11.1 Next.js API route
+
+Next.js App Router-д `app/api/.../route.ts` файл үүсгэхэд автоматаар HTTP endpoint болдог.
+
+Энэ төсөлд:
+
+```text
+app/api/wire/webhook/route.ts
+                 ↓
+/api/wire/webhook
+```
+
+`export const runtime = "nodejs"` тохиргоо нь Node-ийн `crypto` module ашиглах боломж олгоно:
+
+```ts
+import { createHmac, timingSafeEqual } from "node:crypto";
+import { NextResponse } from "next/server";
+
+export const runtime = "nodejs";
+```
+
+### 11.2 GET health check
 
 Endpoint ажиллаж байгаа болон secret тохируулагдсан эсэхийг шалгана:
+
+```ts
+export async function GET() {
+  return NextResponse.json({
+    ok: true,
+    service: "wire-webhook",
+    configured: Boolean(process.env.WIRE_WEBHOOK_SECRET),
+  });
+}
+```
 
 ```json
 {
@@ -380,7 +538,71 @@ Endpoint ажиллаж байгаа болон secret тохируулагдс�
 
 Secret-ийн утгыг хэзээ ч буцаахгүй, зөвхөн байгаа эсэхийг boolean утгаар харуулна.
 
-### POST request
+### 11.3 Webhook secret хаана хадгалагддаг вэ?
+
+Wire endpoint үүсгэхэд `whsec_...` хэлбэртэй signing secret нэг удаа гарна. Vercel дээр:
+
+```text
+Project → Settings → Environment Variables
+```
+
+хэсэгт:
+
+```env
+WIRE_WEBHOOK_SECRET=whsec_your_real_secret
+```
+
+гэж хадгална. Production, Preview, Development орчноос шаардлагатайг сонгоод redeploy хийсний дараа server code:
+
+```ts
+const secret = process.env.WIRE_WEBHOOK_SECRET;
+```
+
+гэж уншина.
+
+Secret-ийг:
+
+- `NEXT_PUBLIC_` угтвартай болгож болохгүй;
+- `public/deadlock-app.js` дотор бичиж болохгүй;
+- GitHub-д commit хийж болохгүй;
+- screenshot, client log эсвэл API response-д гаргаж болохгүй.
+
+`NEXT_PUBLIC_` угтвартай variable browser bundle-д ордог. Webhook secret зөвхөн server талд байх ёстой.
+
+### 11.4 Signature header задлах
+
+Wire webhook request бүр дараах хэлбэрийн header-тэй ирнэ:
+
+```text
+WirePayment-Signature: t=1717000000,v1=5257a869e7ec...
+```
+
+`parseSignature()` header-ийг задална:
+
+```ts
+function parseSignature(value: string | null) {
+  if (!value) return null;
+
+  const parts = new Map(
+    value.split(",").map((part) => {
+      const [key, ...rest] = part.trim().split("=");
+      return [key, rest.join("=")];
+    }),
+  );
+
+  const timestamp = Number(parts.get("t"));
+  const signature = parts.get("v1");
+
+  if (!Number.isFinite(timestamp) || !signature) return null;
+  return { timestamp, signature };
+}
+```
+
+- `t` — signature үүссэн Unix timestamp.
+- `v1` — Wire-ийн тооцсон HMAC-SHA256 signature.
+- Header байхгүй эсвэл буруу бүтэцтэй бол `null` буцаана.
+
+### 11.5 POST request-ийн бүрэн дараалал
 
 Wire webhook ирэхэд:
 
@@ -393,6 +615,63 @@ Wire webhook ирэхэд:
 7. Зөв бол event-ийн `id`, `type`-ийг server log-д бичиж `200` хариу өгнө.
 8. Буруу бол `401`, secret байхгүй бол `503` хариу өгнө.
 
+Эхлээд secret-ийг шалгана:
+
+```ts
+const secret = process.env.WIRE_WEBHOOK_SECRET;
+
+if (!secret) {
+  return NextResponse.json(
+    { ok: false, error: "Webhook secret is not configured" },
+    { status: 503 },
+  );
+}
+```
+
+Дараа нь header-ийг parse хийнэ:
+
+```ts
+const parsed = parseSignature(
+  request.headers.get("WirePayment-Signature"),
+);
+
+if (!parsed) {
+  return NextResponse.json(
+    { ok: false, error: "Missing or invalid signature" },
+    { status: 401 },
+  );
+}
+```
+
+### 11.6 Replay attack-аас хамгаалах timestamp
+
+```ts
+const MAX_SIGNATURE_AGE_SECONDS = 300;
+const now = Math.floor(Date.now() / 1000);
+
+if (
+  parsed.timestamp > now + 30 ||
+  now - parsed.timestamp > MAX_SIGNATURE_AGE_SECONDS
+) {
+  return NextResponse.json(
+    { ok: false, error: "Expired signature" },
+    { status: 401 },
+  );
+}
+```
+
+- 5 минутаас хуучин request-ийг татгалзана.
+- Server-ийн цагаас 30 секундээс илүү ирээдүйн timestamp-ийг татгалзана.
+- Ингэснээр өмнөх зөв request-ийг хуулж дахин илгээх replay attack-ийн эрсдэл буурна.
+
+### 11.7 Яагаад raw body ашигладаг вэ?
+
+```ts
+const rawBody = await request.text();
+```
+
+Signature нь яг Wire-ийн илгээсэн byte/text дээр тооцогдсон байдаг. Эхлээд `request.json()` хийвэл JSON-ийн whitespace эсвэл бүтэц өөрчлөгдөж signature таарахгүй болж болно. Тиймээс эхлээд raw text авч signature шалгаад, дараа нь JSON parse хийнэ.
+
 Signature тооцох үндсэн хэсэг:
 
 ```ts
@@ -401,7 +680,193 @@ const expected = createHmac("sha256", secret)
   .digest("hex");
 ```
 
-### Environment variable
+Wire болон манай server ижил утга тооцох ёстой:
+
+```text
+HMAC_SHA256(secret, timestamp + "." + rawBody)
+```
+
+### 11.8 Constant-time comparison
+
+Энгийн `expected === received` харьцуулалт ашиглахын оронд:
+
+```ts
+function signaturesMatch(expected: string, received: string) {
+  if (!/^[a-f0-9]+$/i.test(received)) return false;
+
+  const expectedBuffer = Buffer.from(expected, "hex");
+  const receivedBuffer = Buffer.from(received, "hex");
+
+  return (
+    expectedBuffer.length === receivedBuffer.length &&
+    timingSafeEqual(expectedBuffer, receivedBuffer)
+  );
+}
+```
+
+ашигладаг. `timingSafeEqual()` нь харьцуулалтын хугацаанаас signature-ийн хэсгийг таах timing attack-ийн эрсдэлийг бууруулна.
+
+### 11.9 Баталгаажсан event боловсруулах
+
+Signature зөв бол raw body-г JSON болгон уншина:
+
+```ts
+try {
+  const event = JSON.parse(rawBody) as {
+    id?: string;
+    type?: string;
+  };
+
+  console.info("Wire webhook verified", {
+    id: event.id ?? "unknown",
+    type: event.type ?? "unknown",
+  });
+} catch {
+  console.info("Wire webhook verified", { type: "non-json" });
+}
+
+return NextResponse.json({ ok: true, received: true });
+```
+
+Одоогийн код event-ийг зөв гэдгийг баталгаажуулаад Vercel server log-д `id` болон `type`-ийг бичдэг. Database-д хадгалах, Discord мэдэгдэл илгээх эсвэл premium эрх нээх ажиллагаа одоогоор байхгүй.
+
+Бодит бүтээгдэхүүн борлуулах үед:
+
+```ts
+if (event.type === "payment_intent.succeeded") {
+  // 1. event.id өмнө боловсруулагдсан эсэхийг database-аас шалгах
+  // 2. amount, currency, metadata-г дахин шалгах
+  // 3. захиалгыг paid болгох
+  // 4. event.id-г processed гэж хадгалах
+}
+```
+
+хэлбэрийн idempotent processing нэмэх шаардлагатай.
+
+### 11.10 HTTP хариуны утга
+
+| Status | Хэзээ буцах вэ? |
+|---|---|
+| `200` | Signature зөв, event хүлээн авсан |
+| `401` | Header байхгүй, signature буруу эсвэл хугацаа дууссан |
+| `503` | `WIRE_WEBHOOK_SECRET` тохируулаагүй |
+
+## 12. Wire API, payment link, webhook-ийн ялгаа
+
+| Хэсэг | Энэ төсөлд ашигласан эсэх | Үүрэг |
+|---|---|---|
+| Wire payment link | Тийм | Wire dashboard дээр үүсгэсэн линкээр төлбөр авна |
+| Wire REST API / SDK | Үгүй | Код дотроос динамик PaymentIntent үүсгэхэд хэрэглэнэ |
+| Next.js API route | Тийм | `/api/wire/webhook` серверийн endpoint үүсгэнэ |
+| Wire webhook | Тийм | Төлбөрийн event-ийг server рүү мэдэгдэнэ |
+| Return URL | Тийм | Төлсний дараа хэрэглэгчийг сайт руу буцаана |
+
+Payment link нь хандив шиг нэг линкийг олон удаа ашиглахад тохиромжтой. Wire REST API нь захиалга бүр өөр үнэ, order ID болон metadata-тай үед илүү тохиромжтой.
+
+### 12.1 Хэрэв дараа нь Wire REST API ашиглавал
+
+Энэ нь одоогийн repository-д хэрэгжээгүй, дараагийн шатны жишээ:
+
+```bash
+npm install @buildry-wire/wire
+```
+
+Server-only environment variable:
+
+```env
+WIRE_API_KEY=sk_live_your_key
+```
+
+Жишээ server code:
+
+```ts
+import { Wire } from "@buildry-wire/wire";
+
+const wire = new Wire(process.env.WIRE_API_KEY!);
+
+const paymentIntent = await wire.paymentIntents.create({
+  amount: 50000,
+  currency: "MNT",
+  description: "Deadlock Mongolia дэмжлэг",
+  allowed_operators: ["your_enabled_operator_id"],
+  idempotencyKey: `support-${crypto.randomUUID()}`,
+});
+```
+
+API ашиглах үед amount-ийн нэгжийг Wire-ийн тухайн API баримттай тулгаж шалгана. Dashboard-ийн payment link дээр дүнг шууд төгрөгөөр оруулдаг бол API нь minor unit ашиглаж болно.
+
+`WIRE_API_KEY` болон `WIRE_WEBHOOK_SECRET` хоёр өөр зүйл:
+
+- API key — манай server Wire рүү хүсэлт илгээхэд хэрэглэнэ.
+- Webhook secret — Wire-ээс манай server рүү ирсэн хүсэлтийг шалгахад хэрэглэнэ.
+
+Аль алийг нь browser/client code-д гаргаж болохгүй.
+
+Wire-ийн албан ёсны дэлгэрэнгүй материал:
+
+- [Төлбөрийн линк](https://docs.wire.mn/docs/guides/payment-links)
+- [Webhooks](https://docs.wire.mn/docs/guides/webhooks)
+- [Hosted checkout](https://docs.wire.mn/docs/guides/hosted-checkout)
+- [Quickstart](https://docs.wire.mn/docs/quickstart)
+
+## 13. Wire холболтыг шалгах
+
+### 13.1 Health check
+
+```bash
+curl https://dead-lock-mongolia.vercel.app/api/wire/webhook
+```
+
+Хүлээгдэж буй хариу:
+
+```json
+{
+  "ok": true,
+  "service": "wire-webhook",
+  "configured": true
+}
+```
+
+### 13.2 Signature-гүй POST
+
+```bash
+curl -i \
+  -X POST \
+  https://dead-lock-mongolia.vercel.app/api/wire/webhook \
+  -H "Content-Type: application/json" \
+  -d '{"type":"test"}'
+```
+
+Signature байхгүй учраас `401` буцах ёстой. Энэ нь endpoint дурын POST request-ийг шууд зөвшөөрөхгүй байгааг батална.
+
+### 13.3 Жинхэнэ төлбөрийн шалгалт
+
+1. Сайт дахь **Дэмжлэг өгөх** товчийг дарна.
+2. Wire дээр тестлэх дүн оруулна.
+3. QPay төлбөрөө дуусгана.
+4. Wire dashboard-ийн transaction жагсаалтыг шалгана.
+5. Vercel → Logs хэсгээс `Wire webhook verified` log хайна.
+6. Сайт руу буцахад success мэдэгдэл харагдаж байгаа эсэхийг шалгана.
+
+## 14. Wire төлбөрийн урсгал
+
+```mermaid
+sequenceDiagram
+    participant U as Хэрэглэгч
+    participant S as Deadlock сайт
+    participant W as Wire/QPay
+    participant A as Webhook API
+    U->>S: Дэмжлэг өгөх товч дарна
+    S->>W: Нээлттэй дүнгийн линк нээнэ
+    U->>W: Дүн оруулж QPay-аар төлнө
+    W->>A: Signed webhook илгээнэ
+    A->>A: Timestamp ба HMAC шалгана
+    A-->>W: 200 OK
+    W-->>S: success эсвэл cancelled URL
+    S-->>U: Үр дүнгийн мэдэгдэл
+```
+
+## 15. Environment variable
 
 Local `.env.local` эсвэл Vercel Environment Variables дотор:
 
@@ -415,25 +880,7 @@ WIRE_WEBHOOK_SECRET=whsec_your_secret_here
 - client-side JavaScript-д хийж болохгүй;
 - screenshot эсвэл public log-д харуулж болохгүй.
 
-## 11. Wire төлбөрийн урсгал
-
-```mermaid
-sequenceDiagram
-    participant U as Хэрэглэгч
-    participant S as Deadlock сайт
-    participant W as Wire/QPay
-    participant A as Webhook API
-    U->>S: Дэмжлэг өгөх товч дарна
-    S->>W: Тогтмол төлбөрийн линк нээнэ
-    U->>W: QPay-аар төлнө
-    W->>A: Signed webhook илгээнэ
-    A->>A: HMAC signature шалгана
-    A-->>W: 200 OK
-    W-->>S: success эсвэл cancelled URL
-    S-->>U: Үр дүнгийн мэдэгдэл
-```
-
-## 12. `scripts/migrate-to-next.mjs`
+## 16. `scripts/migrate-to-next.mjs`
 
 Энэ script `legacy/index.html`-ээс:
 
@@ -445,7 +892,7 @@ sequenceDiagram
 
 > Чухал: Одоогийн Next.js файлууд дээр Wire, webhook, responsive болон бусад гараар хийсэн сайжруулалт байгаа. Migration script-ийг шууд дахин ажиллуулбал эдгээр файлыг хуучин legacy хувилбараар дарж болзошгүй. Эхлээд Git branch эсвэл backup үүсгэ.
 
-## 13. Local орчинд ажиллуулах
+## 17. Local орчинд ажиллуулах
 
 Node.js суусан байх шаардлагатай.
 
@@ -477,7 +924,7 @@ npm run build
 npm start
 ```
 
-## 14. Vercel deploy
+## 18. Vercel deploy
 
 GitHub repository Vercel project-той холбогдсон. `main` branch руу push хийхэд production deployment автоматаар эхэлнэ.
 
@@ -489,7 +936,7 @@ Vercel тохиргоо:
 - Environment Variable: `WIRE_WEBHOOK_SECRET`;
 - Production domain: `dead-lock-mongolia.vercel.app`.
 
-## 15. Код өөрчлөх хурдан лавлах
+## 19. Код өөрчлөх хурдан лавлах
 
 | Өөрчлөх зүйл | Файл/хэсэг |
 |---|---|
@@ -505,7 +952,7 @@ Vercel тохиргоо:
 | Webhook хамгаалалт | `app/api/wire/webhook/route.ts` |
 | Responsive дизайн | `app/globals.css` media queries |
 
-## 16. Цаашид сайжруулах санал
+## 20. Цаашид сайжруулах санал
 
 1. `pageMarkup`-ийг Header, Filters, ItemGrid, Modal, DonationButton зэрэг React component болгон салгах.
 2. Item болон hero мэдээллийг тусдаа JSON эсвэл TypeScript файл руу гаргах.
