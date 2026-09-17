@@ -11,7 +11,7 @@ Deadlock Mongolia нь Монгол тоглогчдод зориулсан ве
 - item бүрийн дэлгэрэнгүй ажиллагаа, авах үе, тохирох hero болон counter зөвлөмжийг унших;
 - hero сонгоод сүүлийн үеийн статистикт тулгуурласан build гаргах;
 - Deadlock Mongolia Discord community-д нэгдэх;
-- Wire/QPay ашиглан 500₮-ийн тогтмол дэмжлэг үзүүлэх боломжтой.
+- Wire/QPay ашиглан хүссэн дүнгээрээ дэмжлэг үзүүлэх боломжтой.
 
 Production сайт: <https://dead-lock-mongolia.vercel.app/>
 
@@ -25,7 +25,7 @@ Production сайт: <https://dead-lock-mongolia.vercel.app/>
 | Vanilla JavaScript | Item каталог, хайлт, filter, modal, API болон build generator |
 | CSS | Responsive layout, өнгө, animation, modal болон mobile дизайн |
 | Deadlock API | Hero, item болон item statistics авах |
-| Wire / QPay | 500₮-ийн тогтмол төлбөр хүлээн авах |
+| Wire / QPay | Нээлттэй дүнтэй төлбөр хүлээн авах |
 | Vercel | Hosting, environment variable, serverless API болон analytics |
 
 ## 3. Фолдерын бүтэц
@@ -144,11 +144,11 @@ Markup-ийг дараах байдлаар DOM-д оруулдаг:
 Баруун доод буланд тогтмол харагдах Wire товч мөн энэ component-д бий:
 
 ```tsx
-const WIRE_FIXED_SUPPORT_URL =
-  "https://pay.wire.mn/link/plink_v27y3riefe7y57gsajlke56yei";
+const WIRE_SUPPORT_URL =
+  "https://pay.wire.mn/link/plink_krd6jmuhq3y6mrrkog7o43mvne";
 ```
 
-Энэ нь Wire dashboard дээр үүсгэсэн 500₮-ийн **тогтмол дүнтэй** payment link. Хэрэглэгч дүнг өөрчлөх боломжгүй.
+Энэ нь Wire dashboard дээр үүсгэсэн **нээлттэй дүнтэй** payment link. Хэрэглэгч төлөх дүнгээ өөрөө оруулна.
 
 ## 8. `public/deadlock-app.js`
 
@@ -301,7 +301,7 @@ let currentSearch = "";
 - counter зөвлөмж;
 - өмнөх болон дараагийн upgrade;
 - анхаарах зүйл;
-- Wire 500₮ дэмжлэгийн товч.
+- Wire нээлттэй дүнгийн дэмжлэгийн товч.
 
 `escapeHtml()` нь API эсвэл өгөгдлөөс орж ирсэн текстийг HTML болгон шууд ажиллахаас хамгаална.
 
@@ -423,7 +423,7 @@ sequenceDiagram
     participant S as Deadlock сайт
     participant W as Wire/QPay
     participant A as Webhook API
-    U->>S: 500₮ дэмжих товч дарна
+    U->>S: Дэмжлэг өгөх товч дарна
     S->>W: Тогтмол төлбөрийн линк нээнэ
     U->>W: QPay-аар төлнө
     W->>A: Signed webhook илгээнэ
@@ -499,7 +499,7 @@ Vercel тохиргоо:
 | Item upgrade холбоос | `ITEM_UPGRADES` |
 | Item-ийн тусгай зөвлөмж | `GUIDE_OVERRIDES` |
 | API болон cache хугацаа | `API_BASE`, `META_WINDOW_DAYS`, `API_CACHE_HOURS` |
-| Wire төлбөрийн линк | `WIRE_SUPPORT_URL`, `WIRE_FIXED_SUPPORT_URL` |
+| Wire төлбөрийн линк | `WIRE_SUPPORT_URL` (`deadlock-guide.tsx`, `deadlock-app.js`) |
 | Floating Wire товчны дизайн | `app/globals.css` → `.wire-float` |
 | SEO title/description | `app/layout.tsx` |
 | Webhook хамгаалалт | `app/api/wire/webhook/route.ts` |
