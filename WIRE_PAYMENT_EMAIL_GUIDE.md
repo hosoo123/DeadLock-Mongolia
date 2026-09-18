@@ -381,6 +381,17 @@ if (event.type === "payment_intent.succeeded") {
 
 Хуучин payment link-ээр үүссэн, `customer_email` metadata байхгүй төлбөр дээр имэйл явуулахгүй.
 
+Зарим webhook payload metadata-г бүтнээр нь агуулахгүй байж болох тул код эхлээд
+PaymentIntent ID-г олж, шаардлагатай үед:
+
+```http
+GET /v1/payment_intents/{id}
+```
+
+хүсэлтээр Wire API-аас бүрэн PaymentIntent-ийг дахин авна. Ингээд
+`metadata.customer_email`-ийг сэргээж талархлын имэйл илгээнэ. Vercel log-д
+`Wire thank-you email sent` эсвэл metadata байхгүй бол тодорхой skip log бичигдэнэ.
+
 ## 8. Gmail талархлын имэйл
 
 Package:
@@ -597,4 +608,3 @@ curl https://dead-lock-mongolia.vercel.app/api/wire/webhook
 ## 17. Товч дүгнэлт
 
 Одоогийн хувилбар нь статик Wire payment link биш. Хэрэглэгч бүрийн имэйл болон дүнгээр backend дээр шинэ PaymentIntent үүсгэдэг. Төлбөр амжилттай болсныг browser-ийн success URL-д итгэж шийдэхгүй; Wire-ийн signed webhook-ийг шалгасны дараа л Gmail талархлын имэйл илгээдэг.
-

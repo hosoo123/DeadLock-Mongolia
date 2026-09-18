@@ -8,15 +8,21 @@ const MAX_SIGNATURE_AGE_SECONDS = 300;
 
 type PaymentIntent = {
   id?: string;
+  object?: string;
   amount?: number;
   currency?: string;
   metadata?: Record<string, unknown>;
 };
 
+type WireEventData = PaymentIntent & {
+  object?: string | PaymentIntent;
+  payment_intent?: string | PaymentIntent;
+};
+
 type WireEvent = {
   id?: string;
   type?: string;
-  data?: PaymentIntent | { object?: PaymentIntent };
+  data?: WireEventData;
 };
 
 function parseSignature(value: string | null) {
@@ -51,10 +57,49 @@ function signaturesMatch(expected: string, received: string) {
 function getPaymentIntent(event: WireEvent) {
   const data = event.data;
   if (!data) return null;
-  if ("object" in data && data.object && typeof data.object === "object") {
+
+  if (data.object && typeof data.object === "object") {
     return data.object;
   }
+
+  if (data.payment_intent && typeof data.payment_intent === "object") {
+    return data.payment_intent;
+  }
+
   return data as PaymentIntent;
+}
+
+function getPaymentIntentId(event: WireEvent, paymentIntent: PaymentIntent | null) {
+  if (paymentIntent?.id) return paymentIntent.id;
+
+  const nested = event.data?.payment_intent;
+  if (typeof nested === "string") return nested;
+  if (nested && typeof nested === "object" && nested.id) return nested.id;
+
+  return null;
+}
+
+async function retrievePaymentIntent(id: string) {
+  const apiKey = process.env.WIRE_SECRET_KEY;
+  if (!apiKey) return null;
+
+  const response = await fetch(
+    `https://api.wire.mn/v1/payment_intents/${encodeURIComponent(id)}`,
+    {
+      headers: { Authorization: `Bearer ${apiKey}` },
+      cache: "no-store",
+    },
+  );
+
+  if (!response.ok) {
+    console.error("Could not retrieve Wire PaymentIntent for email", {
+      id,
+      status: response.status,
+    });
+    return null;
+  }
+
+  return (await response.json()) as PaymentIntent;
 }
 
 function escapeHtml(value: string) {
@@ -166,8 +211,21 @@ export async function POST(request: Request) {
   });
 
   if (event.type === "payment_intent.succeeded") {
-    const paymentIntent = getPaymentIntent(event);
-    const email = paymentIntent?.metadata?.customer_email;
+    let paymentIntent = getPaymentIntent(event);
+    let email = paymentIntent?.metadata?.customer_email;
+
+    // Зарим webhook payload metadata-г бүтнээр нь агуулахгүй байж болно.
+    // Тийм үед PaymentIntent ID-аар Wire API-аас бүрэн object-ийг дахин авна.
+    if (typeof email !== "string") {
+      const paymentIntentId = getPaymentIntentId(event, paymentIntent);
+      if (paymentIntentId) {
+        const retrieved = await retrievePaymentIntent(paymentIntentId);
+        if (retrieved) {
+          paymentIntent = retrieved;
+          email = retrieved.metadata?.customer_email;
+        }
+      }
+    }
 
     // Хуучин payment link болон email metadata-гүй төлбөрийг алгасана.
     if (typeof email === "string" && email.length <= 254) {
@@ -177,6 +235,10 @@ export async function POST(request: Request) {
           paymentIntent?.amount,
           event.id || paymentIntent?.id || "unknown-payment",
         );
+        console.info("Wire thank-you email sent", {
+          eventId: event.id ?? "unknown",
+          paymentIntentId: paymentIntent?.id ?? "unknown",
+        });
       } catch (error) {
         console.error("Wire webhook email processing failed", error);
         // 5xx өгснөөр Wire event-ийг дахин илгээж, түр зуурын email алдааг нөхнө.
@@ -185,6 +247,12 @@ export async function POST(request: Request) {
           { status: 503 },
         );
       }
+    } else {
+      console.warn("Wire thank-you email skipped: customer_email metadata missing", {
+        eventId: event.id ?? "unknown",
+        paymentIntentId: paymentIntent?.id ?? "unknown",
+        dataKeys: event.data ? Object.keys(event.data) : [],
+      });
     }
   }
 
