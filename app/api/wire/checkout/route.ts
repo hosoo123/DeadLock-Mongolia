@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 export const runtime = "nodejs";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const MIN_AMOUNT = 500;
+const MIN_AMOUNT = 1;
 const MAX_AMOUNT = 1_000_000;
 
 type WirePaymentIntent = { id?: string };

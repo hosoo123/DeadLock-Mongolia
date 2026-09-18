@@ -127,7 +127,7 @@ export function SupportCheckout() {
                   name="amount"
                   value={amount}
                   onChange={(event) => setAmount(event.target.value)}
-                  min="500"
+                  min="1"
                   max="1000000"
                   step="1"
                   required
