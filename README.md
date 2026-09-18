@@ -27,6 +27,9 @@ npm start
 
 ## Wire төлбөр ба талархлын имэйл
 
+Бүх код, тохиргоо, аюулгүй байдал болон туршилтын дэлгэрэнгүй тайлбарыг
+[`WIRE_PAYMENT_EMAIL_GUIDE.md`](./WIRE_PAYMENT_EMAIL_GUIDE.md)-ээс үзнэ үү.
+
 `.env.example`-ийг `.env.local` болгон хуулж Wire болон Gmail-ийн нууц
 түлхүүрүүдийг оруулна. Нууц түлхүүртэй `.env.local`-ийг GitHub руу push хийж
 болохгүй.
