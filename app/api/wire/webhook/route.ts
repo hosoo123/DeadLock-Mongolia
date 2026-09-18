@@ -5,6 +5,19 @@ export const runtime = "nodejs";
 
 const MAX_SIGNATURE_AGE_SECONDS = 300;
 
+type PaymentIntent = {
+  id?: string;
+  amount?: number;
+  currency?: string;
+  metadata?: Record<string, unknown>;
+};
+
+type WireEvent = {
+  id?: string;
+  type?: string;
+  data?: PaymentIntent | { object?: PaymentIntent };
+};
+
 function parseSignature(value: string | null) {
   if (!value) return null;
 
@@ -32,6 +45,76 @@ function signaturesMatch(expected: string, received: string) {
     expectedBuffer.length === receivedBuffer.length &&
     timingSafeEqual(expectedBuffer, receivedBuffer)
   );
+}
+
+function getPaymentIntent(event: WireEvent) {
+  const data = event.data;
+  if (!data) return null;
+  if ("object" in data && data.object && typeof data.object === "object") {
+    return data.object;
+  }
+  return data as PaymentIntent;
+}
+
+function escapeHtml(value: string) {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+async function sendThankYouEmail(
+  email: string,
+  amount: number | undefined,
+  eventId: string,
+) {
+  const apiKey = process.env.RESEND_API_KEY;
+  const from = process.env.EMAIL_FROM;
+  if (!apiKey || !from) {
+    throw new Error("Email provider is not configured");
+  }
+
+  const safeEmail = escapeHtml(email);
+  const amountText = Number.isFinite(amount)
+    ? `${Number(amount).toLocaleString("mn-MN")}₮`
+    : "таны дэмжлэг";
+  const response = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+      "Idempotency-Key": `wire-${eventId}`,
+    },
+    body: JSON.stringify({
+      from,
+      to: [email],
+      subject: "Deadlock Mongolia-г дэмжсэнд баярлалаа!",
+      html: `
+        <div style="margin:0;background:#0d110f;padding:32px 16px;font-family:Arial,sans-serif;color:#eefbf2">
+          <div style="max-width:560px;margin:0 auto;border:1px solid #285c39;border-radius:14px;background:#131b16;padding:30px">
+            <p style="margin:0 0 8px;color:#4ade80;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase">Deadlock Mongolia</p>
+            <h1 style="margin:0 0 16px;font-size:28px;line-height:1.2">Дэмжсэнд маш их баярлалаа! ❤️</h1>
+            <p style="margin:0 0 14px;color:#cfe5d6;line-height:1.7">Таны <strong>${amountText}</strong>-ийн төлбөр амжилттай баталгаажлаа. Таны дэмжлэг Монгол Deadlock community болон item тайлбарын сайтыг цааш хөгжүүлэхэд тусална.</p>
+            <p style="margin:0;color:#91aa99;font-size:12px;line-height:1.6">Энэ имэйлийг Wire төлбөр дээр оруулсан <strong>${safeEmail}</strong> хаяг руу автоматаар илгээлээ.</p>
+          </div>
+        </div>
+      `,
+      text: `Deadlock Mongolia-г дэмжсэнд маш их баярлалаа! Таны ${amountText}-ийн төлбөр амжилттай баталгаажлаа.`,
+    }),
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    const details = await response.text();
+    console.error("Thank-you email failed", {
+      eventId,
+      status: response.status,
+      details,
+    });
+    throw new Error("Email delivery failed");
+  }
 }
 
 export async function GET() {
@@ -82,14 +165,39 @@ export async function POST(request: Request) {
     );
   }
 
+  let event: WireEvent;
   try {
-    const event = JSON.parse(rawBody) as { id?: string; type?: string };
-    console.info("Wire webhook verified", {
-      id: event.id ?? "unknown",
-      type: event.type ?? "unknown",
-    });
+    event = JSON.parse(rawBody) as WireEvent;
   } catch {
-    console.info("Wire webhook verified", { type: "non-json" });
+    return NextResponse.json({ ok: false, error: "Invalid JSON" }, { status: 400 });
+  }
+
+  console.info("Wire webhook verified", {
+    id: event.id ?? "unknown",
+    type: event.type ?? "unknown",
+  });
+
+  if (event.type === "payment_intent.succeeded") {
+    const paymentIntent = getPaymentIntent(event);
+    const email = paymentIntent?.metadata?.customer_email;
+
+    // Хуучин payment link болон email metadata-гүй төлбөрийг алгасана.
+    if (typeof email === "string" && email.length <= 254) {
+      try {
+        await sendThankYouEmail(
+          email,
+          paymentIntent?.amount,
+          event.id || paymentIntent?.id || "unknown-payment",
+        );
+      } catch (error) {
+        console.error("Wire webhook email processing failed", error);
+        // 5xx өгснөөр Wire event-ийг дахин илгээж, түр зуурын email алдааг нөхнө.
+        return NextResponse.json(
+          { ok: false, error: "Email delivery failed" },
+          { status: 503 },
+        );
+      }
+    }
   }
 
   return NextResponse.json({ ok: true, received: true });

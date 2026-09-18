@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Analytics } from "@vercel/analytics/next";
+import { SupportCheckout } from "../components/support-checkout";
 import "./globals.css";
+import "./support-checkout.css";
 
 export const metadata: Metadata = {
   title: "Deadlock хэрэгслийн тайлбар — Монгол",
@@ -38,6 +40,7 @@ export default function RootLayout({
     <html lang="mn">
       <body>
         {children}
+        <SupportCheckout />
         <Analytics />
       </body>
     </html>

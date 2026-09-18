@@ -1,0 +1,109 @@
+.wire-checkout-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20000;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: rgba(3, 5, 4, 0.78);
+  backdrop-filter: blur(8px);
+}
+
+.wire-checkout-modal {
+  position: relative;
+  width: min(460px, 100%);
+  padding: 28px;
+  border: 1px solid rgba(74, 222, 128, 0.55);
+  border-radius: 14px;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(74, 222, 128, 0.14), transparent 46%),
+    #101713;
+  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.65);
+  color: #f7fff9;
+}
+
+.wire-checkout-modal h2 {
+  margin: 5px 36px 8px 0;
+  font-family: "Oswald", sans-serif;
+  font-size: 28px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.wire-checkout-modal > p,
+.wire-checkout-modal > small {
+  color: rgba(247, 255, 249, 0.68);
+  font-size: 11px;
+  line-height: 1.65;
+}
+
+.wire-checkout-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  border: 1px solid rgba(247, 255, 249, 0.28);
+  border-radius: 50%;
+  background: transparent;
+  color: #fff;
+  font-size: 19px;
+  cursor: pointer;
+}
+
+.wire-checkout-form {
+  display: grid;
+  gap: 14px;
+  margin: 20px 0 14px;
+}
+
+.wire-checkout-form label {
+  display: grid;
+  gap: 7px;
+  color: #dff7e7;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.wire-checkout-form input {
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 12px;
+  border: 1px solid rgba(247, 255, 249, 0.22);
+  border-radius: 7px;
+  outline: none;
+  background: rgba(0, 0, 0, 0.28);
+  color: #fff;
+  font: inherit;
+}
+
+.wire-checkout-form input:focus {
+  border-color: #4ade80;
+  box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.12);
+}
+
+.wire-checkout-form > button {
+  min-height: 48px;
+  border: 1px solid #4ade80;
+  border-radius: 7px;
+  background: #16a34a;
+  color: #fff;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.wire-checkout-form > button:disabled,
+.wire-checkout-close:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+.wire-checkout-error {
+  margin: 0;
+  color: #fca5a5;
+  font-size: 11px;
+  line-height: 1.5;
+}
