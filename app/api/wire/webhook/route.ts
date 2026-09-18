@@ -1,5 +1,6 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { NextResponse } from "next/server";
+import nodemailer from "nodemailer";
 
 export const runtime = "nodejs";
 
@@ -70,9 +71,9 @@ async function sendThankYouEmail(
   amount: number | undefined,
   eventId: string,
 ) {
-  const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.EMAIL_FROM;
-  if (!apiKey || !from) {
+  const gmailUser = process.env.GMAIL_USER;
+  const gmailAppPassword = process.env.GMAIL_APP_PASSWORD;
+  if (!gmailUser || !gmailAppPassword) {
     throw new Error("Email provider is not configured");
   }
 
@@ -80,18 +81,17 @@ async function sendThankYouEmail(
   const amountText = Number.isFinite(amount)
     ? `${Number(amount).toLocaleString("mn-MN")}₮`
     : "таны дэмжлэг";
-  const response = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-      "Idempotency-Key": `wire-${eventId}`,
-    },
-    body: JSON.stringify({
-      from,
-      to: [email],
-      subject: "Deadlock Mongolia-г дэмжсэнд баярлалаа!",
-      html: `
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: { user: gmailUser, pass: gmailAppPassword },
+  });
+
+  await transporter.sendMail({
+    from: `"Deadlock Mongolia" <${gmailUser}>`,
+    to: email,
+    subject: "Deadlock Mongolia-г дэмжсэнд баярлалаа!",
+    messageId: `<wire-${eventId}@deadlock-mongolia>`,
+    html: `
         <div style="margin:0;background:#0d110f;padding:32px 16px;font-family:Arial,sans-serif;color:#eefbf2">
           <div style="max-width:560px;margin:0 auto;border:1px solid #285c39;border-radius:14px;background:#131b16;padding:30px">
             <p style="margin:0 0 8px;color:#4ade80;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase">Deadlock Mongolia</p>
@@ -101,20 +101,8 @@ async function sendThankYouEmail(
           </div>
         </div>
       `,
-      text: `Deadlock Mongolia-г дэмжсэнд маш их баярлалаа! Таны ${amountText}-ийн төлбөр амжилттай баталгаажлаа.`,
-    }),
-    cache: "no-store",
+    text: `Deadlock Mongolia-г дэмжсэнд маш их баярлалаа! Таны ${amountText}-ийн төлбөр амжилттай баталгаажлаа.`,
   });
-
-  if (!response.ok) {
-    const details = await response.text();
-    console.error("Thank-you email failed", {
-      eventId,
-      status: response.status,
-      details,
-    });
-    throw new Error("Email delivery failed");
-  }
 }
 
 export async function GET() {

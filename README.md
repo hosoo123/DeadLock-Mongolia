@@ -27,7 +27,7 @@ npm start
 
 ## Wire төлбөр ба талархлын имэйл
 
-`.env.example`-ийг `.env.local` болгон хуулж Wire болон Resend-ийн нууц
+`.env.example`-ийг `.env.local` болгон хуулж Wire болон Gmail-ийн нууц
 түлхүүрүүдийг оруулна. Нууц түлхүүртэй `.env.local`-ийг GitHub руу push хийж
 болохгүй.
 
@@ -39,8 +39,9 @@ npm start
   `https://dead-lock-mongolia.vercel.app/api/wire/webhook`
 - Wire webhook event: `payment_intent.succeeded`
 
-Vercel-ийн Environment Variables хэсэгт `.env.example` доторх бүх утгыг мөн
-тохируулна.
+Gmail account дээр 2-Step Verification асаагаад App Password үүсгэн
+`GMAIL_APP_PASSWORD`-д оруулна. Vercel-ийн Environment Variables хэсэгт
+`.env.example` доторх бүх утгыг мөн тохируулна.
 
 ## Төслийн бүтэц
 
