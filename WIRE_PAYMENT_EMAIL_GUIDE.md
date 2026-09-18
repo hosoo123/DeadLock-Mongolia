@@ -608,3 +608,216 @@ curl https://dead-lock-mongolia.vercel.app/api/wire/webhook
 ## 17. Товч дүгнэлт
 
 Одоогийн хувилбар нь статик Wire payment link биш. Хэрэглэгч бүрийн имэйл болон дүнгээр backend дээр шинэ PaymentIntent үүсгэдэг. Төлбөр амжилттай болсныг browser-ийн success URL-д итгэж шийдэхгүй; Wire-ийн signed webhook-ийг шалгасны дараа л Gmail талархлын имэйл илгээдэг.
+
+## 18. Бодит алдаа зассан жишээ: төлбөр амжилттай ч имэйл ирээгүй
+
+### 18.1 Илэрсэн шинж тэмдэг
+
+Production сайт дээр `1₮`-ийн төлбөр амжилттай болсон боловч хэрэглэгчийн
+имэйлд талархлын захиа ирээгүй.
+
+Эхлээд Vercel Logs болон Wire dashboard-ийг шалгасан:
+
+```text
+POST /api/wire/checkout → 200
+Wire transaction       → 1₮, Амжилттай, QPay, API
+POST /api/wire/webhook → 200
+Event type              → payment_intent.succeeded
+```
+
+Эдгээрээс дараахыг баталсан:
+
+- frontend checkout request амжилттай;
+- Wire PaymentIntent болон QPay төлбөр амжилттай;
+- webhook production endpoint рүү ирсэн;
+- HMAC signature шалгалт амжилттай;
+- Gmail authentication error гарсан шинж байгаагүй.
+
+### 18.2 Яагаад өмнөх код алдаагүй мөртлөө имэйл явуулаагүй вэ?
+
+Өмнөх handler зөвхөн webhook payload доторх утгыг шууд уншдаг байсан:
+
+```ts
+const paymentIntent = getPaymentIntent(event);
+const email = paymentIntent?.metadata?.customer_email;
+
+if (typeof email === "string" && email.length <= 254) {
+  await sendThankYouEmail(...);
+}
+```
+
+Хэрэв Wire event дотор PaymentIntent-ийн metadata бүрэн ирээгүй бол `email`
+нь `undefined` болно. Энэ үед код алдаа шидэхгүй, имэйл илгээх хэсгийг зүгээр
+алгасаад webhook-д `200` буцааж байсан. Тиймээс Vercel log дээр Gmail error
+харагдаагүй.
+
+### 18.3 Payload-ийн олон хэлбэрийг дэмжсэн
+
+Wire event-ийн `data` дараах хэд хэдэн хэлбэртэй байж болохоор type болон
+parser-ийг өргөтгөсөн:
+
+```ts
+type WireEventData = PaymentIntent & {
+  object?: string | PaymentIntent;
+  payment_intent?: string | PaymentIntent;
+};
+```
+
+`getPaymentIntent()` одоо:
+
+1. `data.object` object эсэх;
+2. `data.payment_intent` object эсэх;
+3. үгүй бол `data` өөрийг нь PaymentIntent гэж үзэх
+
+дарааллаар шалгана.
+
+Мөн PaymentIntent ID-г өөр өөр payload хэлбэрээс авах helper нэмсэн:
+
+```ts
+function getPaymentIntentId(
+  event: WireEvent,
+  paymentIntent: PaymentIntent | null,
+) {
+  if (paymentIntent?.id) return paymentIntent.id;
+
+  const nested = event.data?.payment_intent;
+  if (typeof nested === "string") return nested;
+  if (nested && typeof nested === "object" && nested.id) return nested.id;
+
+  return null;
+}
+```
+
+### 18.4 Metadata байхгүй үед Wire API-аас PaymentIntent дахин авах
+
+Webhook payload дотор `customer_email` олдохгүй бол `WIRE_SECRET_KEY` ашиглан
+PaymentIntent-ийн бүрэн object-ийг Wire API-аас татдаг болгосон:
+
+```ts
+async function retrievePaymentIntent(id: string) {
+  const apiKey = process.env.WIRE_SECRET_KEY;
+  if (!apiKey) return null;
+
+  const response = await fetch(
+    `https://api.wire.mn/v1/payment_intents/${encodeURIComponent(id)}`,
+    {
+      headers: { Authorization: `Bearer ${apiKey}` },
+      cache: "no-store",
+    },
+  );
+
+  if (!response.ok) return null;
+  return (await response.json()) as PaymentIntent;
+}
+```
+
+Handler дотор fallback дараах байдлаар ажиллана:
+
+```ts
+let paymentIntent = getPaymentIntent(event);
+let email = paymentIntent?.metadata?.customer_email;
+
+if (typeof email !== "string") {
+  const paymentIntentId = getPaymentIntentId(event, paymentIntent);
+
+  if (paymentIntentId) {
+    const retrieved = await retrievePaymentIntent(paymentIntentId);
+
+    if (retrieved) {
+      paymentIntent = retrieved;
+      email = retrieved.metadata?.customer_email;
+    }
+  }
+}
+```
+
+Ингэснээр webhook жижиг payload илгээсэн ч backend PaymentIntent ID-г ашиглан
+анхны checkout үеэр хадгалсан `metadata.customer_email`-ийг сэргээж чадна.
+
+### 18.5 Оношлоход зориулсан log нэмсэн
+
+Имэйл амжилттай илгээгдсэн үед:
+
+```ts
+console.info("Wire thank-you email sent", {
+  eventId: event.id ?? "unknown",
+  paymentIntentId: paymentIntent?.id ?? "unknown",
+});
+```
+
+Имэйл metadata олдохгүй хэвээр байвал:
+
+```ts
+console.warn(
+  "Wire thank-you email skipped: customer_email metadata missing",
+  {
+    eventId: event.id ?? "unknown",
+    paymentIntentId: paymentIntent?.id ?? "unknown",
+    dataKeys: event.data ? Object.keys(event.data) : [],
+  },
+);
+```
+
+Log-д хэрэглэгчийн бодит имэйл, API key, App Password бичихгүй. Зөвхөн event,
+PaymentIntent ID болон payload-ийн key-үүдийг бичнэ.
+
+### 18.6 Build болон deploy шалгалт
+
+Засварын дараа:
+
+```bash
+npm run lint
+npm run build
+```
+
+ажиллуулж TypeScript болон production build амжилттай өнгөрснийг шалгасан.
+Дараа нь GitHub `main` branch руу push хийхэд Vercel автоматаар production
+deployment хийсэн.
+
+Засвар орсон commit:
+
+```text
+cbba4ceb83b428c4280da971beb8066c998fdea3
+```
+
+### 18.7 Өмнөх төлбөрийг дахин боловсруулах
+
+Шинэ төлбөр дахин хийх шаардлагагүй байсан. Wire dashboard-ийн:
+
+```text
+Webhook → Сүүлийн event-үүд → payment_intent.succeeded → Дахин илгээх
+```
+
+товчийг ашиглан өмнөх амжилттай `1₮` event-ийг production webhook руу нэг
+удаа дахин илгээсэн.
+
+Дахин илгээсэн event:
+
+```text
+evt_ispubixyugjj5qhhspd2zv344e
+```
+
+Энэ үйлдэл төлбөрийг дахин татахгүй. Өмнөх event-ийг webhook endpoint рүү
+дахин хүргэж, шинэ handler-аар боловсруулах зориулалттай.
+
+### 18.8 Эцсийн үр дүн
+
+Vercel production log дээр:
+
+```text
+POST /api/wire/webhook → 200
+Wire thank-you email sent {
+  eventId: "evt_ispubixyugjj5qhhspd2zv344e",
+  paymentIntentId: "pi_zrmdc5rpb6f4zmfawc5hq4rwwa"
+}
+```
+
+гэж гарсан. Ингэснээр дараах бүх шат амжилттай ажилласныг баталсан:
+
+1. Wire event дахин хүргэгдсэн;
+2. signature зөв шалгагдсан;
+3. PaymentIntent ID олдсон;
+4. Wire API-аас metadata сэргээгдсэн;
+5. `customer_email` олдсон;
+6. Gmail SMTP хүсэлтийг амжилттай хүлээн авсан;
+7. webhook `200` хариу өгсөн.
