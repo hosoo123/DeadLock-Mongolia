@@ -1145,6 +1145,15 @@
         gap: 10px;
         margin-top: 20px;
       }
+      .hero-select.visually-hidden { display:none; }
+      .hero-picker { grid-column:1 / -1; display:grid; grid-template-columns:repeat(auto-fill,minmax(92px,1fr)); gap:10px; max-height:310px; overflow:auto; padding:2px 3px 8px; }
+      .hero-pick { min-width:0; padding:7px; border:1px solid var(--line); border-radius:6px; background:#171411; color:var(--ink); cursor:pointer; transition:border-color .16s, transform .16s, box-shadow .16s; }
+      .hero-pick:hover { transform:translateY(-2px); border-color:#d7a74f; }
+      .hero-pick.selected { border-color:#d7a74f; box-shadow:0 0 0 1px #d7a74f, 0 0 16px #d7a74f44; }
+      .hero-pick-image { position:relative; display:block; aspect-ratio:1; overflow:hidden; border-radius:4px; background:linear-gradient(145deg,#393024,#171411); }
+      .hero-pick-image img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+      .hero-pick-initial { position:absolute; inset:0; display:grid; place-items:center; color:#d7a74f; font:700 28px "Oswald",sans-serif; }
+      .hero-pick-name { display:block; overflow:hidden; margin-top:6px; font:600 10px "IBM Plex Mono",monospace; text-overflow:ellipsis; white-space:nowrap; }
       .hero-select,
       .generate-build {
         min-height: 48px;

@@ -1313,6 +1313,22 @@
         }));
       }
 
+      function heroImage(hero) {
+        const images = hero?.images || {};
+        const candidates = [images.icon_hero_card, images.hero_card, images.icon, images.portrait, hero?.icon_hero_card, hero?.hero_card, hero?.image, hero?.image_url, hero?.portrait, hero?.portrait_url];
+        return candidates.find((value) => typeof value === "string" && /^https?:\/\//i.test(value)) || "";
+      }
+
+      function renderHeroPicker(heroes) {
+        const picker = document.getElementById("heroPicker");
+        if (!picker) return;
+        const sorted = [...heroes].sort((a, b) => heroName(a).localeCompare(heroName(b)));
+        picker.innerHTML = sorted.map((hero) => {
+          const name = heroName(hero), image = heroImage(hero);
+          const selected = String(hero.id) === document.getElementById("heroSelect").value;
+          return `<button class="hero-pick${selected ? " selected" : ""}" type="button" data-hero-id="${escapeHtml(hero.id)}" aria-pressed="${selected}" aria-label="${escapeHtml(name)}" title="${escapeHtml(name)}"><span class="hero-pick-image">${image ? `<img src="${escapeHtml(image)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">` : ""}<span class="hero-pick-initial">${escapeHtml(name.slice(0, 1))}</span></span><span class="hero-pick-name">${escapeHtml(name)}</span></button>`;
+        }).join("");
+      }
       function populateHeroSelect(heroes) {
         const select = document.getElementById("heroSelect");
         const sorted = [...heroes].sort((a, b) =>
@@ -1326,6 +1342,7 @@
                 `<option value="${escapeHtml(hero.id)}">${escapeHtml(heroName(hero))}</option>`,
             )
             .join("");
+        renderHeroPicker(heroes);
         document.getElementById("generateBuild").disabled = false;
       }
 
@@ -2355,7 +2372,16 @@
       document
         .getElementById("generateBuild")
         .addEventListener("click", generateHeroBuild);
+      document.getElementById("heroPicker").addEventListener("click", (event) => {
+        const button = event.target.closest("[data-hero-id]");
+        if (!button) return;
+        const select = document.getElementById("heroSelect");
+        select.value = button.dataset.heroId;
+        renderHeroPicker(liveHeroes);
+        document.getElementById("buildOutput").classList.remove("visible");
+      });
       document.getElementById("heroSelect").addEventListener("change", () => {
+        renderHeroPicker(liveHeroes);
         document.getElementById("buildOutput").classList.remove("visible");
       });
 
