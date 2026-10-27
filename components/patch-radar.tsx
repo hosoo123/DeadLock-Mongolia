@@ -13,7 +13,6 @@ const itemUpdates = [
   { name: "Curse", type: "Spirit / Active", detail: "Идэвхжүүлж дайсны хөдөлгөөн болон чадварын хэмнэлийг таслахад ашиглана.", image: "https://deadlock.wiki/wiki/Special:FilePath/Curse.png" },
   { name: "Debuff Remover", type: "Vitality / Active", detail: "Сөрөг эффект цэвэрлэж, crowd control-д орсон үед дахин тоглолтод орох боломж өгнө.", image: "https://deadlock.wiki/wiki/Special:FilePath/Debuff_Remover.png" },
 ];
-];
 
 export function PatchRadar() {
   return (
