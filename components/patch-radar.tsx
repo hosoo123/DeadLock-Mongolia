@@ -1,17 +1,17 @@
 const heroUpdates = [
-  { name: "Nurse Harrow", role: "Support / Control", change: "Шинэ баатар", detail: "Leech Therapy, Wretched Vapors, Healing Needles, Lurking Terrors — sustain болон teamfight control дээр төвлөрнө.", tone: "violet" },
-  { name: "Violet", role: "Skirmisher", change: "Шинэ баатар", detail: "Ойрын зайны дарамт, хурдан reposition, ганцаарчилсан pick хийхэд чиглэсэн.", tone: "pink" },
-  { name: "Deadman Danny", role: "Gunslinger", change: "Шинэ баатар", detail: "Бууны burst болон зайнаас дарамтлах playstyle-тэй шинэ сонголт.", tone: "amber" },
-  { name: "Solomon", role: "Frontline", change: "Шинэ баатар", detail: "Удаан үргэлжлэх тулаан, хамгаалалт, frontline space үүсгэхэд зориулагдсан.", tone: "cyan" },
-  { name: "Baba", role: "Bruiser", change: "Шинэ баатар", detail: "Тэсвэр, ойрын зайн дарамт, тогтвортой trade хийхэд хүчтэй.", tone: "lime" },
-  { name: "Rat King", role: "Ambush", change: "Шинэ баатар", detail: "Гэнэтийн дайралт, map pressure, жижиг зайд chaos үүсгэнэ.", tone: "red" },
+  { name: "Nurse Harrow", role: "Support / Control", change: "Шинэ баатар", detail: "Leech Therapy, Wretched Vapors, Healing Needles, Lurking Terrors — sustain болон teamfight control дээр төвлөрнө.", tone: "violet", image: "https://deadlock.wiki/wiki/Special:FilePath/Nurse_Harrow.png" },
+  { name: "Violet", role: "Skirmisher", change: "Шинэ баатар", detail: "Ойрын зайны дарамт, хурдан reposition, ганцаарчилсан pick хийхэд чиглэсэн.", tone: "pink", image: "https://deadlock.wiki/wiki/Special:FilePath/Violet.png" },
+  { name: "Deadman Danny", role: "Gunslinger", change: "Шинэ баатар", detail: "Бууны burst болон зайнаас дарамтлах playstyle-тэй шинэ сонголт.", tone: "amber", image: "https://deadlock.wiki/wiki/Special:FilePath/Deadman_Danny.png" },
+  { name: "Solomon", role: "Frontline", change: "Шинэ баатар", detail: "Удаан үргэлжлэх тулаан, хамгаалалт, frontline space үүсгэхэд зориулагдсан.", tone: "cyan", image: "https://deadlock.wiki/wiki/Special:FilePath/Solomon.png" },
+  { name: "Baba", role: "Bruiser", change: "Шинэ баатар", detail: "Тэсвэр, ойрын зайн дарамт, тогтвортой trade хийхэд хүчтэй.", tone: "lime", image: "https://deadlock.wiki/wiki/Special:FilePath/Baba.png" },
+  { name: "Rat King", role: "Ambush", change: "Шинэ баатар", detail: "Гэнэтийн дайралт, map pressure, жижиг зайд chaos үүсгэнэ.", tone: "red", image: "https://deadlock.wiki/wiki/Special:FilePath/Rat_King.png" },
 ];
 
 const itemUpdates = [
-  { name: "Escalating Resilience", type: "Weapon / Defense", detail: "Дайсанд онох бүрд bullet resistance цэнэглэгдэнэ. Удаан үргэлжлэх буудалцаанд хүч нь нэмэгдэнэ.", image: "https://deadlock.wiki/wiki/Special:FilePath/Escalating_Resilience.png" },
-  { name: "Spiritual Overflow", type: "Spirit", detail: "Буудсан үед charge цуглуулж fire rate, spirit power, spirit lifesteal-ийг өсгөнө.", image: "https://deadlock.wiki/wiki/Special:FilePath/Spiritual_Overflow.png" },
-  { name: "Curse", type: "Spirit / Active", detail: "Идэвхжүүлж дайсны хөдөлгөөн болон чадварын хэмнэлийг таслахад ашиглана.", image: "https://deadlock.wiki/wiki/Special:FilePath/Curse.png" },
-  { name: "Debuff Remover", type: "Vitality / Active", detail: "Сөрөг эффект цэвэрлэж, crowd control-д орсон үед дахин тоглолтод орох боломж өгнө.", image: "https://deadlock.wiki/wiki/Special:FilePath/Debuff_Remover.png" },
+  { name: "Escalating Resilience", type: "Weapon / Defense", detail: "Дайсанд онох бүрд bullet resistance цэнэглэгдэнэ. Удаан үргэлжлэх буудалцаанд хүч нь нэмэгдэнэ.", image: "https://deadlock.wiki/images/5/57/Escalating_Resilience.png" },
+  { name: "Spiritual Overflow", type: "Spirit", detail: "Буудсан үед charge цуглуулж fire rate, spirit power, spirit lifesteal-ийг өсгөнө.", image: "https://deadlock.wiki/images/4/46/Spiritual_Overflow.png" },
+  { name: "Curse", type: "Spirit / Active", detail: "Идэвхжүүлж дайсны хөдөлгөөн болон чадварын хэмнэлийг таслахад ашиглана.", image: "https://deadlock.wiki/images/0/0b/Curse.png" },
+  { name: "Debuff Remover", type: "Vitality / Active", detail: "Сөрөг эффект цэвэрлэж, crowd control-д орсон үед дахин тоглолтод орох боломж өгнө.", image: "https://deadlock.wiki/images/6/6f/Debuff_Remover.png" },
 ];
 
 export function PatchRadar() {
@@ -34,7 +34,7 @@ export function PatchRadar() {
           <div className="hero-update-list">
             {heroUpdates.map((hero) => (
               <article className={`hero-update hero-${hero.tone}`} key={hero.name}>
-                <div className="hero-index">{hero.name.slice(0, 2).toUpperCase()}</div>
+                <div className="hero-index"><img src={hero.image} alt={`${hero.name} баатрын зураг`} loading="lazy" /></div>
                 <div className="hero-copy">
                   <div className="hero-meta"><span>{hero.change}</span><span>{hero.role}</span></div>
                   <h3>{hero.name}</h3>
