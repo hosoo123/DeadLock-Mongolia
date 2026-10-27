@@ -8,10 +8,11 @@ const heroUpdates = [
 ];
 
 const itemUpdates = [
-  { name: "Escalating Resilience", type: "Weapon / Defense", detail: "Дайсанд онох бүрд bullet resistance цэнэглэгдэнэ. Удаан үргэлжлэх буудалцаанд хүч нь нэмэгдэнэ." },
-  { name: "Spiritual Overflow", type: "Spirit", detail: "Буудсан үед charge цуглуулж fire rate, spirit power, spirit lifesteal-ийг өсгөнө." },
-  { name: "Curse", type: "Spirit / Active", detail: "Идэвхжүүлж дайсны хөдөлгөөн болон чадварын хэмнэлийг таслахад ашиглана." },
-  { name: "Debuff Remover", type: "Vitality / Active", detail: "Сөрөг эффект цэвэрлэж, crowd control-д орсон үед дахин тоглолтод орох боломж өгнө." },
+  { name: "Escalating Resilience", type: "Weapon / Defense", detail: "Дайсанд онох бүрд bullet resistance цэнэглэгдэнэ. Удаан үргэлжлэх буудалцаанд хүч нь нэмэгдэнэ.", image: "https://deadlock.wiki/wiki/Special:FilePath/Escalating_Resilience.png" },
+  { name: "Spiritual Overflow", type: "Spirit", detail: "Буудсан үед charge цуглуулж fire rate, spirit power, spirit lifesteal-ийг өсгөнө.", image: "https://deadlock.wiki/wiki/Special:FilePath/Spiritual_Overflow.png" },
+  { name: "Curse", type: "Spirit / Active", detail: "Идэвхжүүлж дайсны хөдөлгөөн болон чадварын хэмнэлийг таслахад ашиглана.", image: "https://deadlock.wiki/wiki/Special:FilePath/Curse.png" },
+  { name: "Debuff Remover", type: "Vitality / Active", detail: "Сөрөг эффект цэвэрлэж, crowd control-д орсон үед дахин тоглолтод орох боломж өгнө.", image: "https://deadlock.wiki/wiki/Special:FilePath/Debuff_Remover.png" },
+];
 ];
 
 export function PatchRadar() {
@@ -51,7 +52,7 @@ export function PatchRadar() {
           <div className="item-update-list">
             {itemUpdates.map((item, index) => (
               <details className="item-update" key={item.name} open={index === 0}>
-                <summary><span className="item-number">0{index + 1}</span><strong>{item.name}</strong><span className="summary-plus">+</span></summary>
+                <summary><span className="item-number">0{index + 1}</span><img className="item-icon" src={item.image} alt="" loading="lazy" /><strong>{item.name}</strong><span className="summary-plus">+</span></summary>
                 <div className="item-update-body"><span>{item.type}</span><p>{item.detail}</p></div>
               </details>
             ))}
