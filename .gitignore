@@ -3,6 +3,7 @@
 
 # Next.js build output
 /.next
+/.next-stale-*
 /out
 
 # local environment files

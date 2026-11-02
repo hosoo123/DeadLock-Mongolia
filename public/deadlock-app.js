@@ -1250,6 +1250,18 @@
         }
       }
 
+      async function fetchAssetData(localPath, remotePath, cacheKey) {
+        try {
+          const response = await fetch(localPath, {
+            headers: { Accept: "application/json" },
+          });
+          if (!response.ok) throw new Error(`Local asset ${response.status}`);
+          return await response.json();
+        } catch {
+          return fetchJson(remotePath, cacheKey);
+        }
+      }
+
       function heroName(hero) {
         return (
           hero.name ||
@@ -1316,7 +1328,7 @@
       function heroImage(hero) {
         const images = hero?.images || {};
         const candidates = [images.icon_hero_card, images.hero_card, images.icon, images.portrait, hero?.icon_hero_card, hero?.hero_card, hero?.image, hero?.image_url, hero?.portrait, hero?.portrait_url];
-        return candidates.find((value) => typeof value === "string" && /^https?:\/\//i.test(value)) || "";
+        return candidates.find((value) => typeof value === "string" && /^(?:https?:\/\/|\/)/i.test(value)) || "";
       }
 
       function renderHeroPicker(heroes) {
@@ -1350,13 +1362,16 @@
         const byName = new Map(
           items.map((item) => [normalizeName(itemName(item)), item]),
         );
+        const itemAliases = {
+          armorpiercingrounds: "armorpiercer",
+        };
         Object.values(DATA).forEach((shop) =>
           shop.items.forEach((localItem) => {
-            const remote = byName.get(normalizeName(localItem.n));
+            const normalized = normalizeName(localItem.n);
+            const remote = byName.get(itemAliases[normalized] || normalized);
             if (!remote) return;
-            // API-г ID/statistics холбоход л ашиглана. Зургийн URL-ийг API-аас
-            // дарж солихгүй; шалгасан хуучин local URL хамгийн найдвартай.
             localItem.apiId = remote.id;
+            localItem.apiData = remote;
           }),
         );
       }
@@ -1365,8 +1380,13 @@
         const status = document.getElementById("apiStatus");
         try {
           const [heroes, items] = await Promise.all([
-            fetchJson("/assets/heroes?language=english", "deadlock-heroes-v1"),
-            fetchJson(
+            fetchAssetData(
+              "/data/deadlock-heroes.json",
+              "/assets/heroes?language=english",
+              "deadlock-heroes-v1",
+            ),
+            fetchAssetData(
+              "/data/deadlock-items.json",
               "/assets/items/by-type/upgrade?language=english",
               "deadlock-items-v1",
             ),
@@ -1379,7 +1399,7 @@
           populateHeroSelect(
             liveHeroes.length ? liveHeroes : localFallbackHeroes(),
           );
-          status.textContent = `${liveHeroes.length || ALL_HEROES.length} hero · Live мэдээлэл холбогдлоо`;
+          status.textContent = `${liveHeroes.length || ALL_HEROES.length} hero · Мэдээлэл бэлэн`;
           status.classList.add("live");
           render();
         } catch (error) {
@@ -2049,12 +2069,59 @@
           .join("");
       }
 
+      function heroPortraitList(names) {
+        return names
+          .slice(0, 5)
+          .map((name) => {
+            const hero = liveHeroes.find(
+              (entry) => normalizeName(heroName(entry)) === normalizeName(name),
+            );
+            const image = heroImage(hero);
+            return `<div class="item-hero" title="${escapeHtml(name)}" aria-label="${escapeHtml(name)}">
+              <div class="item-hero-portrait">
+                ${image ? `<img src="${escapeHtml(image)}" alt="${escapeHtml(name)}" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">` : ""}
+                <span aria-hidden="true">${escapeHtml(name.slice(0, 1))}</span>
+              </div>
+              <small>${escapeHtml(name)}</small>
+            </div>`;
+          })
+          .join("");
+      }
+
       function findItemByName(name) {
         for (const [shopKey, shop] of Object.entries(DATA)) {
           const item = shop.items.find((entry) => entry.n === name);
           if (item) return { item, shopKey, shop };
         }
         return null;
+      }
+
+      function localItemIcon(item) {
+        return `/items/${encodeURIComponent(item.n)}.png`;
+      }
+
+      function itemImageAttributes(item) {
+        const localSource = localItemIcon(item);
+        const usesLocalAsset = localSource.startsWith("/items/");
+        return `src="${escapeHtml(localSource)}"${usesLocalAsset && item.img ? ` data-fallback-src="${escapeHtml(item.img)}"` : ""}`;
+      }
+
+      function bindItemImageFallbacks(root) {
+        root
+          .querySelectorAll("img[data-fallback-src]:not([data-fallback-ready])")
+          .forEach((image) => {
+            image.dataset.fallbackReady = "true";
+            image.addEventListener(
+              "error",
+              () => {
+                const fallback = image.dataset.fallbackSrc;
+                if (!fallback || image.src === fallback) return;
+                image.removeAttribute("data-fallback-src");
+                image.src = fallback;
+              },
+              { once: true },
+            );
+          });
       }
 
       function getUpgradeInfo(itemName) {
@@ -2071,7 +2138,7 @@
       function upgradeButton(found) {
         const { item, shop } = found;
         return `<button class="upgrade-item" type="button" data-upgrade-name="${escapeHtml(item.n)}">
-          ${item.img ? `<img src="${escapeHtml(item.img)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : ""}
+          <img ${itemImageAttributes(item)} alt="" loading="lazy" referrerpolicy="no-referrer">
           <span><strong>${escapeHtml(item.n)}</strong><small>Түвшин ${item.t} · ${escapeHtml(shop.tierPrices[item.t])}</small></span>
         </button>`;
       }
@@ -2100,10 +2167,134 @@
 
       function readableItemSummary(item, guide) {
         const description = String(item.d || "").trim();
-        const purpose = guide.builds.slice(0, 2).join(" болон ");
-        if (!description)
-          return `${item.n} нь ${purpose} чиглэлийн хэрэгслийн бүрдэлд ашиглагдана.`;
-        return `${description} Ерөнхийдөө ${purpose} чиглэлээр тоглоход илүү тохиромжтой.`;
+        return description || `${item.n} таны баатрыг илүү хүчтэй болгоно.`;
+      }
+
+      function simpleWhenToBuy(item) {
+        return {
+          1: "Тоглолтын эхэнд, хямдхан хүч авахдаа.",
+          2: "Эхэн–дунд үед build-ээ хүчтэй болгохдоо.",
+          3: "Дунд үед гол build-ээ гүйцээхдээ.",
+          4: "Сүүлд, үндсэн item-уудаа авсны дараа.",
+        }[item.t];
+      }
+
+      function simpleUsageSteps(item) {
+        const text = `${item.n} ${item.d}`.toLowerCase();
+        if (item.active)
+          return [
+            "Item бэлэн эсэхийг шалга.",
+            "Тулааны чухал мөчид item-ийн товчоо дар.",
+          ];
+        if (item.imbue)
+          return [
+            "Авахдаа хамгийн их ашигладаг чадвартайгаа холбо.",
+            "Тэр чадвараа ашиглахад item-ийн нөлөө орно.",
+          ];
+        if (/headshot|толгой/.test(text))
+          return ["Товч дарахгүй.", "Толгойд оноход нэмэлт нөлөө орно."];
+        if (/reload|цэнэгл|magazine|магазин/.test(text))
+          return ["Товч дарахгүй.", "Сумаа цэнэглэх үед нөлөө нь ажиллана."];
+        if (/close|ойр зай|point blank/.test(text))
+          return ["Товч дарахгүй.", "Дайсандаа ойр байхад хүч нь орно."];
+        if (/long range|хол зай|алсын зай|stalker/.test(text))
+          return ["Товч дарахгүй.", "Дайснаас зайтай байхад хүч нь орно."];
+        return ["Товч дарахгүй.", "Авсан даруйдаа өөрөө ажиллана."];
+      }
+
+      function simpleItemTip(item, shopKey) {
+        const text = `${item.n} ${item.d}`.toLowerCase();
+        if (/heal|regen|lifesteal|restorative/.test(text))
+          return "Дайсан heal багасгах item авбал хүч нь буурна.";
+        if (/headshot|толгой/.test(text))
+          return "Толгойд тогтмол онодог бол илүү ашигтай.";
+        if (/close|ойр зай|melee/.test(text))
+          return "Дайсандаа ойртож чаддаг үедээ ав.";
+        if (/long range|хол зай|алсын зай/.test(text))
+          return "Зайгаа сайн барьж тоглодог үедээ ав.";
+        if (shopKey === "fairfax") return "Буугаар гол damage гаргадаг build-д тохирно.";
+        if (shopKey === "mps") return "Хэт олон хамгаалалтын item авбал damage дутаж магадгүй.";
+        return "Чадвараа ойр ойрхон ашигладаг build-д илүү тохирно.";
+      }
+
+      function friendlyStatLabel(label) {
+        const exact = {
+          "Weapon Damage": "Бууны хохирол",
+          "Max Ammo": "Сумны багтаамж",
+          "Fire Rate": "Буудах хурд",
+          "Bullet Lifesteal": "Буугаар амь нөхөх",
+          "Spirit Lifesteal": "Чадвараар амь нөхөх",
+          "Spirit Power": "Чадварын хүч",
+          "Move Speed": "Хөдөлгөөний хурд",
+          "Sprint Speed": "Гүйлтийн хурд",
+          Health: "Нэмэгдэх амь",
+          "Bonus Health": "Нэмэгдэх амь",
+          "Health Regen": "Амь нөхөлт",
+          "Bullet Resist": "Бууны хамгаалалт",
+          "Spirit Resist": "Чадварын хамгаалалт",
+          Cooldown: "Дахин бэлэн болох",
+          Duration: "Үйлчлэх хугацаа",
+          Range: "Хүрэх зай",
+          "Cast Range": "Хүрэх зай",
+          Stamina: "Хөдөлгөөний цэнэг",
+          "Melee Damage": "Гар цохилтын хохирол",
+        };
+        if (exact[label]) return exact[label];
+        return String(label || "Нэмэлт хүч")
+          .replace(/Weapon/gi, "Бууны")
+          .replace(/Bullet/gi, "Бууны")
+          .replace(/Spirit/gi, "Чадварын")
+          .replace(/Damage/gi, "хохирол")
+          .replace(/Resist/gi, "хамгаалалт")
+          .replace(/Speed/gi, "хурд")
+          .replace(/Cooldown/gi, "хүлээлгийн хугацаа")
+          .replace(/Duration/gi, "үйлчлэх хугацаа");
+      }
+
+      function getGameItemStats(item) {
+        const remote = item.apiData;
+        if (!remote?.properties) return [];
+        const keys = [];
+        (remote.tooltip_sections || []).forEach((section) =>
+          (section.section_attributes || []).forEach((attributes) => {
+            ["properties", "elevated_properties", "important_properties"].forEach(
+              (field) => (attributes[field] || []).forEach((key) => keys.push(key)),
+            );
+          }),
+        );
+        if (!keys.length) {
+          Object.entries(remote.properties).forEach(([key, property]) => {
+            if (property.tooltip_section) keys.push(key);
+          });
+        }
+        return [...new Set(keys)]
+          .map((key) => remote.properties[key])
+          .filter((property) => property && property.value != null)
+          .filter((property) => !/^0(?:\.0+)?(?:s|m)?$/i.test(String(property.value).trim()))
+          .slice(0, 6)
+          .map((property) => {
+            const raw = String(property.value).trim();
+            const numeric = Number.parseFloat(raw);
+            const wantsSign = String(property.prefix || "").includes("sign");
+            const sign = wantsSign && Number.isFinite(numeric) && numeric > 0 ? "+" : "";
+            const hasUnit = /[a-z%]/i.test(raw);
+            const postfix = hasUnit ? "" : String(property.postfix || "").trim();
+            return {
+              label: friendlyStatLabel(property.label || property.postvalue_label),
+              value: `${sign}${raw}${postfix}`,
+              className: String(property.css_class || "default").replace(/[^a-z0-9_-]/gi, ""),
+            };
+          });
+      }
+
+      function renderGameStats(item, compact = false) {
+        const stats = getGameItemStats(item).slice(0, compact ? 2 : 6);
+        if (!stats.length) return "";
+        return `<div class="game-stat-grid${compact ? " compact" : ""}">${stats
+          .map(
+            (stat) => `<div class="game-stat ${escapeHtml(stat.className)}"><strong>${escapeHtml(stat.value)}</strong><span>${escapeHtml(stat.label)}</span></div>`,
+          )
+          .join("")}</div>`;
       }
 
       let lastFocusedCard = null;
@@ -2111,12 +2302,9 @@
       function openItemGuide(item, shopKey) {
         const shop = DATA[shopKey];
         const guide = getItemGuide(item, shopKey);
-        const mechanic = getMechanicGuide(item);
         const modal = document.getElementById("itemModal");
         const body = document.getElementById("itemModalBody");
-        const visual = item.img
-          ? `<img src="${escapeHtml(item.img)}" alt="${escapeHtml(item.n)}" referrerpolicy="no-referrer" />`
-          : '<div class="modal-placeholder">Зураг оруулаагүй</div>';
+        const visual = `<img ${itemImageAttributes(item)} alt="${escapeHtml(item.n)}" referrerpolicy="no-referrer" />`;
 
         body.innerHTML = `
           <aside class="modal-visual">
@@ -2125,94 +2313,41 @@
               <span class="meta-pill">${escapeHtml(shop.label)}</span>
               <span class="meta-pill">Түвшин ${item.t}</span>
               <span class="meta-pill">${escapeHtml(shop.tierPrices[item.t])}</span>
-              <span class="meta-pill">${escapeHtml(mechanic.type)}</span>
+              <span class="meta-pill">${item.active ? "Товч дарж ашиглана" : item.imbue ? "Чадварт холбоно" : "Автоматаар ажиллана"}</span>
             </div>
           </aside>
           <section>
-            <div class="modal-kicker">${escapeHtml(plainMongolianText(guide.role))} · Хэрэгслийн тайлбар</div>
+            <div class="modal-kicker">${escapeHtml(shop.label)} · ${escapeHtml(shop.tierPrices[item.t])}</div>
             <h2 class="modal-title" id="itemModalTitle">${escapeHtml(item.n)}</h2>
             <div class="summary-card">
-              <span class="summary-label">Товч ойлголт</span>
+              <span class="summary-label">Юу хийдэг вэ?</span>
               <p class="modal-summary">${formatGuideText(readableItemSummary(item, guide))}</p>
             </div>
-            <div class="quick-glance" aria-label="Хэрэгслийн хурдан мэдээлэл">
-              <div class="glance-card"><small>Механик</small><strong>${escapeHtml(mechanic.type.split(" · ")[0])}</strong></div>
-              <div class="glance-card"><small>Авах үе</small><strong>Түвшин ${item.t} · ${escapeHtml(String(guide.when).split("—")[0].trim())}</strong></div>
-              <div class="glance-card"><small>Гол чиглэл</small><strong>${escapeHtml(plainMongolianText(guide.builds[0] || guide.role))}</strong></div>
-            </div>
-            <div class="guide-grid">
-              <div class="mechanic-hero">
-                <span class="mechanic-icon" aria-hidden="true">${mechanic.icon}</span>
-                <div>
-                  <strong>Яг яаж ажилладаг вэ?</strong>
-                  <p>${formatGuideText(mechanic.effect)}</p>
-                </div>
+            ${renderGameStats(item)}
+            <div class="simple-guide-grid">
+              <div class="simple-guide-card usage-card">
+                <h3>Яаж ашиглах вэ?</h3>
+                <ol>${simpleUsageSteps(item).map((step) => `<li>${escapeHtml(step)}</li>`).join("")}</ol>
               </div>
-              <div class="guide-section wide">
-                <h3>⚡ Ямар үед, яаж идэвхждэг вэ?</h3>
-                <p>${formatGuideText(mechanic.trigger)}</p>
+              <div class="simple-guide-card">
+                <h3>Хэзээ авах вэ?</h3>
+                <p>${escapeHtml(simpleWhenToBuy(item))}</p>
               </div>
-              <div class="guide-section wide">
-                <h3>1 → 2 → 3 Хэрэглэх дараалал</h3>
-                <ol class="usage-steps">
-                  ${mechanic.steps.map((step) => `<li>${formatGuideText(step)}</li>`).join("")}
-                </ol>
+              <div class="simple-guide-card">
+                <h3>Хэнд тохирох вэ?</h3>
+                <div class="item-hero-list">${heroPortraitList(guide.heroes)}</div>
               </div>
-              <div class="guide-section">
-                <h3>◉ Ажиллаж байгааг яаж мэдэх вэ?</h3>
-                <p>${formatGuideText(mechanic.signal)}</p>
+              <div class="simple-guide-card tip-card">
+                <h3>Санамж</h3>
+                <p>${escapeHtml(simpleItemTip(item, shopKey))}</p>
               </div>
-              <div class="guide-section">
-                <h3>⏱ Ашиглах зөв мөч</h3>
-                <p>${formatGuideText(mechanic.timing)}</p>
-              </div>
-              <div class="guide-section">
-                <h3>◎ Хэзээ худалдаж авах вэ?</h3>
-                <p>${formatGuideText(guide.when)}</p>
-              </div>
-              <div class="guide-section">
-                <h3>◇ Ямар хэрэгслийн бүрдэлд тохирох вэ?</h3>
-                <div class="tag-list">${tagList(guide.builds)}</div>
-              </div>
-              <div class="guide-section">
-                <h3>♟ Аль баатарт илүү тохирох вэ?</h3>
-                <div class="tag-list">${tagList(guide.heroes)}</div>
-              </div>
-              <div class="guide-section">
-                <h3>⚔ Ямар дайсны эсрэг авах вэ?</h3>
-                <p>${formatGuideText(guide.counter)}</p>
-              </div>
-              ${renderUpgradePath(item.n)}
-              <div class="guide-section wide">
-                <h3>! Сонгохын өмнө анхаарах зүйл</h3>
-                <p>${formatGuideText(guide.caution)}</p>
-              </div>
-            </div>
-            <div class="wire-support-card">
-              <div>
-                <span class="wire-support-kicker">Wire · QPay</span>
-                <strong>Deadlock Mongolia-г дэмжих</strong>
-                <p>Энэ тайлбар хэрэг болсон бол хүссэн дүнгээрээ төслийг дэмжээрэй.</p>
-              </div>
-              <a class="wire-support-button" href="${WIRE_SUPPORT_URL}" target="_blank" rel="noopener noreferrer">
-                QPay-аар дэмжих
-              </a>
             </div>
             <div class="guide-actions">
-              <button class="guide-action" id="copyItemGuide" type="button">Тайлбар хуулах</button>
+              <button class="guide-action" id="copyItemGuide" type="button">Товч тайлбар хуулах</button>
             </div>
-            <details class="term-help">
-              <summary>Үг ойлгомжгүй байвал энд дар</summary>
-              <div class="term-help-grid">
-                <p><strong>Гараар идэвхжүүлнэ</strong><br />Хэрэгслийн тусгай товчийг өөрөө дарж ажиллуулна.</p>
-                <p><strong>Өөрөө автоматаар ажиллана</strong><br />Тайлбарт байгаа нөхцөл биелмэгц товч дарахгүйгээр асна.</p>
-                <p><strong>Нэг чадварт холбоно</strong><br />Худалдаж авах үедээ нэг чадвар сонгоход зөвхөн тэр чадварт нөлөөлнө.</p>
-                <p><strong>Түвшин</strong><br />Хэрэгслийн үнэ болон хүчний ангилал. Түвшин өндөр байх тусам ихэвчлэн үнэтэй.</p>
-              </div>
-            </details>
-            <p class="guide-note">Энэ бол ерөнхий зөвлөмж. Тоглоомын шинэчлэлт, хоёр багийн баатар, тоглож буй шугам болон тухайн тулааны нөхцөлд тааруулж сонголтоо өөрчлөөрэй.</p>
           </section>
         `;
+        bindItemImageFallbacks(body);
 
         lastFocusedCard = document.activeElement;
         modal.classList.add("open");
@@ -2228,11 +2363,11 @@
           .getElementById("copyItemGuide")
           ?.addEventListener("click", async (event) => {
             const button = event.currentTarget;
-            const copyText = `${item.n} — ${mechanic.type}\n\nЯаж ажилладаг: ${plainMongolianText(mechanic.effect)}\nИдэвхжих нөхцөл: ${plainMongolianText(mechanic.trigger)}\nАшиглах зөв мөч: ${plainMongolianText(mechanic.timing)}\nТохирох баатар: ${guide.heroes.join(", ")}\nХэрэгслийн бүрдэл: ${guide.builds.map(plainMongolianText).join(", ")}\nАнхаарах зүйл: ${plainMongolianText(guide.caution)}`;
+            const copyText = `${item.n}\n${readableItemSummary(item, guide)}\n\nЯаж ашиглах: ${simpleUsageSteps(item).join(" ")}\nХэзээ авах: ${simpleWhenToBuy(item)}\nТохирох баатар: ${guide.heroes.slice(0, 5).join(", ")}\nСанамж: ${simpleItemTip(item, shopKey)}`;
             try {
               await navigator.clipboard.writeText(copyText);
               button.textContent = "Хуулагдлаа ✓";
-              setTimeout(() => (button.textContent = "Тайлбар хуулах"), 1600);
+              setTimeout(() => (button.textContent = "Товч тайлбар хуулах"), 1600);
             } catch {
               button.textContent = "Хуулж чадсангүй";
             }
@@ -2255,6 +2390,50 @@
       let currentTier = "all";
       let currentSearch = "";
 
+      const itemTooltip = document.createElement("div");
+      itemTooltip.className = "item-tooltip";
+      itemTooltip.setAttribute("role", "tooltip");
+      itemTooltip.setAttribute("aria-hidden", "true");
+      document.body.appendChild(itemTooltip);
+
+      function showItemTooltip(card, item, shop) {
+        if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches)
+          return;
+        itemTooltip.innerHTML = `
+          <div class="tooltip-head">
+            <img ${itemImageAttributes(item)} alt="" referrerpolicy="no-referrer">
+            <div><small>${escapeHtml(shop.tierPrices[item.t])} · ТҮВШИН ${item.t}</small><strong>${escapeHtml(item.n)}</strong></div>
+          </div>
+          <p>${formatGuideText(item.d)}</p>
+          ${renderGameStats(item, true)}
+          <div class="tooltip-rule"></div>
+          <dl>
+            <div><dt>АШИГЛАХ</dt><dd>${item.active ? "Товч дарна" : item.imbue ? "Чадварт холбоно" : "Өөрөө ажиллана"}</dd></div>
+            <div><dt>ХЭЗЭЭ</dt><dd>${escapeHtml(simpleWhenToBuy(item))}</dd></div>
+          </dl>
+          <span class="tooltip-hint">Дарж бүрэн тайлбарыг үзнэ</span>`;
+        bindItemImageFallbacks(itemTooltip);
+        itemTooltip.classList.add("visible");
+        itemTooltip.setAttribute("aria-hidden", "false");
+
+        const rect = card.getBoundingClientRect();
+        const tooltipRect = itemTooltip.getBoundingClientRect();
+        const gap = 12;
+        let left = rect.right + gap;
+        if (left + tooltipRect.width > window.innerWidth - gap)
+          left = rect.left - tooltipRect.width - gap;
+        left = Math.max(gap, Math.min(left, window.innerWidth - tooltipRect.width - gap));
+        let top = rect.top + rect.height / 2 - tooltipRect.height / 2;
+        top = Math.max(gap, Math.min(top, window.innerHeight - tooltipRect.height - gap));
+        itemTooltip.style.left = `${left}px`;
+        itemTooltip.style.top = `${top}px`;
+      }
+
+      function hideItemTooltip() {
+        itemTooltip.classList.remove("visible");
+        itemTooltip.setAttribute("aria-hidden", "true");
+      }
+
       function render() {
         const shop = DATA[currentShop];
         document.documentElement.style.setProperty(
@@ -2263,6 +2442,9 @@
         );
         const content = document.getElementById("content");
         content.innerHTML = "";
+        content.className = currentTier === "all" ? "catalog-board" : "catalog-board single-tier";
+        content.dataset.shop = currentShop;
+        content.setAttribute("aria-label", `${shop.label} item catalog`);
 
         const tiers = [1, 2, 3, 4].filter(
           (t) => currentTier === "all" || currentTier == String(t),
@@ -2285,6 +2467,7 @@
 
           const block = document.createElement("div");
           block.className = "tier-block";
+          block.dataset.tier = String(t);
 
           const head = document.createElement("div");
           head.className = "tier-head";
@@ -2307,9 +2490,7 @@
               `${it.n} item-ийн дэлгэрэнгүй тайлбарыг нээх`,
             );
 
-            const imgSlot = it.img
-              ? `<div class="item-img-slot"><img src="${it.img}" alt="${it.n}" loading="lazy"></div>`
-              : `<div class="item-img-slot placeholder">ЗУРАГ<br>ОРУУЛААГҮЙ</div>`;
+            const imgSlot = `<div class="item-img-slot"><img ${itemImageAttributes(it)} alt="${escapeHtml(it.n)}" loading="lazy" referrerpolicy="no-referrer"></div>`;
 
             card.innerHTML = `
         ${imgSlot}
@@ -2323,12 +2504,22 @@
         <div class="item-desc">${formatGuideText(it.d)}</div>
         <div class="guide-link">Дэлгэрэнгүй тайлбар</div>
       `;
+            bindItemImageFallbacks(card);
             card.addEventListener("click", () =>
               openItemGuide(it, currentShop),
             );
+            card.addEventListener("mouseenter", () =>
+              showItemTooltip(card, it, shop),
+            );
+            card.addEventListener("mouseleave", hideItemTooltip);
+            card.addEventListener("focus", () =>
+              showItemTooltip(card, it, shop),
+            );
+            card.addEventListener("blur", hideItemTooltip);
             card.addEventListener("keydown", (event) => {
               if (event.key === "Enter" || event.key === " ") {
                 event.preventDefault();
+                hideItemTooltip();
                 openItemGuide(it, currentShop);
               }
             });
