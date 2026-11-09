@@ -1,7 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import { Analytics } from "@vercel/analytics/next";
 import { SupportCheckout } from "../components/support-checkout";
+import { LanguageProvider } from "../components/language-provider";
 import "./globals.css";
+import "./player-stats.css";
 import "./support-checkout.css";
 
 export const metadata: Metadata = {
@@ -39,8 +41,10 @@ export default function RootLayout({
   return (
     <html lang="mn">
       <body>
-        {children}
-        <SupportCheckout />
+        <LanguageProvider>
+          {children}
+          <SupportCheckout />
+        </LanguageProvider>
         <Analytics />
       </body>
     </html>

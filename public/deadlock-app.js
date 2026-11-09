@@ -2051,13 +2051,15 @@
       }
 
       function formatGuideText(value) {
-        const safe = escapeHtml(plainMongolianText(value));
+        const source = String(value || "");
+        const safe = escapeHtml(plainMongolianText(source));
         const keywords =
           /(гараар ажиллуулдаг|автоматаар ажиллах|нэг чадварт холбох|дахин ашиглах хүлээлгийн хугацаа|үйлчлэх хугацаа|толгойн оновчтой буудалт|сумаа дахин цэнэглэх|сумны дайз|чадварын хүч|бууны сум|амь нөхөх|эмчилгээ|HP|чадвар|огцом бултах хөдөлгөөн|хөдөлгөөний цэнэг|ашиглах зөв мөч|дараалсан дайралт|хамгаалалтын бүрхүүл|давхарга|хохирол)/gi;
-        return safe.replace(
+        const formatted = safe.replace(
           keywords,
           '<strong class="guide-keyword">$1</strong>',
         );
+        return `<span class="localized-guide-text" data-source-text="${escapeHtml(source)}">${formatted}</span>`;
       }
 
       function tagList(values) {

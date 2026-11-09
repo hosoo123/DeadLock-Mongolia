@@ -970,3 +970,35 @@ Vercel тохиргоо:
 ---
 
 Энэ төсөл нь эхний HTML/CSS/JavaScript хувилбараас Next.js рүү шилжиж, live Deadlock statistics, offline fallback, responsive UI, Wire/QPay төлбөр болон хамгаалалттай webhook бүхий production веб апп болсон.
+
+## 21. Тоглогчийн статистик хайлт
+
+Нүүр хуудсанд `components/player-stats.tsx` Steam нэр, Account ID, SteamID64
+эсвэл профайлын холбоосоор хайлт хийж дараах мэдээллийг харуулна:
+
+- Steam профайл болон нээлттэй country code;
+- Deadlock rank;
+- сүүлийн 20, 50 эсвэл 100 хүчинтэй тоглолтын ялалтын хувь, K/D/A дундаж;
+- тухайн хугацаан дахь хамгийн их сонгосон гурван баатрын win rate;
+- сүүлийн 30 хоногт тоглосон тоглолтын тоо.
+
+`app/api/players/route.ts` нь Deadlock API-ийн Steam search, Steam profile, rank
+болон match-history endpoint-уудыг сервер талаас дуудна. SteamID64-ийг API-д
+хэрэглэдэг Account ID болгон хувиргаж, `/profiles/` хэлбэрийн холбоосоос ID-г
+ялгана. Optional `STEAM_API_KEY` байгаа үед Steam-ийн vanity resolver ашиглан
+`/id/нэр` холбоосыг мөн SteamID64 болгоно. Түлхүүргүй үед vanity замын нэрийг
+Steam profile нэрээр хайх оролдлого хийнэ. Rank эсвэл match-history endpoint
+мэдээлэл өгөхгүй үед байхгүйг UI дээр ил тод харуулна.
+
+Монгол гэсэн тэмдэглэгээ зөвхөн Steam profile-ийн public country code `MN`
+байх үед гарна. Deadlock API Монголын бүх тоглогчийг хайх endpoint өгөөгүй,
+мөн тухайн шалгалтын үед Asia leaderboard хоосон байсан тул нийт Монгол
+leaderboard-ийг таамгаар үүсгэж харуулахгүй.
+
+## 22. Хуудасны шууд цэс
+
+`components/quick-nav.tsx` хуудасны доод хэсэгт тогтмол харагдах навигаци
+гаргана. Каталог, build generator, patch мэдээлэл болон тоглогчийн статистик
+рүү anchor холбоосоор шууд очно. Гар утсанд дэлгэцийн доод талд бүтэн өргөнтэй,
+desktop дээр төвлөсөн жижиг dock хэлбэртэй. Item modal нээлттэй үед товчлуурууд
+контент дээр давхарлахгүйн тулд нуугдана.

@@ -1,5 +1,7 @@
 import Script from "next/script";
 import { PatchRadar } from "./patch-radar";
+import { PlayerStats } from "./player-stats";
+import { QuickNav } from "./quick-nav";
 
 const WIRE_SUPPORT_URL =
   "https://pay.wire.mn/link/plink_krd6jmuhq3y6mrrkog7o43mvne";
@@ -15,6 +17,8 @@ export function DeadlockGuide() {
         suppressHydrationWarning
       />
       <PatchRadar />
+      <PlayerStats />
+      <QuickNav />
       <a
         className="wire-float"
         href={WIRE_SUPPORT_URL}
