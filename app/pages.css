@@ -1,0 +1,369 @@
+/* =========================================================
+   STANDALONE PAGES — /counter and /guide
+   Uses tokens from redesign.css.
+   ========================================================= */
+
+/* ---------- Counter helper ---------- */
+.counter-page,
+.guide-page {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 48px var(--gutter) 0;
+}
+.counter-title,
+.guide-title {
+  margin: 0 0 12px;
+  color: var(--text);
+  font: 700 clamp(36px, 6vw, 60px)/1 "Oswald", sans-serif;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  text-shadow: none;
+}
+.counter-panel {
+  margin-top: 8px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.counter-panel-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.counter-panel-head h2,
+.counter-section-head h2,
+.counter-breakdown > h2 {
+  margin: 0;
+  font: 700 20px "Oswald", sans-serif;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.counter-panel-tools { display: flex; gap: 8px; }
+.counter-panel-tools input {
+  min-width: 200px;
+  min-height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  outline: none;
+}
+.counter-panel-tools input:focus { border-color: var(--accent); }
+.counter-panel-tools .btn { min-height: 40px; padding: 0 14px; font-size: 13px; }
+
+.counter-heroes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
+  gap: 6px;
+}
+.counter-hero {
+  display: grid;
+  gap: 4px;
+  padding: 4px 4px 6px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface-2);
+  color: var(--text-dim);
+  font: 600 11px "Inter", sans-serif;
+  cursor: pointer;
+  transition: border-color 0.12s ease, transform 0.12s ease, opacity 0.12s ease;
+}
+.counter-hero img {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 7px;
+  object-fit: cover;
+  object-position: top;
+  background: #0b0e13;
+}
+.counter-hero span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.counter-hero:hover:not(:disabled) { border-color: var(--text-dim); transform: translateY(-1px); }
+.counter-hero.selected {
+  border-color: #ff6e6e;
+  background: rgba(255, 110, 110, 0.12);
+  color: var(--text);
+  box-shadow: inset 0 0 0 1px #ff6e6e;
+}
+.counter-hero:disabled { opacity: 0.35; cursor: not-allowed; }
+
+.counter-style {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+.counter-style > span { margin-right: 6px; color: var(--text-dim); font-size: 14px; }
+.counter-style .chip { border-radius: 8px; }
+
+.counter-empty {
+  margin: 28px 0 0;
+  padding: 40px 20px;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius);
+  color: var(--text-dim);
+  text-align: center;
+}
+
+.counter-top,
+.counter-breakdown { margin-top: 32px; }
+.counter-section-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.counter-section-head .btn { min-height: 40px; font-size: 13px; }
+.counter-top-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.counter-item {
+  display: grid;
+  grid-template-columns: 28px 56px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  height: 100%;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--text);
+  text-decoration: none;
+  transition: border-color 0.12s ease;
+}
+.counter-item:hover { border-color: var(--accent); }
+.counter-rank {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: rgba(242, 165, 65, 0.14);
+  color: var(--accent);
+  font: 700 15px "Oswald", sans-serif;
+}
+.counter-item img { width: 56px; height: 56px; border-radius: 10px; object-fit: cover; }
+.counter-item-copy { display: grid; gap: 4px; min-width: 0; }
+.counter-item-copy strong { font-size: 15px; }
+.counter-item-copy small { color: var(--text-dim); font-size: 13px; line-height: 1.45; }
+.counter-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.counter-tags span {
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: rgba(255, 110, 110, 0.12);
+  color: #ff9d9d;
+  font-size: 11px;
+}
+.counter-price { align-self: start; color: var(--text-faint); font: 500 12px "IBM Plex Mono", monospace; }
+
+.counter-threats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+.counter-threat {
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+}
+.counter-threat h3 { margin: 0 0 8px; color: #ff9d9d; font-size: 16px; }
+.counter-threat-from {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 8px;
+  color: var(--text-faint);
+  font-size: 12.5px;
+}
+.counter-mini-hero {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 8px 2px 2px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--text-dim);
+}
+.counter-mini-hero img { width: 20px; height: 20px; border-radius: 50%; object-fit: cover; object-position: top; }
+.counter-threat-why { margin: 0 0 12px; color: var(--text-dim); font-size: 14px; line-height: 1.55; }
+.counter-threat-items { display: grid; gap: 6px; }
+.counter-threat-items .id-chip { align-items: flex-start; }
+.counter-threat-items .id-chip small { display: block; line-height: 1.4; }
+
+/* ---------- Beginner guide ---------- */
+.guide-lead { max-width: 680px; margin: 0; color: var(--text-dim); font-size: 17px; line-height: 1.65; }
+.guide-layout {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  gap: 48px;
+  align-items: start;
+  margin-top: 40px;
+}
+.guide-body { max-width: 760px; }
+.guide-body section { padding: 28px 0; border-top: 1px solid var(--border); }
+.guide-body h2 {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin: 0 0 14px;
+  font: 700 26px "Oswald", sans-serif;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.guide-body h2 span { color: var(--accent); font: 600 13px "IBM Plex Mono", monospace; }
+.guide-body p,
+.guide-body li { color: var(--text-dim); font-size: 15.5px; line-height: 1.7; }
+.guide-body p { margin: 0 0 12px; }
+.guide-body ul,
+.guide-body ol { margin: 0 0 12px; padding-left: 22px; }
+.guide-body li + li { margin-top: 6px; }
+.guide-body strong { color: var(--text); }
+.guide-body a { color: var(--accent); }
+.guide-callout {
+  margin: 14px 0;
+  padding: 14px 16px;
+  border-left: 3px solid var(--accent);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--text);
+}
+.guide-table {
+  width: 100%;
+  margin: 8px 0 14px;
+  border-collapse: collapse;
+  font-size: 14.5px;
+}
+.guide-table th,
+.guide-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
+.guide-table th { color: var(--text-faint); font: 600 11px "IBM Plex Mono", monospace; letter-spacing: 0.12em; text-transform: uppercase; }
+.guide-table td { color: var(--text-dim); }
+.guide-table td:first-child { color: var(--text); font-weight: 600; white-space: nowrap; }
+.guide-next {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 8px;
+}
+.guide-next a {
+  display: grid;
+  gap: 4px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--text);
+  text-decoration: none;
+}
+.guide-next a:hover { border-color: var(--accent); }
+.guide-next strong { font-size: 15px; }
+.guide-next span { color: var(--text-dim); font-size: 13px; }
+
+/* ---------- Home teasers for counter + guide ---------- */
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.tool-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: center;
+  padding: 24px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, rgba(242, 165, 65, 0.08), transparent 60%), var(--surface);
+  color: var(--text);
+  text-decoration: none;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+.tool-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+.tool-card h3 { margin: 0 0 6px; font: 700 22px "Oswald", sans-serif; letter-spacing: 0.02em; text-transform: uppercase; }
+.tool-card p { margin: 0; color: var(--text-dim); font-size: 14.5px; line-height: 1.55; }
+.tool-card .tool-arrow { color: var(--accent); font-size: 26px; }
+
+@media (max-width: 860px) {
+  .counter-top-list,
+  .counter-threats,
+  .tools-grid { grid-template-columns: 1fr; }
+  .guide-layout { grid-template-columns: 1fr; gap: 8px; margin-top: 24px; }
+  .guide-next { grid-template-columns: 1fr; }
+}
+@media (max-width: 720px) {
+  .counter-page,
+  .guide-page { padding-top: 32px; }
+  .counter-panel { padding: 14px; }
+  .counter-panel-tools { width: 100%; }
+  .counter-panel-tools input { flex: 1; min-width: 0; font-size: 16px; }
+  .counter-heroes { grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); }
+  .counter-item { grid-template-columns: 24px 44px minmax(0, 1fr); }
+  .counter-item img { width: 44px; height: 44px; }
+  .counter-price { display: none; }
+  .guide-table td:first-child { white-space: normal; }
+}
+
+/* Chips outside the catalog have no shop accent; use the site accent. */
+.counter-style .chip.active {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+/* Header + mobile nav: current page */
+.site-nav a[aria-current="page"] { color: var(--text); background: rgba(242, 165, 65, 0.12); }
+.quick-nav-link[aria-current="page"] { color: var(--accent); }
+@media (max-width: 1080px) {
+  /* Six links don't fit next to the actions; Patch/Players stay reachable on the home page. */
+  .site-nav a:nth-child(6) { display: none; }
+}
+@media (max-width: 900px) {
+  .site-nav a:nth-child(n + 5) { display: none; }
+}
+
+/* ---------- Patch radar: official feed + staleness notice ---------- */
+.patch-behind {
+  display: grid;
+  gap: 4px;
+  margin: 0 0 24px;
+  padding: 14px 16px;
+  border: 1px solid rgba(242, 165, 65, 0.45);
+  border-radius: 10px;
+  background: rgba(242, 165, 65, 0.08);
+  color: var(--text);
+  text-decoration: none;
+}
+.patch-behind strong { color: var(--accent); }
+.patch-behind span { color: var(--text-dim); font-size: 13px; }
+.patch-item-link { display: inline-block; margin-top: 8px; color: var(--live); font-size: 12px; text-decoration: none; }
+.patch-official { margin-top: 24px; }
+.patch-official ul { margin: 0; padding: 0; list-style: none; }
+.patch-official a {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+  color: var(--text);
+  font-size: 14px;
+  text-decoration: none;
+}
+.patch-official a:hover span { color: var(--live); }
+.patch-official time { color: var(--text-faint); font: 500 12px "IBM Plex Mono", monospace; white-space: nowrap; }

@@ -1,0 +1,135 @@
+/* =========================================================
+   STEAM LOGIN + PROFILES (/me, /players/[accountId]) + header account button
+   ========================================================= */
+
+/* ---------- Header account button ---------- */
+.header-account {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 38px;
+  padding: 0 12px 0 4px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+.header-account:hover { border-color: var(--accent); }
+.header-account.login { padding: 0 14px; }
+.header-account.placeholder { width: 92px; border-color: transparent; background: transparent; }
+.header-account img,
+.header-account-initial {
+  width: 30px;
+  height: 30px;
+  border-radius: 7px;
+  object-fit: cover;
+}
+.header-account-initial {
+  display: grid;
+  place-items: center;
+  background: var(--surface-2);
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.btn-steam {
+  background: #1b2838;
+  border-color: #66c0f4;
+  color: #fff;
+}
+.btn-steam:hover { background: #2a475e; }
+
+/* ---------- /me ---------- */
+.me-page .section-head { margin-bottom: 20px; }
+.me-alert { margin: 0 0 16px; padding: 12px 14px; border: 1px solid rgba(255, 138, 138, 0.4); border-radius: 10px; background: rgba(255, 110, 110, 0.08); }
+.me-alert ul { margin: 6px 0 0; padding-left: 20px; }
+.me-head {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 24px;
+  align-items: center;
+  margin-bottom: 24px;
+}
+.me-avatar { width: 96px; height: 96px; border: 1px solid var(--border-strong); border-radius: 18px; object-fit: cover; }
+.me-head .counter-title { margin-bottom: 6px; overflow-wrap: anywhere; }
+.me-head-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.me-head-actions .btn,
+.me-danger .btn { min-height: 40px; padding: 0 14px; font-size: 13.5px; }
+.me-head-actions form { margin: 0; }
+.me-flag { background: rgba(242, 165, 65, 0.14) !important; color: var(--accent) !important; }
+
+.me-form { display: grid; gap: 12px; }
+.me-card {
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+}
+.me-card-title { margin: 0 0 12px; font: 700 18px "Oswald", sans-serif; letter-spacing: 0.03em; text-transform: uppercase; }
+.me-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.me-field { display: grid; gap: 6px; }
+.me-field-wide { grid-column: 1 / -1; }
+.me-field > span { color: var(--text-dim); font: 600 11px "IBM Plex Mono", monospace; letter-spacing: 0.1em; text-transform: uppercase; }
+.me-field input,
+.me-field select,
+.me-field textarea {
+  width: 100%;
+  min-height: 42px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  outline: none;
+}
+.me-field textarea { font: 12.5px/1.45 "IBM Plex Mono", monospace; resize: vertical; word-break: break-all; }
+.me-field input:focus,
+.me-field select:focus,
+.me-field textarea:focus { border-color: var(--accent); }
+.me-field small { color: var(--text-faint); font-size: 12.5px; }
+.me-xh-preview {
+  display: grid;
+  place-items: center;
+  width: 200px;
+  aspect-ratio: 16 / 10;
+  margin-top: 12px;
+  border-radius: 10px;
+  background: #3b4a5a;
+}
+.me-xh-preview img { width: 120px; height: 120px; image-rendering: pixelated; }
+.me-check { margin-bottom: 10px; line-height: 1.45; }
+.me-check input { width: 18px; height: 18px; accent-color: var(--accent); flex-shrink: 0; }
+.me-actions { display: flex; justify-content: flex-end; }
+.me-danger { margin-top: 28px; border-color: rgba(255, 138, 138, 0.3); }
+.me-danger .me-card-title { color: #ff9d9d; }
+
+/* ---------- /players/[accountId] ---------- */
+.pp-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
+.pp-stage { aspect-ratio: 16 / 9; }
+.pp-settings { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 0; }
+.pp-settings div { padding: 10px 12px; border-radius: 9px; background: var(--surface-2); }
+.pp-settings dt { color: var(--text-faint); font: 600 10.5px "IBM Plex Mono", monospace; letter-spacing: 0.1em; text-transform: uppercase; }
+.pp-settings dd { margin: 3px 0 0; font-size: 15px; font-weight: 600; overflow-wrap: anywhere; }
+
+/* Community crosshair cards on /crosshair */
+.xh-community { display: grid; gap: 4px; }
+.xh-community > .xh-source { padding: 0 4px; color: var(--accent); font-size: 12px; text-decoration: none; }
+
+@media (max-width: 900px) {
+  .header-account-label { display: none; }
+  .header-account { padding: 0 4px; }
+  .header-account.login { padding: 0 10px; }
+  .header-account.login .header-account-label { display: inline; }
+  .me-head { grid-template-columns: auto minmax(0, 1fr); }
+  .me-head .hp-stats { grid-column: 1 / -1; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .pp-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 620px) {
+  .me-grid { grid-template-columns: 1fr 1fr; }
+  .me-avatar { width: 64px; height: 64px; border-radius: 14px; }
+  .header-account.placeholder { width: 38px; }
+}

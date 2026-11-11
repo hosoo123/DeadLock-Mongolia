@@ -1,0 +1,106 @@
+[
+ {
+  "id": "default",
+  "name": {
+   "mn": "Тоглоомын анхдагч",
+   "en": "Game default"
+  },
+  "note": {
+   "mn": "Deadlock-ийн үндсэн crosshair.",
+   "en": "Deadlock's stock crosshair."
+  },
+  "code": "DL.AQDAdYkfAQK4NAKGAgIOAQWik5vGAgIFZmFsc2UCDgEFxvj3.gYCBWZhbHNlAgoBBe2f6qYGAgEyAgsBBbTE1vMMAgIxNgIKAQXLpNHpBwIBNAIMAQXl3ZnSBAIDMC41AgoBBfOHp7YDAgExAgoBBffx1KAFAgEwAgwBBdbB3b4MAgMwLjcCCgEFksLJ8AkCATQCCwEE1eWHeQIDMC43AgoBBZ26.vcPAgEyAgoBBdzgptAPAgEwAgwBBdmyhakIAgMwLjcCDAEFnMH9hgECAzI1NQIMAQWBiICZBwIDMjU1AgwBBbOa8uMEAgMyNTUCCgEFmajT9wcCATACCgEF29DgoQMCATACCgEF7M.L6AUCATA=",
+  "source": null
+ },
+ {
+  "id": "small-cross",
+  "name": {
+   "mn": "Жижиг загалмай",
+   "en": "Small cross"
+  },
+  "note": {
+   "mn": "Нарийн, тод — headshot онилоход тохиромжтой.",
+   "en": "Tight and crisp — good for headshots."
+  },
+  "code": "DL.AQCQsdzWAQK4NAL9AQIOAQWik5vGAgIFZmFsc2UCDgEFxvj3.gYCBWZhbHNlAgoBBe2f6qYGAgEyAgoBBbTE1vMMAgE2AgoBBcuk0ekHAgEzAgoBBeXdmdIEAgExAgoBBfOHp7YDAgExAgoBBffx1KAFAgEwAgwBBdbB3b4MAgMwLjcCCgEFksLJ8AkCATQCCQEE1eWHeQIBMAIKAQWduvr3DwIBMgIKAQXc4KbQDwIBMAIKAQXZsoWpCAIBMAIKAQWcwf2GAQIBMAIMAQWBiICZBwIDMjU1AgwBBbOa8uMEAgMyNTUCCgEFmajT9wcCATACCgEF29DgoQMCATACCgEF7M.L6AUCATA=",
+  "source": null
+ },
+ {
+  "id": "green-dot",
+  "name": {
+   "mn": "Ногоон цэг",
+   "en": "Green dot"
+  },
+  "note": {
+   "mn": "Зөвхөн цэг — дэлгэц цэвэрхэн харагдана.",
+   "en": "Dot only — keeps the screen clean."
+  },
+  "code": "DL.AQDZL6jtAQK4NAL6AQIOAQWik5vGAgIFZmFsc2UCDgEFxvj3.gYCBWZhbHNlAgoBBe2f6qYGAgEyAgsBBbTE1vMMAgIxNgIKAQXLpNHpBwIBNAIKAQXl3ZnSBAIBMAIKAQXzh6e2AwIBMQIKAQX38dSgBQIBMAIKAQXWwd2.DAIBMAIKAQWSwsnwCQIBMwIJAQTV5Yd5AgExAgoBBZ26.vcPAgExAgoBBdzgptAPAgEwAgoBBdmyhakIAgExAgoBBZzB_YYBAgEwAgwBBYGIgJkHAgMyNTUCCgEFs5ry4wQCATACCgEFmajT9wcCATACCgEF29DgoQMCATACCgEF7M.L6AUCATA=",
+  "source": null
+ },
+ {
+  "id": "high-contrast",
+  "name": {
+   "mn": "Өндөр ялгаралт",
+   "en": "High contrast"
+  },
+  "note": {
+   "mn": "Цагаан, хар хүрээтэй — ямар ч map дээр харагдана.",
+   "en": "White with a black outline — visible on any map."
+  },
+  "code": "DL.AQB2q1SqAQK4NAL9AQIOAQWik5vGAgIFZmFsc2UCDgEFxvj3.gYCBWZhbHNlAgoBBe2f6qYGAgEyAgoBBbTE1vMMAgE4AgoBBcuk0ekHAgE0AgoBBeXdmdIEAgExAgoBBfOHp7YDAgExAgoBBffx1KAFAgEwAgoBBdbB3b4MAgExAgoBBZLCyfAJAgEyAgkBBNXlh3kCATECCgEFnbr69w8CATICCgEF3OCm0A8CATACCgEF2bKFqQgCATECDAEFnMH9hgECAzI1NQIMAQWBiICZBwIDMjU1AgwBBbOa8uMEAgMyNTUCCgEFmajT9wcCATACCgEF29DgoQMCATACCgEF7M.L6AUCATA=",
+  "source": null
+ },
+ {
+  "id": "wide-gap",
+  "name": {
+   "mn": "Өргөн зай",
+   "en": "Wide gap"
+  },
+  "note": {
+   "mn": "Голоо нээлттэй үлдээнэ — бай руугаа харахад саадгүй.",
+   "en": "Open centre so the target stays visible."
+  },
+  "code": "DL.AQB6E9ZBAQK4NAKBAgIOAQWik5vGAgIFZmFsc2UCDgEFxvj3.gYCBWZhbHNlAgoBBe2f6qYGAgEyAgsBBbTE1vMMAgIxMAIKAQXLpNHpBwIBOQIMAQXl3ZnSBAIDMC45AgoBBfOHp7YDAgExAgoBBffx1KAFAgEwAgwBBdbB3b4MAgMwLjcCCgEFksLJ8AkCATQCCQEE1eWHeQIBMAIKAQWduvr3DwIBMgIKAQXc4KbQDwIBMAIKAQXZsoWpCAIBMAIMAQWcwf2GAQIDMjU1AgwBBYGIgJkHAgMyMzUCCwEFs5ry4wQCAjU5AgoBBZmo0_cHAgEwAgoBBdvQ4KEDAgEwAgoBBezPi.gFAgEw",
+  "source": null
+ },
+ {
+  "id": "static-yellow",
+  "name": {
+   "mn": "Хөдөлгөөнгүй шар",
+   "en": "Static yellow"
+  },
+  "note": {
+   "mn": "Буудах үед тэлэхгүй — тогтвортой онилгоо.",
+   "en": "Doesn't expand while shooting — steady aim."
+  },
+  "code": "DL.AQBlxoFtAQK4NAL.AQIOAQWik5vGAgIFZmFsc2UCDQEFxvj3.gYCBHRydWUCCgEF7Z_qpgYCATICCgEFtMTW8wwCATcCCgEFy6TR6QcCATQCCgEF5d2Z0gQCATECCgEF84entgMCATECCgEF9_HUoAUCATACDAEF1sHdvgwCAzAuNwIKAQWSwsnwCQIBMgIJAQTV5Yd5AgExAgoBBZ26.vcPAgEyAgoBBdzgptAPAgEwAgwBBdmyhakIAgMwLjcCDAEFnMH9hgECAzI1NQIMAQWBiICZBwIDMjE0AgoBBbOa8uMEAgEwAgoBBZmo0_cHAgEwAgoBBdvQ4KEDAgEwAgoBBezPi.gFAgEw",
+  "source": null
+ },
+ {
+  "id": "tiny-pink",
+  "name": {
+   "mn": "Жижиг ягаан",
+   "en": "Tiny pink"
+  },
+  "note": {
+   "mn": "Маш жижиг — холын зайд нарийн онилно.",
+   "en": "Very small — precise at long range."
+  },
+  "code": "DL.AQAnb7e_AQK4NAKAAgIOAQWik5vGAgIFZmFsc2UCDgEFxvj3.gYCBWZhbHNlAgoBBe2f6qYGAgExAgoBBbTE1vMMAgE0AgoBBcuk0ekHAgEyAgoBBeXdmdIEAgExAgoBBfOHp7YDAgExAgoBBffx1KAFAgEwAgwBBdbB3b4MAgMwLjcCCgEFksLJ8AkCATECCQEE1eWHeQIBMQIKAQWduvr3DwIBMgIKAQXc4KbQDwIBMAIMAQXZsoWpCAIDMC43AgwBBZzB_YYBAgMyNTUCCwEFgYiAmQcCAjY0AgwBBbOa8uMEAgMyMDACCgEFmajT9wcCATACCgEF29DgoQMCATACCgEF7M.L6AUCATA=",
+  "source": null
+ },
+ {
+  "id": "thick-red",
+  "name": {
+   "mn": "Зузаан улаан",
+   "en": "Thick red"
+  },
+  "note": {
+   "mn": "Том, тод — ойрын зайн hero-д.",
+   "en": "Big and bold — for close-range heroes."
+  },
+  "code": "DL.AQCV2qwLAQK4NAL8AQIOAQWik5vGAgIFZmFsc2UCDgEFxvj3.gYCBWZhbHNlAgoBBe2f6qYGAgE0AgsBBbTE1vMMAgIxMgIKAQXLpNHpBwIBNQIKAQXl3ZnSBAIBMQIKAQXzh6e2AwIBMQIKAQX38dSgBQIBMAIKAQXWwd2.DAIBMQIKAQWSwsnwCQIBNAIJAQTV5Yd5AgEwAgoBBZ26.vcPAgEyAgoBBdzgptAPAgEwAgoBBdmyhakIAgEwAgwBBZzB_YYBAgMyNTUCCwEFgYiAmQcCAjYwAgsBBbOa8uMEAgI2MAIKAQWZqNP3BwIBMAIKAQXb0OChAwIBMAIKAQXsz4voBQIBMA==",
+  "source": null
+ }
+]

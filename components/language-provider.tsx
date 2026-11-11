@@ -2,36 +2,150 @@
 
 import {
   ReactNode,
+  createContext,
+  useContext,
   useEffect,
   useRef,
   useState,
 } from "react";
 
-type Language = "mn" | "en";
+export type Language = "mn" | "en";
+
+type LanguageContextValue = {
+  language: Language;
+  setLanguage: (language: Language) => void;
+};
+
+const LanguageContext = createContext<LanguageContextValue>({
+  language: "mn",
+  setLanguage: () => {},
+});
+
+export function useLanguage() {
+  return useContext(LanguageContext);
+}
 
 const translations: Record<string, string> = {
+  // Home redesign
+  "Hero бүрийн build":
+    "Builds for every hero",
+  "Өндөр rank-ийн тоглогчид юу авч, хэнийг хэцүү гэж үздэгийг бодит датагаар.":
+    "What high-rank players buy and who they struggle against, from real match data.",
+  "Crosshair-аа тохируулаад тоглоомд шууд оруулах code аваарай.":
+    "Tune your crosshair and get a code to import in-game.",
+  "Item-ийн бүтэн тайлбар →":
+    "Full item guide →",
+  "Дайсандаа юу авах вэ?":
+    "What should I buy?",
+  "Дайсны hero-уудыг сонгоход эсрэг нь авах item-уудыг тайлбартай нь санал болгоно.":
+    "Pick the enemy heroes and get counter items, with reasons.",
+  "Шинэ тоглогчид":
+    "New players",
+  "Deadlock-ийн үндэс":
+    "Deadlock basics",
+  "Soul, lane, item slot, objective — эхлэхэд хэрэгтэй бүх зүйл монголоор.":
+    "Souls, lanes, item slots, objectives — everything you need to get started.",
+  "Item тайлбар":
+    "Item Guide",
+  "Item бүр юу хийдэг, хэзээ авах, ямар hero-д тохирохыг монголоор энгийнээр тайлбарлана. Hero-гоо сонгоод бодит тоглолтын дата дээр суурилсан build аваарай.":
+    "What every item does, when to buy it and which heroes it suits — explained simply. Pick a hero to get a build based on real match data.",
+  "Hero-доо тохирох build":
+    "Find a build for your hero",
+  "Hero-гоо сонгоход сүүлийн 30 хоногийн бодит тоглолтуудаас хамгийн их авсан, хамгийн их хожсон item-уудыг харьцуулж, lane-аас late game хүртэлх build санал болгоно.":
+    "Pick a hero and we'll compare the most-bought and highest-winning items from the last 30 days, then suggest a build from lane to late game.",
+  "Зургаар hero сонгох":
+    "Pick a hero by portrait",
+  "Шинэ hero":
+    "New hero",
+  "Тайлбаруудыг тоглолтод хэрэгтэй байдлаар нь товчилсон. Шинэ patch гарахад шинэчилнэ.":
+    "Summaries focus on what matters in a match and are updated with each new patch.",
+  "Lane үе":
+    "Laning",
+  "Эхэн үе":
+    "Early game",
+  "Дунд үе":
+    "Mid game",
+  "Late game":
+    "Late game",
+  "Hero-гийн role-д тохирсон":
+    "Fits the hero's role",
+  "Дата хангалтгүй":
+    "Not enough data",
+  "Эхлээд hero-гоо сонго.":
+    "Pick a hero first.",
+  "-д тохирох build. Яг энэ дарааллаар авах албагүй — lane болон дайсны hero-уудаасаа хамаараад хамгаалалтын эсвэл counter item-ээр сольж болно.":
+    " build. You don't have to follow this order exactly — swap in defensive or counter items based on your lane and the enemy heroes.",
+  "Сүүлийн 30 хоногийн тоглолтуудаас хэр олон авсан, хэр их хожсоноор нь эрэмбэлсэн. Чиглэл болгож ашиглаарай — тоглолт болгон өөр.":
+    "Ranked by how often each item was bought and how often it won over the last 30 days. Use it as a guide — every match is different.",
+  "Live дата түр ирэхгүй байгаа тул hero-гийн role болон item-уудын зохицол дээр үндэслэсэн build харуулж байна. Чиглэл болгож ашиглаарай — тоглолт болгон өөр.":
+    "Live data isn't available right now, so this build is based on the hero's role and item synergy. Use it as a guide — every match is different.",
+  "Тайлбар хуулах":
+    "Copy guide",
+  "Active · товч дарна":
+    "Active · press to use",
+  "Imbue · чадварт холбоно":
+    "Imbue · attach to an ability",
+  "Passive · өөрөө ажиллана":
+    "Passive · always on",
+  "Товч дарна":
+    "Press to use",
+  "Чадварт холбоно":
+    "Attach to an ability",
+  "Өөрөө ажиллана":
+    "Always on",
+  "Дарж дэлгэрэнгүйг үз":
+    "Click for the full guide",
+  "АШИГЛАХ":
+    "USE",
+  "Юу хийдэг вэ?":
+    "What it does",
+  "Яаж ашиглах вэ?":
+    "How to use it",
+  "Хэзээ авах вэ?":
+    "When to buy",
+  "Хэнд тохирох вэ?":
+    "Good on",
+  "Санамж":
+    "Pro tip",
+  "Дараагийн хүчтэй хувилбар":
+    "Upgrades into",
+  "Lane-ийн эхэнд. Хямд тул эрт аваад хурдан хүч ав.":
+    "Early in lane — it's cheap, so grab it for a quick power boost.",
+  "Lane дуусах үе буюу эхний 10 минут орчимд.":
+    "Around the end of laning, roughly the first 10 minutes.",
+  "Дунд үед, teamfight эхлэх үед гол item болгож ав.":
+    "Mid game, as a core item once teamfights start.",
+  "Сүүлд, үндсэн item-уудаа бүрдүүлсний дараа.":
+    "Late, after your core items are done.",
+  "Үндсэн агуулга руу шилжих": "Skip to main content",
+  "Deadlock · Монгол гарын авлага": "Deadlock · Mongolian Guide",
+  "Item хайх": "Browse items",
+  "Build гаргах": "Generate a build",
+  "Хэрхэн ашиглах вэ": "How to use",
+  "Дэлгүүрээ сонго": "Pick a shop",
+  "Fairfax, MPS эсвэл Curiosity Catalog.": "Fairfax, MPS or Curiosity Catalog.",
+  "Item дээр дар": "Tap an item",
+  "Нэрээр хайх эсвэл түвшингээр шүүх боломжтой.": "Search by name or filter by tier.",
+  "Тайлбараа унш": "Read the guide",
+  "Хэзээ авах, хэрхэн ашиглах, ямар hero-д тохирох.": "When to buy, how to use it, which heroes it suits.",
+  "Item каталог": "Item catalog",
+  "Бүх item нэг дор": "Every item in one place",
+  "Дэлгүүр болон түвшингээр шүүгээд item дээр дарж дэлгэрэнгүй тайлбарыг харна.":
+    "Filter by shop and tier, then select an item to see its full guide.",
+  "Дэлгүүр": "Shop",
   "Тоглоом сонгох": "Choose a game",
   "Item тайлбарыг хаах": "Close item details",
   "Hero-оо сонгоно уу": "Choose a hero",
   "Тоглоомын сонголт": "Game selection",
   "Live meta · Сүүлийн 30 хоног": "Live Meta · Last 30 Days",
-  "Deadlock · Reference No. 03": "Deadlock · Reference No. 03",
-  "Хэрэгслийн тайлбар": "Item Guide",
-  "Хэрэгсэл дээр дараад яаж ажилладаг, ямар баатарт тохирдог, хэзээ авах болон ямар дайсны эсрэг ашиглахыг нэг дороос хараарай.":
-    "Select an item to see how it works, which heroes it suits, when to buy it, and what it counters.",
   "Монгол тоглогчидтой танилцаж, хамт тоглох хүн олох, build болон item-ийн мэдээлэл солилцох community-д нэгдээрэй.":
     "Meet Mongolian players, find teammates, and share builds and item tips with the community.",
   "Deadlock Mongolia Discord серверт нэгдэх": "Join the Deadlock Mongolia Discord server",
   "Discord-д нэгдэх": "Join Discord",
   "Сүүлийн 30 хоног": "Last 30 days",
-  "Баатрын хэрэгслийн бүрдэл гаргах": "Hero Build Generator",
-  "Баатраа сонгоход сүүлийн үеийн бодит тоглолтын хэрэгслийн сонголт, ялалтын хувь болон ашигласан тоглолтын тоог харьцуулна. Дараа нь тоглолтын эхнээс төгсгөл хүртэл авахад хялбар дараалал санал болгоно.":
-    "Choose a hero to compare recent item picks, win rates, and match counts. Get a suggested item order from lane start to late game.",
   "Шинэ мэдээлэл шалгаж байна…": "Checking for recent data…",
   "Hero сонгох": "Choose a hero",
   "Hero мэдээлэл ачаалж байна…": "Loading hero data…",
-  "Зургаар баатар сонгох": "Choose a hero by portrait",
-  "Бүрдэл гаргах": "Generate build",
   "Тооцоолж байна…": "Calculating…",
   "Item нэрээр хайх...": "Search items...",
   "Бүгд": "All",
@@ -41,10 +155,6 @@ const translations: Record<string, string> = {
   "Түвшин 4": "Tier 4",
   "Тохирох item олдсонгүй.": "No matching items found.",
   "Дэмжлэг үзүүлэх": "Support the project",
-  "Энэ каталог хэрэг болсон бол QR кодыг уншуулж хүссэн дүнгээрээ дэмжлэг үзүүлээрэй. Баярлалаа ❤️":
-    "If this catalog helped you, scan the QR code to support the project with any amount. Thank you ❤️",
-  "энэ QR код нь зөвхөн SocialPay-тэй хүмүүст л болно":
-    "This QR code is only available to SocialPay users.",
   "Хуудасны хэсгүүд": "Page sections",
   "Каталог": "Catalog",
   "Тоглогч": "Players",
@@ -52,7 +162,6 @@ const translations: Record<string, string> = {
   "City Never Sleeps цувралын шинэ баатрууд болон item-ийн meta өөрчлөлтийг Монгол хэлээр товчлоод нэг дор цуглууллаа.":
     "A quick overview of new City Never Sleeps heroes and item meta changes.",
   "Шинэчлэл идэвхтэй": "Live update",
-  "Шинэ баатар": "New Hero",
   "Leech Therapy, Wretched Vapors, Healing Needles, Lurking Terrors — sustain болон teamfight control дээр төвлөрнө.":
     "Built around sustain and teamfight control with Leech Therapy, Wretched Vapors, Healing Needles, and Lurking Terrors.",
   "Ойрын зайны дарамт, хурдан reposition, ганцаарчилсан pick хийхэд чиглэсэн.":
@@ -73,8 +182,6 @@ const translations: Record<string, string> = {
     "Activate it to disrupt enemy movement and ability timing.",
   "Сөрөг эффект цэвэрлэж, crowd control-д орсон үед дахин тоглолтод орох боломж өгнө.":
     "Removes negative effects and helps you re-enter a fight after being crowd-controlled.",
-  "Тайлбарууд нь тоглолтын практик хэрэглээгээр хөрвүүлсэн. Patch өөрчлөгдөхөд дахин шинэчилнэ.":
-    "Descriptions focus on practical use and will be updated as the patch changes.",
   "Тоглогчийн статистик": "Player Stats",
   "Steam нэр, Account ID, SteamID64 эсвэл профайлын холбоосоор хайж тоглогчийн үзүүлэлтээ харна.":
     "Search by Steam name, Account ID, SteamID64, or profile link to view player stats.",
@@ -102,11 +209,6 @@ const translations: Record<string, string> = {
   "STEAM ПРОФАЙЛ": "STEAM PROFILE",
   "Steam профайл нээх ↗": "Open Steam Profile ↗",
   "Төлбөрийн цонх хаах": "Close checkout",
-  "Юу хийдэг вэ?": "What does it do?",
-  "Яаж ашиглах вэ?": "How to use",
-  "Хэзээ авах вэ?": "When to buy",
-  "Хэнд тохирох вэ?": "Who is it for?",
-  "Санамж": "Tip",
   "Төлбөр амжилттай боллоо ✓": "Payment successful ✓",
   "Төлбөр цуцлагдлаа": "Payment cancelled",
   "Deadlock Mongolia-г дэмжсэнд баярлалаа!": "Thanks for supporting Deadlock Mongolia!",
@@ -134,31 +236,10 @@ const translations: Record<string, string> = {
   "Имэйл хаягийг зөвхөн энэ төлбөрийн баталгаажуулалт, талархлын имэйлд ашиглана.":
     "Your email is used only to confirm this payment and send a thank-you message.",
   "Дэмжлэг өгөх": "Support",
-  "☕ Дэмжлэг үзүүлэх": "☕ Support the project",
-  "Банк:": "Bank:",
-  "Голомт банк": "Golomt Bank",
-  "QR-аар шууд уншуулж төлнө": "Pay by scanning the QR code.",
-  "QR код дээр дарвал томоор нээгдэнэ.": "Click the QR code to enlarge it.",
-  "Шугамын эхлэл": "Lane Start",
-  "Тоглолтын эхэн": "Early Game",
-  "Тоглолтын дунд үе": "Mid Game",
-  "Тоглолтын төгсгөл": "Late Game",
-  "Баатрын үүрэгтэй тохирсон": "Matches the hero's role",
-  "Мэдээлэл хангалтгүй": "Not enough data",
-  "Эхлээд баатраа сонгоно уу.": "Choose a hero first.",
-  "Сүүлийн 30 хоногийн бодит тоглолтод хэдэн удаа ашигласан болон ялалтын хувийг хамтад нь харьцуулж эрэмбэлэв.":
-    "Ranked using recent 30-day match counts and win rates.",
-  "Шинэ мэдээлэл түр ирээгүй тул баатрын үндсэн үүрэг болон хэрэгслүүдийн зохицолд тулгуурласан санал харуулж байна.":
-    "Live data is temporarily unavailable; this build is based on the hero's role and item synergy.",
-  "Энэ нь баримжаа болохоос тоглолт бүрт өөрчлөхгүй хатуу дараалал биш.":
-    "Use this as a guide, not a fixed order for every match.",
   "Шинэ мэдээлэл түр ирээгүй": "Live data is temporarily unavailable",
   "Дараа дахин шинэчилнэ": "Try again later",
   "Offline fallback · Дараа дахин шинэчилнэ": "Offline fallback · Try again later",
-  "-д санал болгож буй хэрэгслийн бүрдэл. Заавал яг энэ дарааллаар авах албагүй. Тоглож буй шугам, дайсны баатрууд болон өөрт тулгарсан асуудалд тааруулж хамгаалах эсвэл сөрөх хэрэгслээр сольж болно.":
-    " recommended build. This order is not mandatory. Adjust it to your lane, enemy heroes, and the situation by swapping in defensive or counter items.",
   "Хуулагдлаа ✓": "Copied ✓",
-  "Товч тайлбар хуулах": "Copy quick guide",
   "Хуулж чадсангүй": "Could not copy",
   "Мэдэгдэл хаах": "Close notification",
   "Төлбөрийн хуудас нээж чадсангүй.": "Could not open the checkout page.",
@@ -187,222 +268,19 @@ const translations: Record<string, string> = {
   "Гараар": "Active",
   "Чадварт": "Imbue",
   "Дэлгэрэнгүй тайлбар": "Details",
-  "Дэлгэрэнгүй тайлбар хуулах": "Copy quick guide",
-  "Дараагийн хүчтэй хувилбар": "Next upgrade",
   "ТҮВШИН": "TIER",
-  "АШИГЛАХ": "ACTIVATE",
   "ХЭЗЭЭ": "WHEN",
-  "Товч дарна": "Press the item key",
-  "Чадварт холбоно": "Imbue an ability",
-  "Өөрөө ажиллана": "Activates automatically",
-  "Автоматаар ажиллана": "Activates automatically",
-  "Дарж бүрэн тайлбарыг үзнэ": "Click to view full details",
   "Таны үзүүлэлт": "Your stats",
-  "Бууны хохирол": "Weapon Damage",
-  "Сумны багтаамж": "Max Ammo",
-  "Буудах хурд": "Fire Rate",
-  "Буугаар амь нөхөх": "Bullet Lifesteal",
-  "Чадвараар амь нөхөх": "Spirit Lifesteal",
-  "Чадварын хүч": "Spirit Power",
-  "Хөдөлгөөний хурд": "Move Speed",
-  "Гүйлтийн хурд": "Sprint Speed",
-  "Нэмэгдэх амь": "Bonus Health",
-  "Амь нөхөлт": "Health Regen",
-  "Бууны хамгаалалт": "Bullet Resist",
-  "Чадварын хамгаалалт": "Spirit Resist",
-  "Дахин бэлэн болох": "Cooldown",
-  "Үйлчлэх хугацаа": "Duration",
-  "Хүрэх зай": "Range",
-  "Хөдөлгөөний цэнэг": "Stamina",
-  "Гар цохилтын хохирол": "Melee Damage",
-  "Melee хамгаалалт": "Melee Resist",
-  "Тоглолтын эхэнд, хямдхан хүч авахдаа.": "Buy early for an affordable power boost.",
-  "Эхэн–дунд үед build-ээ хүчтэй болгохдоо.": "Buy in the early-to-mid game to strengthen your build.",
-  "Дунд үед гол build-ээ гүйцээхдээ.": "Buy in the mid game to complete your core build.",
-  "Сүүлд, үндсэн item-уудаа авсны дараа.": "Buy late, after completing your core items.",
-  "Item бэлэн эсэхийг шалга.": "Check that the item is ready.",
-  "Тулааны чухал мөчид item-ийн товчоо дар.": "Use the item key at a critical moment in a fight.",
-  "Авахдаа хамгийн их ашигладаг чадвартайгаа холбо.": "Imbue the ability you use most.",
-  "Тэр чадвараа ашиглахад item-ийн нөлөө орно.": "The item effect activates when you use that ability.",
-  "Товч дарахгүй.": "No key press required.",
-  "Толгойд оноход нэмэлт нөлөө орно.": "Landing a headshot activates the bonus effect.",
-  "Сумаа цэнэглэх үед нөлөө нь ажиллана.": "The effect activates when you reload.",
-  "Дайсандаа ойр байхад хүч нь орно.": "The bonus applies at close range.",
-  "Дайснаас зайтай байхад хүч нь орно.": "The bonus applies at long range.",
-  "Авсан даруйдаа өөрөө ажиллана.": "Activates automatically when purchased.",
-  "Дайсан heal багасгах item авбал хүч нь буурна.": "Less effective against enemies with anti-heal items.",
-  "Толгойд тогтмол онодог бол илүү ашигтай.": "More effective if you can consistently land headshots.",
-  "Дайсандаа ойртож чаддаг үедээ ав.": "Buy when you can reliably get into close range.",
-  "Зайгаа сайн барьж тоглодог үедээ ав.": "Buy when you can maintain distance.",
-  "Буугаар гол damage гаргадаг build-д тохирно.": "Best suited for weapon-damage builds.",
-  "Хэт олон хамгаалалтын item авбал damage дутаж магадгүй.": "Too many defensive items may leave you short on damage.",
-  "Чадвараа ойр ойрхон ашигладаг build-д илүү тохирно.": "Best suited for builds that use abilities frequently.",
-  "Хэрэгслийг авсан даруйд үндсэн нэмэгдэл нь байнга ажиллана.":
-    "The item's base bonus is always active once purchased.",
-};
-
-const itemDescriptionTranslations: Record<string, string> = {
-  "Ойрын зайд бууны хохирол нэмэгдэнэ.": "Increases weapon damage at close range.",
-  "Сумны багтаамж нэмэгдэнэ.": "Increases ammo capacity.",
-  "Толгойн цохилтын хохирол нэмэгдэнэ.": "Increases headshot damage.",
-  "Сумны хурд болон алсын зайн хохирол сайжирна.": "Increases bullet velocity and long-range damage.",
-  "NPC/creep зэрэг чөтгөрт илүү их хохирол өгнө.": "Deals bonus damage to NPCs and creeps.",
-  "Буудах хурд (fire rate) нэмэгдэнэ.": "Increases fire rate.",
-  "Бууны хохиролоор бага хэмжээний life steal өгнө.": "Grants a small amount of bullet lifesteal.",
-  "Идэвхтэй чадвар: цэнэглэлтийг хурдасгана.": "Active: Speeds up your reload.",
-  "Буудсаны дараа хөдөлгөөний хурд түр нэмэгдэнэ.": "Temporarily increases movement speed after firing.",
-  "Магазин дуусах тусам сум бүрийн хохирол нэмэгдэнэ.": "Each shot deals more damage as your magazine empties.",
-  "Dash хийхэд нэмэлт бонус эффект өгнө.": "Grants an additional bonus when you dash.",
-  "Алсын зайн бууны хохирол мэдэгдэхүйц сайжирна.": "Significantly increases weapon damage at long range.",
-  "Melee цохилт цэнэглэгддэг болж, дараагийн цохилт хүчтэй болно.": "Charges your melee attack, empowering the next strike.",
-  "Бууны сум нэмэлт spirit хохирол өгдөг болно.": "Your bullets deal bonus Spirit damage.",
-  "Магазины эхний сум(ууд) илүү их хохиролтой.": "The first shot(s) in your magazine deal increased damage.",
-  "Идэвхтэй: түр хугацаанд буудах хурд, reload хурдасна.": "Active: Temporarily increases fire rate and reload speed.",
-  "Сум онох бүрт өрсөлдөгчийг удаашруулна.": "Your bullets slow enemies on hit.",
-  "Spirit shield-тэй өрсөлдөгчид эффектив хохирол.": "Deals increased damage to enemies with Spirit Shields.",
-  "Идэвхтэй: буудсан сум задарч олон чиглэлд тархана.": "Active: Your shots split and spread in multiple directions.",
-  "Хол зайд байгаа дайсанд нэмэлт хохирол.": "Deals bonus damage to distant enemies.",
-  "Attack speed нэмэгдэнэ.": "Increases attack speed.",
-  "Магазины багтаамж их хэмжээгээр нэмэгдэнэ.": "Greatly increases magazine capacity.",
-  "Толгойн цохилт дайсанд debuff (сулруулах) эффект өгнө.": "Headshots apply a debuff to enemies.",
-  "Идэвхтэй: заасан талбайд гал тавьж тасралтгүй хохирол өгнө.": "Active: Sets an area on fire, dealing damage over time.",
-  "Сумыг spirit damage-тай холино.": "Adds Spirit damage to your bullets.",
-  "HP багасах тусам бууны хохирол нэмэгдэнэ.": "Increases weapon damage as your health decreases.",
-  "Идэвхтэй: өөрийн HP зарцуулж их хохирол/бонус авна.": "Active: Sacrifices health for greatly increased damage and bonuses.",
-  "Дарахад хэд хэдэн сум цуваагаар гардаг болно.": "Firing releases a rapid burst of multiple bullets.",
-  "Идэвхтэй: HP зарцуулж хүчирхэг бонус эффект авна.": "Active: Sacrifices health to gain a powerful bonus.",
-  "Хохирол авах тусам resistance (тэсвэржилт) нэмэгдэнэ.": "Taking damage increases your damage resistance.",
-  "Магазины эхний сум илүү хурдтай бөгөөд хохиролтой.": "The first shot in your magazine has increased velocity and damage.",
-  "Бага HP-той (сул) дайсанд нэмэлт хохирол.": "Deals bonus damage to low-health enemies.",
-  "Идэвхтэй: ойролцоох багийн гишүүдэд buff аура өгнө.": "Active: Grants an aura buff to nearby allies.",
-  "Маш ойр зайд хохирол нэмэгдэнэ.": "Increases damage at point-blank range.",
-  "Ойролцоох дайсныг илрүүлдэг (wallhack төрлийн) эффект.": "Reveals nearby enemies through walls.",
-  "Маш ойрхон зайд асар их хохирол өгнө.": "Deals massive damage at point-blank range.",
-  "Идэвхтэй: түр хугацаанд нуугдаж/арчлагдаж чадна.": "Active: Temporarily become invisible.",
-  "Алсын зайн бонус хохирол улам нэмэгдсээр байна.": "Further increases your bonus damage at long range.",
-  "Дайсны spirit shield-ийг устгаж/сулруулна.": "Shreds enemy Spirit Shields.",
-  "Сум онсон дайсны ойролцоох бусад дайсан руу цахилгаан chain хийнэ.": "Bullets chain lightning to nearby enemies.",
-  "Сум онсон дайсанд хор нэмж, тасралтгүй хохирол өгнө.": "Bullets poison enemies, dealing damage over time.",
-  "Сум онохоор knockback/удаашруулах эффект нэмнэ.": "Hits knock enemies back and slow them.",
-  "Дайсны armor-ийг тоохгүйгээр шууд хохирол өгнө.": "Deals damage that ignores enemy armor.",
-  "Идэвхтэй: цэнэглэгдсэний дараа асар их хохиролтой цохилт.": "Active: Charge up a devastating attack.",
-  "Толгойн цохилт онсон дайсныг disable (хөдөлгөөнгүй) болгоно.": "Headshots disable enemies.",
-  "Melee чадварыг эрс сайжруулна.": "Greatly improves your melee capabilities.",
-  "Kill хийх бүрт хурд/хохирол нэмэгдэнэ (killing streak).": "Kills build a streak that increases your speed and damage.",
-  "Бууны хохирол ихээр нэмэгдэнэ, харин өөрийн эмзэг байдал нэмэгдэнэ.": "Greatly increases weapon damage but makes you more vulnerable.",
-  "Санамсаргүй байдлаар crit хохирол өгдөг магазин.": "Your magazine has a chance to deal critical damage.",
-  "Сум нэг дайснаас нөгөө дайсан руу секээд шилждэг болно.": "Bullets ricochet from one enemy to another.",
-  "Дайсны spirit ур чадварыг хааж (silence) идэвхгүй болгоно.": "Silences enemies, disabling their Spirit abilities.",
-  "Бууны хохирлыг spirit ур чадварт хувиргаж нэмнэ.": "Converts weapon damage into bonus Spirit damage.",
-  "Илүү зогсоосон spirit item-ийн (6-р слот) эффектийг сайжруулна.": "Enhances the effect of the Spirit item in your sixth slot.",
-  "Max HP нэмэгдэнэ.": "Increases maximum health.",
-  "HP сэргэх (regen) хурд нэмэгдэнэ.": "Increases health regeneration.",
-  "Dash/sprint-ийн нэмэлт цэнэг өгнө.": "Grants an additional dash or sprint charge.",
-  "Идэвхтэй: debuff-ийн үргэлжлэх хугацааг богиносгоно.": "Active: Reduces the duration of debuffs.",
-  "Идэвхтэй: өөрийгөө болон ойролцоох багийнхныг эмчилнэ.": "Active: Heals you and nearby allies.",
-  "Melee цохилтоор HP сэргээнэ.": "Melee attacks restore health.",
-  "Дайсан ойролцоо байх үед buff идэвхждэг.": "Activates a buff when enemies are nearby.",
-  "Хөдөлгөөний хурд нэмэгдэнэ.": "Increases movement speed.",
-  "HP болон бууны хохирлын resistance хамтад нь нэмэгдэнэ.": "Increases health and bullet damage resistance.",
-  "Бууны сумаар HP сэргээнэ.": "Bullets restore health.",
-  "Дайсны debuff-ийн үргэлжлэх хугацааг богиносгоно.": "Reduces the duration of enemy debuffs.",
-  "Ойролцоох дайсанд тасралтгүй бага хохирол (аура) өгнө.": "Deals low damage over time to nearby enemies.",
-  "Хөдөлгөөний хурд болон damage resistance нэгтгэсэн бонус.": "Increases movement speed and damage resistance.",
-  "Идэвхтэй: түр зуурын shield нэмж өгнө.": "Active: Grants a temporary shield.",
-  "Дайсны эмчилгээний (heal) үр дүнг бууруулна.": "Reduces healing received by enemies.",
-  "Өөрийн авах эмчилгээний эффект сайжирна.": "Increases healing received.",
-  "Хохирол авахад автоматаар түр shield үүсгэнэ.": "Taking damage automatically grants a temporary shield.",
-  "Идэвхтэй: их хэмжээний эмчилгээ хийнэ.": "Active: Restores a large amount of health.",
-  "Идэвхтэй: авсан хохирлын нэг хэсгийг буцаана (reflect).": "Active: Reflects a portion of the damage you take.",
-  "Spirit хохиролоор HP сэргээнэ.": "Spirit damage restores health.",
-  "Spirit-ээс хүлээн авах хохирлыг бууруулна.": "Reduces damage taken from Spirit.",
-  "Kill хийхэд нэмэлт бонус эффект авна.": "Gain an additional bonus when you secure a kill.",
-  "Бууны хохирлыг бууруулна.": "Reduces bullet damage taken.",
-  "Бууны хохирлын эсрэг resistance ихээхэн нэмэгдэнэ.": "Greatly increases bullet damage resistance.",
-  "Дайсны spirit ур чадварыг блоклоно.": "Blocks enemy Spirit abilities.",
-  "Идэвхтэй: өөрийн дээрх debuff-үүдийг арилгана.": "Active: Removes debuffs from yourself.",
-  "Их хэмжээний HP болон resistance хамтад нь өгнө.": "Grants a large amount of health and damage resistance.",
-  "Идэвхтэй: HP багасах тусам түр хугацаанд хүчирхэгжинэ.": "Active: Temporarily grows stronger as your health decreases.",
-  "Идэвхтэй: ойролцоох талбайд эмчилгээ тарааж өгнө.": "Active: Heals allies in a nearby area.",
-  "Идэвхтэй: их хохирол өгөөд эргээд их хэмжээний heal авна.": "Active: Deals heavy damage and restores a large amount of health.",
-  "Идэвхтэй: хол зайд үсэрч шилжинэ.": "Active: Leap a long distance.",
-  "Идэвхтэй: түр хугацаанд асар их damage reduction авна.": "Active: Greatly reduces damage taken for a short time.",
-  "Идэвхтэй: багийн гишүүнийг өөр рүүгээ татаж авчирна.": "Active: Pulls an ally to your location.",
-  "Spirit хохирлын эсрэг resistance ихээхэн нэмэгдэнэ.": "Greatly increases Spirit damage resistance.",
-  "Dash/sprint-ийн цэнэгийн тоо нэмэгдэнэ.": "Increases your dash or sprint charges.",
-  "Идэвхтэй: түр хугацаанд үл үзэгдэгч (invisible) болно.": "Active: Become invisible for a short time.",
-  "Идэвхтэй: богино зайд шуурхай teleport хийнэ.": "Active: Instantly teleport a short distance.",
-  "Үхэх ёстой цохилтыг зорчиж, бага хэмжээний HP-тэй амьд үлдэнэ.": "Survive a lethal hit with a small amount of health.",
-  "Их хэмжээний HP, resistance авч, биеийн хэмжээ томорно.": "Gain a large amount of health and resistance, and grow in size.",
-  "Идэвхтэй: маш их HP-тэй shield үүсгэнэ.": "Active: Create a shield with a large amount of health.",
-  "Идэвхтэй: прожектайл төрлийн бууны хохирлын эсрэг resist өгнө.": "Active: Grants resistance to projectile-based weapon damage.",
-  "Идэвхтэй: шуурхай их хэмжээний heal (burst) хийнэ.": "Active: Quickly restores a large amount of health.",
-  "Crowd control (CC) эффектийн эсрэг resistance ихээхэн нэмэгдэнэ.": "Greatly increases resistance to crowd control.",
-  "Идэвхтэй: ойролцоох багийнхандаа buff/heal аура тараана.": "Active: Grants nearby allies a buff and healing aura.",
-  "Идэвхтэй: дайсны эмчилгээг бүрэн блоклоно.": "Active: Completely blocks enemy healing.",
-  "Kill хийх streak үргэлжлэх тусам хүчирхэг buff авна.": "Builds a stronger buff as your kill streak continues.",
-  "Идэвхтэй: маш их хэмжээний lifesteal авна.": "Active: Grants a large amount of lifesteal.",
-  "Идэвхтэй: дайсан руу шуурхай dash хийж хохирол өгнө.": "Active: Dash to an enemy and deal damage.",
-  "Бууны хохирлын эсрэг маш их resistance өгнө.": "Greatly increases resistance to bullet damage.",
-  "Бууны сумны lifesteal ихээхэн нэмэгдэнэ.": "Greatly increases bullet lifesteal.",
-  "Идэвхтэй: бүх debuff-ээ цэвэрлээд CC-ийн эсрэг resist авна.": "Active: Removes all debuffs and grants crowd control resistance.",
-  "Идэвхтэй: түр хугацаанд CC-д огт үл нөлөөлдөг болно.": "Active: Become immune to crowd control for a short time.",
-  "Идэвхтэй: ойролцоох талбайд их хэмжээний AoE lifesteal хийнэ.": "Active: Deals area damage and grants substantial lifesteal.",
-  "Дайсан spirit ур чадвар ашиглахад тэднийг удаашруулна.": "Slows enemies when they use Spirit abilities.",
-  "Ур чадварын цэнэгийн тоо нэмэгдэнэ.": "Increases ability charges.",
-  "Spirit power нэмэгдэнэ.": "Increases Spirit Power.",
-  "Идэвхтэй: алт олох бонус өгнө.": "Active: Grants bonus souls.",
-  "Ур чадвар ашиглахад дэлбэрэлтийн нэмэлт хохирол өгнө.": "Using an ability triggers an additional damage explosion.",
-  "Ур чадварын нөлөөллийн радиус томорно.": "Increases ability radius.",
-  "Spirit power-тэй холбоотой HP сэргэлт нэмэгдэнэ.": "Increases health regeneration based on Spirit Power.",
-  "Идэвхтэй: их хохиролтой прожектайл шидэнэ.": "Active: Launches a high-damage projectile.",
-  "Melee цохилтод spirit хохирол нэмж өгнө.": "Melee attacks deal bonus Spirit damage.",
-  "Ур чадвар ашигласны дараа түр хугацаанд buff идэвхжинэ.": "Using an ability grants a temporary buff.",
-  "Дайсны бууны resistance-ийг бууруулна.": "Reduces enemy bullet resistance.",
-  "Идэвхтэй: заасан талбайг мөслөж, удаашруулна.": "Active: Freezes and slows enemies in a targeted area.",
-  "Ур чадварын cooldown-г богиносгодог imbue.": "Imbues an ability to reduce its cooldown.",
-  "Ур чадварын үргэлжлэх хугацааг сунгадаг imbue.": "Imbues an ability to increase its duration.",
-  "Spirit power их хэмжээгээр нэмэгдэнэ.": "Greatly increases Spirit Power.",
-  "Ур чадвар онох бүрт дайсныг удаашруулна.": "Abilities slow enemies on hit.",
-  "Ур чадвараар онсон дайсан нэмэлт хохирол хүлээж авдаг болно.": "Enemies hit by your abilities take bonus damage.",
-  "Reload-ийн хурдыг нэмэгдүүлдэг imbue.": "Imbues an ability to increase reload speed.",
-  "Идэвхтэй: target-ийг чиглүүлж удаашруулна.": "Active: Targets and slows an enemy.",
-  "Идэвхтэй: дайсны spirit power-ийг авч өөртөө шилжүүлнэ.": "Active: Steals Spirit Power from an enemy.",
-  "Дайсны ур чадварыг түр хугацаанд disable хийнэ.": "Temporarily disables an enemy ability.",
-  "Идэвхтэй: дайсны эмчилгээг блоклож, тасралтгүй хохирол өгнө.": "Active: Blocks enemy healing and deals damage over time.",
-  "Идэвхтэй: дайсны бууг түр хугацаанд disable хийнэ.": "Active: Temporarily disables an enemy's weapon.",
-  "Ур чадварын нөлөөллийн радиус ихээхэн томорно.": "Greatly increases ability radius.",
-  "Идэвхтэй: том хэмжээний knockback эффект өгнө.": "Active: Applies a powerful knockback.",
-  "Spirit power-тэй холбоотой HP regen ихээхэн нэмэгдэнэ.": "Greatly increases health regeneration based on Spirit Power.",
-  "Ур чадварын цэнэг хурдан дүүрдэг болно.": "Abilities recharge faster.",
-  "Идэвхтэй: том талбайд silence эффект тараана.": "Active: Silences enemies in a large area.",
-  "Ур чадвараар дайсны spirit power авна.": "Abilities steal Spirit Power from enemies.",
-  "Ур чадварын cooldown ихээхэн богиносно.": "Greatly reduces ability cooldowns.",
-  "Ур чадварын үргэлжлэх хугацаа ихээхэн сунгагдана.": "Greatly increases ability duration.",
-  "Ур чадвар ашигласны дараа spirit burst нэмдэг imbue.": "Imbues an ability to trigger a Spirit burst after use.",
-  "Их HP-той дайсанд нэмэлт хохирол.": "Deals bonus damage to enemies with high health.",
-  "Дайсныг тасралтгүй damage over time-д оруулна.": "Inflicts damage over time on enemies.",
-  "Идэвхтэй: том хэмжээний мөс/удаашруулах бөмбөг шиднэ.": "Active: Throws a large freezing orb that slows enemies.",
-  "Spirit power ихээхэн хэмжээгээр нэмэгдэнэ.": "Greatly increases Spirit Power.",
-  "Идэвхтэй: дайсны spirit power-ийг авна.": "Active: Steals Spirit Power from an enemy.",
-  "Идэвхтэй: сүүлд ашигласан ур чадвараа давтан идэвхжүүлнэ.": "Active: Recasts your most recently used ability.",
-  "Дайсныг олон удаа онох тусам эмзэг байдал нь нэмэгдэнэ.": "Repeated hits make enemies more vulnerable.",
-  "Идэвхтэй: түр хугацаанд материаллаг бус болж attack-аас зайлсхийнэ.": "Active: Become ethereal and avoid attacks for a short time.",
-  "Ур чадварын алсын зай, нарийвчлал сайжирна.": "Increases ability range and accuracy.",
-  "Идэвхтэй: цахилгаан chain хохирол дайснуудад дамжуулна.": "Active: Chains electric damage between enemies.",
-  "Идэвхтэй: түр хугацаанд нисдэг болно.": "Active: Fly for a short time.",
-  "Бууг spirit-тэй хослуулдаг imbue.": "Imbues an ability to combine it with your weapon.",
-  "Ур чадвар давхар удаа идэвхждэг imbue.": "Imbues an ability to activate twice.",
-  "Идэвхтэй: бүх ур чадварын cooldown-г шууд цэвэрлэнэ.": "Active: Instantly refreshes all ability cooldowns.",
-  "Идэвхтэй: их хэмжээний AoE spirit хохирол өгнө.": "Active: Deals heavy area-of-effect Spirit damage.",
-  "Идэвхтэй: дайсны spirit power-ийг шатааж багасгана.": "Active: Burns away an enemy's Spirit Power.",
-  "Ур чадварын cooldown маш ихээр богиносно.": "Massively reduces ability cooldowns.",
-  "Идэвхтэй: дайсныг татаж, торонд бариулна.": "Active: Pulls enemies in and traps them in a cage.",
 };
 
 const dynamicTranslations: Array<[RegExp, (match: RegExpMatchArray) => string]> = [
   [/^Item тай\uFFFD{2}барыг хаах$/, () => "Close item details"],
   [/^(.+) item-ийн дэлгэрэнгүй тайлбарыг нээх$/, (match) => `Open ${match[1]} item details`],
+  [/^Шинэ patch гарсан: (.+)$/, (match) => `New patch released: ${match[1]}`],
+  [
+    /^Доорх товчлол (.+)-ны байдлаар\. Албан ёсны тэмдэглэлийг унших ↗$/,
+    (match) => `The summary below is from ${match[1]}. Read the official notes ↗`,
+  ],
   [/^(.+) баатрын зураг$/, (match) => `${match[1]} hero portrait`],
   [/^(.+) профайлын зураг$/, (match) => `${match[1]} profile picture`],
   [/^(\d+(?:\.\d+)?% WR · [\d,]+) тоглолт$/, (match) => `${match[1]} matches`],
@@ -438,7 +316,7 @@ function translate(value: string, language: Language) {
       });
   }
   const normalized = normalizeText(value);
-  const exact = translations[normalized] ?? itemDescriptionTranslations[normalized];
+  const exact = translations[normalized];
   if (exact) return exact;
   for (const [pattern, render] of dynamicTranslations) {
     const match = normalized.match(pattern);
@@ -472,6 +350,8 @@ function translateNode(
   }
 
   if (node instanceof Element) {
+    // Components that already render both languages opt out of DOM translation.
+    if (node.closest("[data-no-translate]")) return;
     if (node.matches(".localized-guide-text")) {
       const currentText = node.textContent ?? "";
       const record = elementRecords.get(node);
@@ -536,6 +416,8 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
         ? "Deadlock item guide with hero builds, item tips, and player stats for the Mongolian Deadlock community."
         : "Deadlock item бүрийн Монгол тайлбар, hero/build тохироо, counter зөвлөмж болон Монгол тоглогчдын Deadlock Mongolia Discord community.";
     const updateTitle = () => {
+      // Sub-pages (e.g. /privacy) manage their own titles.
+      if (window.location.pathname !== "/") return;
       if (document.title !== localizedTitle) document.title = localizedTitle;
     };
     updateTitle();
@@ -593,28 +475,32 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   }, [language]);
 
   return (
-    <>
+    <LanguageContext.Provider value={{ language, setLanguage }}>
       {children}
-      <nav className="language-switcher" aria-label="Language">
-        <button
-          type="button"
-          aria-pressed={language === "en"}
-          aria-label="English"
-          title="English"
-          onClick={() => setLanguage("en")}
-        >
-          EN
-        </button>
-        <button
-          type="button"
-          aria-pressed={language === "mn"}
-          aria-label="Mongolian"
-          title="Mongolian"
-          onClick={() => setLanguage("mn")}
-        >
-          MN
-        </button>
-      </nav>
-    </>
+    </LanguageContext.Provider>
+  );
+}
+
+export function LanguageSwitcher() {
+  const { language, setLanguage } = useLanguage();
+  return (
+    <div className="language-switcher" role="group" aria-label="Language" data-no-translate>
+      <button
+        type="button"
+        aria-pressed={language === "mn"}
+        title="Монгол"
+        onClick={() => setLanguage("mn")}
+      >
+        MN
+      </button>
+      <button
+        type="button"
+        aria-pressed={language === "en"}
+        title="English"
+        onClick={() => setLanguage("en")}
+      >
+        EN
+      </button>
+    </div>
   );
 }

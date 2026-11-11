@@ -46,6 +46,54 @@ SteamID64 ашиглана.
 тайлбар англиар гарч, MN горимд `damage` зэрэг тоглоомын түгээмэл нэр томьёог
 орчуулалгүй үлдээнэ.
 
+## Item өгөгдөл ба засвар
+
+Item-тэй холбоотой бүх өгөгдөл `lib/` дотор байрлана. Каталог, `/items/[slug]`
+хуудас, counter helper гурвуулаа эндээс уншина.
+
+| Файл | Юу байдаг |
+|---|---|
+| [`lib/item-copy.ts`](./lib/item-copy.ts) | Item бүрийн MN/EN тайлбар (`d`, `use`, `tip`), active/passive/imbue төрөл |
+| [`lib/item-shops.ts`](./lib/item-shops.ts) | Дэлгүүр, tier, үнэ, item-ийн нэр |
+| [`lib/items.ts`](./lib/items.ts) | Дээрхийг нэгтгэж slug, upgrade зам, stat, hero датаг нэмнэ |
+| [`lib/counters.ts`](./lib/counters.ts) | Hero бүрийн аюул (heal, CC, gun…) ба эсрэг item-ууд |
+| [`lib/patch-notes.ts`](./lib/patch-notes.ts) | Patch radar-ийн монгол товчлол + албан ёсны patch feed |
+| [`lib/deadlock-api.ts`](./lib/deadlock-api.ts) | Deadlock API-аас Phantom+ stat, build, leaderboard татах (сервер тал, ISR cache) |
+| [`lib/mn-players.ts`](./lib/mn-players.ts) | Монгол leaderboard-ийн Account ID жагсаалт (зөвхөн зөвшөөрөлтэй) |
+| [`lib/crosshairs.ts`](./lib/crosshairs.ts) | Crosshair preset болон pro тоглогчдын (эх сурвалжтай) code |
+
+Тайлбар бичихдээ damage, cooldown, lane зэрэг тоглогчдын өдөр тутам хэрэглэдэг
+нэр томьёог англиар нь үлдээж, найздаа тайлбарлаж байгаа юм шиг энгийн бичнэ.
+
+### Шинэ patch гарсны дараа
+
+```bash
+node scripts/build-item-heroes.mjs   # аль hero ямар item авдаг (Deadlock API, сүүлийн 30 хоног)
+node scripts/build-item-stats.mjs    # public/data/deadlock-items.json → item stat-ууд
+node scripts/build-crosshair-presets.mjs  # crosshair preset-үүдийг code болгоно (preset өөрчилсөн үед)
+```
+
+Дараа нь `lib/patch-notes.ts` дахь `PATCH_SUMMARY`-г шинэчилнэ. Албан ёсны patch-ийн
+жагсаалт цаг тутам автоматаар шинэчлэгддэг бөгөөд товчлол хоцорвол сайт өөрөө
+"Шинэ patch гарсан" гэж харуулна.
+
+## Монгол leaderboard-д тоглогч нэмэх
+
+Тоглогч Discord дээр өөрөө хүсэлт гаргасны дараа [`lib/mn-players.ts`](./lib/mn-players.ts)-д
+Account ID-г нь нэмнэ. Rank, тоглолт, win rate нь автоматаар шинэчлэгдэнэ. Хасуулах хүсэлт
+ирвэл мөрийг нь устгана.
+
+## Хуудсууд
+
+- `/` — нүүр: item каталог, build generator, patch radar, тоглогчийн статистик
+- `/items/[slug]` — item тус бүрийн хуудас (156 ширхэг, SEO + Facebook/Discord preview зурагтай)
+- `/heroes`, `/heroes/[slug]` — Phantom+ meta, hero бүрийн build, matchup, алдартай build (6 цаг тутам шинэчлэгдэнэ)
+- `/pro` — бүсийн leaderboard + Монгол тоглогчид (цаг тутам)
+- `/crosshair` — crosshair builder, тоглоомын share code, бэлэн загварууд
+- `/counter` — дайсны hero-уудыг сонгоход эсрэг нь авах item санал болгоно (`?vs=Abrams,Haze` линкээр хуваалцана)
+- `/guide` — шинэ тоглогчийн гарын авлага
+- `/privacy` — нууцлалын бодлого
+
 ## Production build
 
 ```bash
