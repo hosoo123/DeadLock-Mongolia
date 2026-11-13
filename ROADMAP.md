@@ -122,9 +122,11 @@ Steam-ээрээ нэвтэрч профайлаа үүсгээд leaderboard-д
 
 ## 🛠 4. Техникийн сайжруулалт (сайтыг найдвартай болгох)
 
-### 4.1 Preview болон Production-д тусдаа database — 👤🤖 🟢
-- Одоо preview deploy дээр нэвтрэхэд жинхэнэ database-д бичигдэнэ.
-- Neon-ийн branch ашиглаж preview бүрт тусдаа database өгөх (Neon ↔ Vercel integration).
+### 4.1 ✅ Preview болон Production-д тусдаа database — 🤖 🟢 *(2026-11-13 дууссан)*
+- Neon дээр `production`-оос `preview` branch үүсгэсэн (хугацаагүй, устахгүй).
+- Vercel-ийн **Preview** орчны `DATABASE_URL` → `preview` branch. **Production** хэвээр `production` branch.
+- Preview дээр нэвтэрч, профайл хадгалсан ч жинхэнэ сайтын датад нөлөөлөхгүй.
+- Preview branch-ийг production-ий одоогийн байдал руу буцаах: `neon branches reset preview --parent`
 
 ### 4.2 Build generator-ийг React руу шилжүүлэх — 🤖 🟡
 - `public/deadlock-app.js` (596 мөр) нь хуучин JavaScript хэвээр.
@@ -171,7 +173,7 @@ Steam-ээрээ нэвтэрч профайлаа үүсгээд leaderboard-д
 |---|---|---|
 | `.env.local` | `DATABASE_URL`, `SESSION_SECRET`, Neon хувьсагчид | **Хэзээ ч GitHub-д бүү оруул** (gitignore-д орсон) |
 | Vercel → Environment Variables | `DATABASE_URL`, `SESSION_SECRET` (Production + Preview), Wire, Gmail | Preview-ийн `SESSION_SECRET` нь тусдаа |
-| Neon | Project `aged-water-29568829`, branch `production` | `neon.ts`, `.neon` |
+| Neon | Project `aged-water-29568829`, branch `production` (сайт) ба `preview` (Vercel preview) | `neon.ts`, `.neon` |
 | Google Search Console | `public/google9e0edb9e754e9d74.html` | **Бүү устга** — устгавал баталгаажуулалт цуцлагдана |
 | Монгол leaderboard (гараар) | `lib/mn-players.ts` | Steam login-оор өөрөө нэмэгдэх тул ихэвчлэн хэрэггүй |
 | Бүдүүлэг нэрийн шүүлтүүр | `lib/name-filter.ts` | Шинэ үг нэмж болно |
