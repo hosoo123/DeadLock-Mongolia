@@ -27,9 +27,6 @@ export const metadata: Metadata = {
     "Deadlock Discord Mongolia",
     "Deadlock build Монгол",
   ],
-  alternates: {
-    canonical: "https://dead-lock-mongolia.vercel.app/",
-  },
   openGraph: {
     title: "Deadlock Item Guide — Монгол",
     description:
